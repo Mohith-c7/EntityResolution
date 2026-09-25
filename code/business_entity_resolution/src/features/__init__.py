@@ -1,0 +1,3 @@
+"""
+Pairwise feature engineering subpackage.
+"""
