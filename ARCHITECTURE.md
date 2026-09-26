@@ -308,6 +308,22 @@ COL business_name VAL {normalized_name} COL business_address VAL {normalized_add
 | `digit_tokens` | Extracted numeric tokens (house numbers, postal codes) |
 | `country` | Original country string — kept as-is (open set) |
 
+### Current preprocessing contract
+
+- Primary normalized text preserves Unicode letters, numbers, and combining marks.
+  `accent_folded_name` and `accent_folded_address` provide Latin-accent-folded
+  alternate views without removing Indic marks.
+- `norm_address` expands the standard address abbreviations. The separate
+  `norm_address_unexpanded` retains the punctuation-cleaned, unexpanded address
+  view for blocking.
+- `digit_tokens`, `name_tokens`, `address_tokens`, `name_numeric_tokens`,
+  `address_numeric_tokens`, and `postcode_candidates` are `tuple[str, ...]`.
+  Missing or empty inputs produce `()`. Postcode candidates are generic address
+  numeric tokens with four or more digits, retaining leading zeros.
+- `name_missing`, `address_missing`, and `country_missing` are boolean flags.
+  Normalized string fields use `""` for missing input. Raw source columns are
+  retained unchanged.
+
 ---
 
 ## Stage 2 — Blocking (Candidate Generation)
