@@ -162,3 +162,19 @@ python scripts/freeze_scale_experiment.py --output models/scale_reproduction --l
 ```
 
 Use a fresh output directory. `build_crossfit_aliases.py` reuses completed artifacts only when input fingerprints and settings match. The frozen runner resumes completed cache chunks after validating their hashes. It refuses to overwrite a partial model fit or reuse an already started audit for a different selection.
+
+## Targeted retrieval diagnosis
+
+`scripts/profile_missing_candidates.py` examined all 1,212 known retrieval misses from the existing 10,000-entity tuning comparison, using one low-priority worker. It did not inspect the reserved audit or modify either running job.
+
+| Location of the missing link | Links |
+|---|---:|
+| Present in the original shortlist, then removed by the top-20 cut | 354 |
+| Absent from the original shortlist | 858 |
+| Missing candidate address, across both groups | 570 |
+
+Increasing the fused shortlist budget from 64 to 128 made 502 of the known misses available before truncation. Keeping the original reranker recovered 88 into the final top 20; the experimental learned ranker recovered 490, including 345 links with missing candidate addresses.
+
+This is an error-only diagnostic. It does not count previously retrieved true links lost by the new ranking, false matches, or the full runtime cost. It is not a macro F0.5 improvement and does not override the earlier full-pipeline probe that failed to improve matching. The next controlled comparison should measure both gains and losses on the full tuning set, using the larger matcher if it passes its own evaluation. Missing-address ranking and the 858 pre-shortlist misses deserve separate attention.
+
+Aggregate results: `reports/experiments/redesign/missing_candidate_profile.json`. Detailed pairs remain in the ignored model-artifact directory.
