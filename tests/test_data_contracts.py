@@ -56,6 +56,8 @@ def test_loader_preserves_raw_strings_and_ids(tmp_path: Path) -> None:
     tsv_path = tmp_path / "synthetic_source1.tsv"
     sample_df = get_valid_source1_df()
     sample_df.loc[0, "business_address"] = "00123"
+    sample_df.loc[1, "country"] = "NA"
+    sample_df.loc[1, "business_name"] = "NA"
     sample_df.to_csv(tsv_path, sep="\t", index=False)
 
     df = load_tsv(tsv_path)
@@ -69,15 +71,6 @@ def test_loader_preserves_raw_strings_and_ids(tmp_path: Path) -> None:
     assert df.loc[0, "business_address"] == "00123"
     assert df.loc[1, "country"] == "NA"
     assert df.loc[1, "business_name"] == "NA"
-
-    assert list(df.columns) == REQUIRED_SOURCE_COLUMNS
-    for eid in df["entity_id"]:
-        assert eid.startswith("S1-")
-        assert isinstance(eid, str)
-    assert df.loc[0, "business_address"] == "00123"
-    assert df.loc[1, "country"] == "NA"
-    assert df.loc[1, "business_name"] == "NA"
-
 
 def test_loader_raises_on_missing_file(tmp_path: Path) -> None:
     missing_path = tmp_path / "non_existent_file.tsv"
