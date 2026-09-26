@@ -6,6 +6,8 @@ Date: 26 September 2026
 
 Improve macro F₀.₅ while retaining a small, auditable candidate set and practical full-test runtime. A top-10 position is the goal; neither local validation nor model complexity guarantees a rank.
 
+Execution order: finish Submission 01 with the verified `larger_alias_v4` saved baseline before starting further experiments. Its model, normalization, 50-feature schema, wide blocking configuration, and threshold `0.71` are frozen under `output/submission_01/`. Full inference, both validators with ID checks, versioned outputs, and an upload report are automated by `scripts/create_submission.py`. See [Submission 01](SUBMISSION_01.md). Resume the improvement priorities below only after this submission is complete, preserving it unchanged.
+
 The main metric is per-S1 macro F₀.₅, including singletons. For nonempty truth:
 
 `F0.5 = 1.25 × TP / (1.25 × TP + FP + 0.25 × FN)`
