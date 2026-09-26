@@ -94,11 +94,11 @@ From the repository root:
 python -m pip install -r requirements-dev.txt
 python -m pytest -q
 
-python3 utils/validate_submission.py \
+python3 code/business_entity_resolution/run_validate.py \
   --matching output/matching_results.tsv \
   --candidate output/candidate_pairs.tsv --test-dir dataset/test
 
-python3 utils/organizer_validate_submission.py \
+python3 code/business_entity_resolution/src/utils/organizer_validate_submission.py \
   --matching output/matching_results.tsv \
   --candidate output/candidate_pairs.tsv --test-dir dataset/test --check-ids
 ```

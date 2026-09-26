@@ -53,3 +53,16 @@ Oracle scores assume perfect matching and must never be presented as actual mode
 5. Freeze the chosen system, measure full inference throughput, export every official test S1, run both validators, and fill final methodology counts.
 
 Detailed machine-readable pilot reports are stored beside this document. Local model/pair artifacts remain under ignored `models/`.
+
+## Candidate-budget pilot
+
+| K per source | Mean candidates | Tune macro F₀.₅ | Holdout macro F₀.₅ | Holdout retrieval ceiling |
+|---|---:|---:|---:|---:|
+| 1 | 2 | 0.7694 | 0.7891 | 0.8097 |
+| 2 | 4 | 0.8875 | 0.8895 | 0.9264 |
+| 3 | 6 | 0.9185 | 0.9139 | 0.9581 |
+| 5 | 10 | 0.9303 | 0.9297 | 0.9780 |
+| 10 | 20 | 0.9346 | 0.9273 | 0.9830 |
+| 20 | 40 | 0.9379 | 0.9268 | 0.9872 |
+
+K=5 is a smaller candidate-budget challenger, with comparable pilot matching quality. K=20 remains preferred by the tuning score. Selecting K=5 solely because its holdout score is highest would use the holdout for tuning; confirm budget choice on the larger development population. Pair features in wide retrieval are independent of final K, so existing predictions permit this exploratory comparison. Final inference must score and export only the configured retained set.
