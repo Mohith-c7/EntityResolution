@@ -13,12 +13,6 @@ NAME_ABBREVIATIONS = {
     "mfg": "manufacturing", "pvt": "private", "svc": "services",
     "svcs": "services", "tech": "technology",
 }
-ADDRESS_ABBREVIATIONS = {
-    "apt": "apartment", "ave": "avenue", "blvd": "boulevard", "ct": "court",
-    "dr": "drive", "fl": "floor", "hwy": "highway", "ln": "lane",
-    "no": "number", "pkwy": "parkway", "rd": "road", "st": "street",
-    "ste": "suite",
-}
 LEGAL_SUFFIXES = frozenset({
     "company", "corporation", "incorporated", "limited", "llc", "llp", "private",
 })
@@ -29,12 +23,11 @@ def _is_missing(value: Any) -> bool:
     if value is None:
         return True
     try:
-        comparison = value != value
-        if comparison is True:
-            return True
-        return str(comparison) == "<NA>"
+        # This catches Python and NumPy NaN scalar values.  pandas.NA raises
+        # when coerced to bool, which is handled below.
+        return bool(value != value)
     except (TypeError, ValueError):
-        return False
+        return type(value).__name__ == "NAType"
 
 
 def _clean_text(value: Any) -> str:
@@ -42,7 +35,12 @@ def _clean_text(value: Any) -> str:
     if _is_missing(value):
         return ""
     text = unicodedata.normalize("NFKC", str(value)).casefold().strip()
-    text = re.sub(r"[^\w\s]", " ", text).replace("_", " ")
+    # ``\w`` excludes Unicode combining marks.  Retaining the L, N, and M
+    # categories preserves scripts such as Devanagari and Odia intact.
+    text = "".join(
+        char if char.isspace() or unicodedata.category(char)[0] in {"L", "N", "M"} else " "
+        for char in text
+    )
     return re.sub(r"\s+", " ", text).strip()
 
 
@@ -59,12 +57,8 @@ def normalize_name(raw_name: Any) -> str:
 
 
 def normalize_address(raw_address: Any) -> str:
-    """Normalize an address while retaining all textual and numeric tokens."""
-    if _is_missing(raw_address):
-        return ""
-    value = unicodedata.normalize("NFKC", str(raw_address))
-    value = re.sub(r"\bh\s*\.?\s*no\.?\b", " house number ", value, flags=re.I)
-    return _expand_tokens(_clean_text(value), ADDRESS_ABBREVIATIONS)
+    """Normalize an address without expanding potentially ambiguous abbreviations."""
+    return _clean_text(raw_address)
 
 
 def normalize_country(raw_country: Any) -> str:
@@ -78,6 +72,23 @@ def extract_digits(text: Any) -> list[str]:
         "".join(str(unicodedata.digit(char)) for char in token)
         for token in re.findall(r"\d+", _clean_text(text))
     ]
+
+
+def accent_fold(text: Any) -> str:
+    """Return a Latin-accent-folded alternate view without damaging Indic marks."""
+    primary = _clean_text(text)
+    folded: list[str] = []
+    previous_base = ""
+    for char in unicodedata.normalize("NFKD", primary):
+        category = unicodedata.category(char)
+        if category.startswith("M"):
+            if "LATIN" not in unicodedata.name(previous_base, ""):
+                folded.append(char)
+        else:
+            folded.append(char)
+            if category[0] in {"L", "N"}:
+                previous_base = char
+    return unicodedata.normalize("NFC", "".join(folded))
 
 
 def name_core(normalized_name: Any) -> str:
