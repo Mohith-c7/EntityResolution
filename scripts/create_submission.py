@@ -40,11 +40,19 @@ def id_digest(rows):
     return hashlib.sha256("\n".join(r["entity_id"] for r in rows).encode()).hexdigest()
 
 
-def initialize(package, model, indexes, config, threshold, version, aliases, mmap_bytes=0):
+def initialize(package, model, indexes, config, threshold, version, aliases, mmap_bytes=0,
+               retrieval=None, feature_cache=None):
     sys.path.insert(0, package)
     from src.pipeline.inference import initialize_worker
     from src.blocking.disk_index import DiskSearchConfig
-    initialize_worker(model, indexes, DiskSearchConfig(**config), threshold, version, aliases)
+    if retrieval is None:
+        initialize_worker(model, indexes, DiskSearchConfig(**config), threshold, version, aliases)
+    else:
+        if retrieval["engine"] != "bounded-postings-v1":
+            raise ValueError("Unsupported frozen retrieval engine")
+        from src.pipeline.inference import initialize_postings_worker
+        initialize_postings_worker(model, indexes, DiskSearchConfig(**config), threshold, version, aliases,
+            retrieval["options"], str(Path(package) / retrieval["native_extension"]), feature_cache)
     if mmap_bytes:
         from src.pipeline import inference
         for index in inference._WORKER[1]:
@@ -60,7 +68,7 @@ def score(rows):
     return score_batch(rows)
 
 
-def save_chunk(directory, number, rows, results):
+def save_chunk(directory, number, rows, results, feature_cache=None):
     if [r["entity_id"] for r in rows] != [r[0] for r in results]:
         raise ValueError("Worker result order differs from its Source 1 input")
     paths = [directory / f"{number:07d}.{kind}.tsv" for kind in ("matching", "candidate")]
@@ -95,6 +103,11 @@ def save_chunk(directory, number, rows, results):
     stats["candidate_histogram"] = dict(histogram)
     stats["input_id_sha256"] = id_digest(rows)
     stats["files"] = {path.name: digest(path) for path in paths}
+    if feature_cache:
+        path = Path(feature_cache) / (id_digest(rows) + ".parquet")
+        if not path.exists():
+            raise ValueError("Scored feature cache missing; checkpoint cannot be committed")
+        stats["feature_cache"] = {"file": path.name, "sha256": digest(path)}
     # The JSON marker is committed last; both files must exist to resume a chunk.
     write_json(directory / f"{number:07d}.json", stats)
     return stats
@@ -134,6 +147,9 @@ def run(args):
     from src.pipeline.inference import batches
     from src.pipeline.export import validate_submission
     report = json.loads((model / "report.json").read_text())
+    pipeline_holdout = report.get("pipeline_holdout_macro_f05", report["holdout"]["macro_f05"])
+    retrieval = report.get("retrieval")
+    feature_cache = str(submission / "feature_cache") if retrieval else None
     compatibility = json.loads((submission / "compatibility_report.json").read_text())
     if not compatibility["compatible"]:
         raise ValueError("Compatibility preflight failed")
@@ -151,7 +167,8 @@ def run(args):
         "frozen_assets": frozen, "batch_size": args.batch_size, "expected_entities": expected_entities,
         "config": report["search_config"], "feature_version": report["feature_version"],
         "runtime_options": {"mmap_bytes": args.mmap_bytes},
-        "threshold": report["threshold"], "local_validation_macro_f05": report["holdout"]["macro_f05"],
+        "threshold": report["threshold"], "local_validation_macro_f05": pipeline_holdout,
+        "retrieval": retrieval, "tuning_macro_f05": report.get("pipeline_tuning_macro_f05"),
         "leaderboard_score": None}
     manifest_path = submission / "run_manifest.json"
     if manifest_path.exists() and json.loads(manifest_path.read_text()) != manifest:
@@ -173,7 +190,8 @@ def run(args):
     tasks = iter(enumerate(batches(test / "test_source1.tsv", args.batch_size)))
     initargs = (str(package), str(model / "model.txt"),
         [str(indexes / f"index_test_{s}.sqlite") for s in ("S2", "S3")],
-        report["search_config"], report["threshold"], report["feature_version"], str(model / "name_aliases.json"), args.mmap_bytes)
+        report["search_config"], report["threshold"], report["feature_version"], str(model / "name_aliases.json"), args.mmap_bytes,
+        retrieval, feature_cache)
     pending = deque()
     all_chunks = []
     with ProcessPoolExecutor(max_workers=args.workers, mp_context=multiprocessing.get_context("spawn"),
@@ -194,6 +212,10 @@ def run(args):
                     for name, expected in saved["files"].items():
                         if digest(checkpoint / name) != expected:
                             raise ValueError("Corrupt checkpoint file")
+                    if feature_cache:
+                        evidence = saved.get("feature_cache")
+                        if not evidence or digest(Path(feature_cache) / evidence["file"]) != evidence["sha256"]:
+                            raise ValueError("Missing or corrupt scored feature cache")
                     add_stats(total, saved)
                     resumed += len(rows)
                 else:
@@ -202,7 +224,7 @@ def run(args):
         publish_progress()
         while pending:
             number, rows, future = pending.popleft()
-            add_stats(total, save_chunk(checkpoint, number, rows, future.result()))
+            add_stats(total, save_chunk(checkpoint, number, rows, future.result(), feature_cache))
             generated += len(rows)
             fill()
             publish_progress()
@@ -249,7 +271,8 @@ def run(args):
         "p95_candidates_per_s1": percentile(total["candidate_histogram"], .95, total["entities"]),
         "elapsed_seconds_this_run": time.perf_counter() - start, "workers": args.workers,
         "validation": {"strict": "PASS", "official": "PASS", "id_checking": True},
-        "output_sha256": output_hashes, "local_validation_macro_f05": report["holdout"]["macro_f05"],
+        "output_sha256": output_hashes, "local_validation_macro_f05": pipeline_holdout,
+        "tuning_macro_f05": report.get("pipeline_tuning_macro_f05"), "retrieval": retrieval,
         "leaderboard_score": None, "threshold": report["threshold"], "model": report.get("experiment", model.name),
         "runtime_options": {"mmap_bytes": args.mmap_bytes},
         "candidate_contract": "Exactly the retained candidates scored by the frozen matching model; matches are subsets.",
@@ -259,7 +282,8 @@ def run(args):
     write_json(submission / "progress.json", summary)
     summary_lines = ["# " + submission.name.replace("_", " ").title(), "", "Complete inference; both validators passed with ID checks enabled.", "",
         f"Upload: [matching_results.tsv]({root_output / 'matching_results.tsv'})", "",
-        f"Local validation macro F0.5: **{summary['local_validation_macro_f05']:.9f}**. Leaderboard score: **unknown**.", "",
+        (f"Fresh local holdout macro F0.5: **{pipeline_holdout:.9f}**. Leaderboard score: **unknown**." if pipeline_holdout is not None
+         else f"Fresh holdout for this retrieval configuration: **pending**. Tuning macro F0.5: **{report.get('pipeline_tuning_macro_f05')}**. Leaderboard score: **unknown**."), "",
         f"- Test Source 1 entities: {total['entities']:,}",
         f"- Predicted matching links: {total['predicted_links']:,}",
         f"- Empty predictions: {total['empty_predictions']:,} ({summary['predicted_no_match_rate']:.4%})",

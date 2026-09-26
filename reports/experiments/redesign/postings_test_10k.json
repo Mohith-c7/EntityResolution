@@ -1,0 +1,56 @@
+{
+  "status": "experimental_not_submission_ready",
+  "split": "unlabelled_test_sample",
+  "entities": 10000,
+  "workers": 10,
+  "seconds": 39.679340667004,
+  "references_per_second": 252.02031666608974,
+  "options": {
+    "max_postings": 100000,
+    "tokens_per_field": 6,
+    "field_budget": 24,
+    "fused_budget": 64,
+    "cache_bytes": 67108864
+  },
+  "top_k_per_source": 20,
+  "native_extension": "models/runtime/erpostings.dylib",
+  "mean_candidates": 40.0,
+  "profile_worker_seconds_summed": {
+    "features_seconds": 59.91200125249452,
+    "prediction_seconds": 26.479893054973218,
+    "cache_write_seconds": 4.846129351150012,
+    "retrieve_seconds": 124.59413994757051,
+    "rerank_seconds": 137.38123761757743,
+    "queries": 20000,
+    "accumulated_records": 2168847976,
+    "reranked_records": 1874647,
+    "cache_hits": 64022,
+    "cache_misses": 192933,
+    "skipped_large_lists": 0
+  },
+  "reference_ids_sha256": "bfb30c77a9f29aefdbacdbb5bcf4203e8943ee13ce80c592527ece69dde0b7c4",
+  "caveat": "New retrieval changes blocking score distribution; old classifier/threshold are exploratory controls.",
+  "country_counts_unlabelled_when_test": {
+    "India": {
+      "references": 4676,
+      "candidates": 187040,
+      "matches": 14758,
+      "empty": 277,
+      "eight_or_more": 35
+    },
+    "US": {
+      "references": 3843,
+      "candidates": 153720,
+      "matches": 12779,
+      "empty": 210,
+      "eight_or_more": 38
+    },
+    "France": {
+      "references": 1481,
+      "candidates": 59240,
+      "matches": 5607,
+      "empty": 56,
+      "eight_or_more": 61
+    }
+  }
+}

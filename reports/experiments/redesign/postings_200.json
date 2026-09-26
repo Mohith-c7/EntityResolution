@@ -1,0 +1,58 @@
+{
+  "status": "experimental_not_submission_ready",
+  "split": "previously_inspected_tuning",
+  "entities": 200,
+  "workers": 1,
+  "seconds": 9.2795448340039,
+  "references_per_second": 21.55278126003782,
+  "options": {
+    "max_postings": 20000,
+    "tokens_per_field": 6,
+    "field_budget": 24,
+    "fused_budget": 64,
+    "cache_bytes": 67108864
+  },
+  "mean_candidates": 40.0,
+  "matching": {
+    "macro_f05": 0.9689735819207581,
+    "entities": 200,
+    "true_positive_links": 648,
+    "predicted_links": 659,
+    "true_links": 706,
+    "micro_precision": 0.9833080424886191,
+    "micro_recall": 0.9178470254957507,
+    "singleton_entities": 12,
+    "singleton_false_positives": 0,
+    "singleton_false_positive_rate": 0.0,
+    "non_singleton_empty_rate": 0.0,
+    "country_macro_f05": {}
+  },
+  "oracle": {
+    "macro_f05": 0.9902424725811823,
+    "entities": 200,
+    "true_positive_links": 680,
+    "predicted_links": 680,
+    "true_links": 706,
+    "micro_precision": 1.0,
+    "micro_recall": 0.9631728045325779,
+    "singleton_entities": 12,
+    "singleton_false_positives": 0,
+    "singleton_false_positive_rate": 0.0,
+    "non_singleton_empty_rate": 0.0,
+    "country_macro_f05": {}
+  },
+  "profile_worker_seconds_summed": {
+    "features_seconds": 0.8112311832956038,
+    "prediction_seconds": 0.3676022909930907,
+    "retrieve_seconds": 2.952682750954409,
+    "rerank_seconds": 4.1702862971578725,
+    "queries": 400,
+    "accumulated_records": 11143091,
+    "reranked_records": 35046,
+    "cache_hits": 333,
+    "cache_misses": 4246,
+    "skipped_large_lists": 0
+  },
+  "reference_ids_sha256": "f65824b3e9abec2df9cb51844800d409f8b6a7f183caed8043addc079c602655",
+  "caveat": "New retrieval changes blocking score distribution; old classifier/threshold are exploratory controls."
+}

@@ -1,0 +1,28 @@
+{
+  "status": "splits_reserved_no_model_trained_no_audit_labels_read",
+  "counts": {
+    "train": 300000,
+    "tune": 50000,
+    "holdout": 10000
+  },
+  "country_counts": {
+    "train": {
+      "US": 180529,
+      "India": 119471
+    },
+    "tune": {
+      "US": 29958,
+      "India": 20042
+    },
+    "holdout": {
+      "India": 3988,
+      "US": 6012
+    }
+  },
+  "outer_split": "Existing deterministic entity_fold, seed 42",
+  "sampling_domain": "scale-v1-reservation-20260926",
+  "training_alias_policy": "Five inner entity folds. Each training reference uses aliases fitted without its inner fold; tuning/audit use aliases fitted on outer training only.",
+  "cache_policy": "Version candidates and supervised features by alias-model hash and fold. Shared normalized records/postings may be label-free; a single supervised feature cache is not universal.",
+  "ownership_policy": "Do not claim full-universe ownership accuracy from these sampled references. Require a separate complete competition evaluation with compatible fold-specific supervision.",
+  "audit_policy": "Holdout IDs reserved without labels. Freeze selection on tuning first; read audit labels once for final confirmation."
+}

@@ -1,0 +1,105 @@
+{
+  "status": "experimental_not_submission_ready",
+  "split": "previously_inspected_tuning",
+  "entities": 10000,
+  "workers": 10,
+  "seconds": 38.90927654199186,
+  "references_per_second": 257.0081196243202,
+  "options": {
+    "max_postings": 100000,
+    "tokens_per_field": 6,
+    "field_budget": 24,
+    "fused_budget": 64,
+    "cache_bytes": 67108864
+  },
+  "top_k_per_source": 20,
+  "native_extension": "models/runtime/erpostings.dylib",
+  "mean_candidates": 40.0,
+  "profile_worker_seconds_summed": {
+    "features_seconds": 57.871770420097164,
+    "prediction_seconds": 25.8467944033182,
+    "cache_write_seconds": 0.0,
+    "retrieve_seconds": 108.12272083399876,
+    "rerank_seconds": 141.75784673135786,
+    "queries": 20000,
+    "accumulated_records": 1853943435,
+    "reranked_records": 1859216,
+    "cache_hits": 61315,
+    "cache_misses": 196706,
+    "skipped_large_lists": 0
+  },
+  "reference_ids_sha256": "b66237936b6e637f74fd223ae3c211cd18a8ef36c1db815cf4371867d9e38815",
+  "caveat": "New retrieval changes blocking score distribution; old classifier/threshold are exploratory controls.",
+  "country_counts_unlabelled_when_test": {
+    "US": {
+      "references": 5983,
+      "candidates": 239320,
+      "matches": 19340,
+      "empty": 350,
+      "eight_or_more": 53
+    },
+    "India": {
+      "references": 4017,
+      "candidates": 160680,
+      "matches": 12729,
+      "empty": 268,
+      "eight_or_more": 28
+    }
+  },
+  "matching": {
+    "macro_f05": 0.9592620965715906,
+    "entities": 10000,
+    "true_positive_links": 31656,
+    "predicted_links": 32069,
+    "true_links": 34624,
+    "micro_precision": 0.9871215192241729,
+    "micro_recall": 0.914279112754159,
+    "singleton_entities": 570,
+    "singleton_false_positives": 33,
+    "singleton_false_positive_rate": 0.05789473684210526,
+    "non_singleton_empty_rate": 0.008589607635206787,
+    "country_macro_f05": {}
+  },
+  "oracle": {
+    "macro_f05": 0.9885139110589763,
+    "entities": 10000,
+    "true_positive_links": 33412,
+    "predicted_links": 33412,
+    "true_links": 34624,
+    "micro_precision": 1.0,
+    "micro_recall": 0.9649953789279113,
+    "singleton_entities": 570,
+    "singleton_false_positives": 0,
+    "singleton_false_positive_rate": 0.0,
+    "non_singleton_empty_rate": 0.002863202545068929,
+    "country_macro_f05": {}
+  },
+  "same_entities_saved_baseline_matching": {
+    "macro_f05": 0.960238377334227,
+    "entities": 10000,
+    "true_positive_links": 31765,
+    "predicted_links": 32189,
+    "true_links": 34624,
+    "micro_precision": 0.9868277983161949,
+    "micro_recall": 0.9174272181146026,
+    "singleton_entities": 570,
+    "singleton_false_positives": 34,
+    "singleton_false_positive_rate": 0.05964912280701754,
+    "non_singleton_empty_rate": 0.008059384941675504,
+    "country_macro_f05": {}
+  },
+  "same_entities_saved_baseline_oracle": {
+    "macro_f05": 0.9901411198078899,
+    "entities": 10000,
+    "true_positive_links": 33522,
+    "predicted_links": 33522,
+    "true_links": 34624,
+    "micro_precision": 1.0,
+    "micro_recall": 0.9681723659889094,
+    "singleton_entities": 570,
+    "singleton_false_positives": 0,
+    "singleton_false_positive_rate": 0.0,
+    "non_singleton_empty_rate": 0.002014846235418876,
+    "country_macro_f05": {}
+  }
+}

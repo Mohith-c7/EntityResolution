@@ -2,7 +2,9 @@
 
 The full official test run uses `models/features_v3_audit01`, feature schema `pairwise-v3-65`, and threshold `0.76`. Its local fresh-audit macro F0.5 is **0.9606164625**. No leaderboard score is claimed.
 
-The model, aliases, audited inference source and runner are frozen under `output/submission_02/`. The earlier `output/submission_01/` checkpoints remain separate and stopped. Predictions from different models are never combined.
+**Status: stopped by request, with 3,200 references checkpointed.** Do not resume this slow retrieval run as part of the runtime redesign. No complete upload file exists.
+
+The model, aliases, audited inference source and runner are frozen under `output/submission_02/`. The earlier `output/submission_01/` checkpoints remain separate and stopped. Predictions from different models are never combined. Commands below document the preserved runner; they are not instructions to restart it now.
 
 ## Generate or resume
 

@@ -2,6 +2,7 @@
 
 import csv
 import itertools
+import hashlib
 import json
 import multiprocessing
 import os
@@ -22,10 +23,12 @@ from .export import validate_submission
 from .training import json_write
 
 _WORKER = None
+_FEATURE_CACHE = None
 
 
 def initialize_worker(model_path, index_paths, config, threshold, version=FEATURE_VERSION, alias_path=None):
-    global _WORKER
+    global _WORKER, _FEATURE_CACHE
+    _FEATURE_CACHE = None
     model = lgb.Booster(model_file=str(model_path))
     names = names_for_version(version)
     if model.num_feature() != len(names) or tuple(model.feature_name()) != tuple(names):
@@ -34,10 +37,27 @@ def initialize_worker(model_path, index_paths, config, threshold, version=FEATUR
     _WORKER = model, [DiskSourceIndex(path, config, aliases=aliases) for path in index_paths], threshold, version
 
 
+def initialize_postings_worker(model_path, index_paths, config, threshold, version, alias_path,
+                               postings_config, native_extension, cache_dir=None):
+    """Explicit opt-in for a separately frozen retrieval configuration."""
+    global _WORKER, _FEATURE_CACHE
+    from ..blocking.postings_index import PostingsSourceIndex, PostingsConfig
+    model = lgb.Booster(model_file=str(model_path))
+    if tuple(model.feature_name()) != tuple(names_for_version(version)):
+        raise ValueError("Model feature names differ from registry")
+    aliases = NameAliases.load(alias_path) if config.use_name_aliases else None
+    indexes = [PostingsSourceIndex(path, config, aliases=aliases,
+        postings_config=PostingsConfig(**postings_config), native_extension=native_extension) for path in index_paths]
+    _WORKER = model, indexes, threshold, version
+    _FEATURE_CACHE = Path(cache_dir) if cache_dir else None
+    if _FEATURE_CACHE:
+        _FEATURE_CACHE.mkdir(parents=True, exist_ok=True)
+
+
 def score_batch(raw_rows):
     model, indexes, threshold, version = _WORKER
     index_by_source = {index.source:index for index in indexes}
-    features, groups = [], []
+    features, groups, evidence = [], [], []
     for raw in raw_rows:
         reference = normalize_record(raw)
         pairs = [pair for index in indexes for pair in index.query(reference)]
@@ -48,9 +68,26 @@ def score_batch(raw_rows):
         else:
             features.extend(feature_vector(reference, target, candidate) for candidate, target in pairs)
         groups.append((reference.entity_id, [c.candidate_entity_id for c, _ in pairs], start, len(features)))
+        if _FEATURE_CACHE:
+            evidence.extend((c.source1_entity_id, c.candidate_entity_id, c.candidate_source,
+                c.rank_within_source, ",".join(c.blocking_paths)) for c, _ in pairs)
     probabilities = model.predict(np.vstack(features), num_threads=1) if features else np.empty(0)
     if not np.all(np.isfinite(probabilities)):
         raise ValueError("Model returned nonfinite scores")
+    if _FEATURE_CACHE:
+        import pandas as pd
+        frame = pd.DataFrame(np.vstack(features) if features else np.empty((0, len(names_for_version(version)))),
+                             columns=names_for_version(version))
+        for i, key in enumerate(("source1_entity_id", "candidate_entity_id", "candidate_source", "rank_within_source", "blocking_paths")):
+            frame[key] = [row[i] for row in evidence]
+        frame["probability"] = probabilities
+        chunk_id = hashlib.sha256("\n".join(r["entity_id"] for r in raw_rows).encode()).hexdigest()
+        path = _FEATURE_CACHE / (chunk_id + ".parquet")
+        temporary = path.with_suffix(".partial")
+        frame.to_parquet(temporary, index=False)
+        with temporary.open("rb") as stream:
+            os.fsync(stream.fileno())
+        temporary.replace(path)
     result = []
     for eid, ids, start, end in groups:
         predicted = sorted(cid for cid, probability in zip(ids, probabilities[start:end]) if probability >= threshold)

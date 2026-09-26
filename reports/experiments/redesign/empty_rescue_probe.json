@@ -1,0 +1,419 @@
+{
+  "scope": "Exploratory tuning selection; requires independent confirmation",
+  "empty_predictions": 618,
+  "correct_empty_singletons": 537,
+  "incorrect_empty_non_singletons": 81,
+  "top_candidate_true_among_empty": 45,
+  "correct_empty_fraction": 0.8689320388349514,
+  "best_unconstrained": {
+    "minimum_probability": 0.72,
+    "minimum_margin": 0.0,
+    "rescued_references": 11,
+    "true_links_added": 6,
+    "new_singleton_false_positives": 3,
+    "tuning_macro_gain": 0.00015694444444444447
+  },
+  "best_without_new_singleton_errors": null,
+  "trials": [
+    {
+      "minimum_probability": 0.3,
+      "minimum_margin": 0.0,
+      "rescued_references": 105,
+      "true_links_added": 33,
+      "new_singleton_false_positives": 65,
+      "tuning_macro_gain": -0.0036162698412698416
+    },
+    {
+      "minimum_probability": 0.3,
+      "minimum_margin": 0.05,
+      "rescued_references": 94,
+      "true_links_added": 28,
+      "new_singleton_false_positives": 62,
+      "tuning_macro_gain": -0.003656547619047619
+    },
+    {
+      "minimum_probability": 0.3,
+      "minimum_margin": 0.1,
+      "rescued_references": 89,
+      "true_links_added": 25,
+      "new_singleton_false_positives": 60,
+      "tuning_macro_gain": -0.003694642857142857
+    },
+    {
+      "minimum_probability": 0.3,
+      "minimum_margin": 0.2,
+      "rescued_references": 79,
+      "true_links_added": 21,
+      "new_singleton_false_positives": 55,
+      "tuning_macro_gain": -0.003549404761904762
+    },
+    {
+      "minimum_probability": 0.3,
+      "minimum_margin": 0.3,
+      "rescued_references": 68,
+      "true_links_added": 19,
+      "new_singleton_false_positives": 47,
+      "tuning_macro_gain": -0.002916071428571429
+    },
+    {
+      "minimum_probability": 0.4,
+      "minimum_margin": 0.0,
+      "rescued_references": 74,
+      "true_links_added": 27,
+      "new_singleton_false_positives": 41,
+      "tuning_macro_gain": -0.0017829365079365075
+    },
+    {
+      "minimum_probability": 0.4,
+      "minimum_margin": 0.05,
+      "rescued_references": 66,
+      "true_links_added": 22,
+      "new_singleton_false_positives": 40,
+      "tuning_macro_gain": -0.0020232142857142853
+    },
+    {
+      "minimum_probability": 0.4,
+      "minimum_margin": 0.1,
+      "rescued_references": 62,
+      "true_links_added": 19,
+      "new_singleton_false_positives": 39,
+      "tuning_macro_gain": -0.0021613095238095237
+    },
+    {
+      "minimum_probability": 0.4,
+      "minimum_margin": 0.2,
+      "rescued_references": 56,
+      "true_links_added": 17,
+      "new_singleton_false_positives": 36,
+      "tuning_macro_gain": -0.0020160714285714283
+    },
+    {
+      "minimum_probability": 0.4,
+      "minimum_margin": 0.3,
+      "rescued_references": 54,
+      "true_links_added": 16,
+      "new_singleton_false_positives": 36,
+      "tuning_macro_gain": -0.002099404761904762
+    },
+    {
+      "minimum_probability": 0.45,
+      "minimum_margin": 0.0,
+      "rescued_references": 64,
+      "true_links_added": 24,
+      "new_singleton_false_positives": 35,
+      "tuning_macro_gain": -0.0014287698412698412
+    },
+    {
+      "minimum_probability": 0.45,
+      "minimum_margin": 0.05,
+      "rescued_references": 57,
+      "true_links_added": 19,
+      "new_singleton_false_positives": 34,
+      "tuning_macro_gain": -0.001669047619047619
+    },
+    {
+      "minimum_probability": 0.45,
+      "minimum_margin": 0.1,
+      "rescued_references": 54,
+      "true_links_added": 17,
+      "new_singleton_false_positives": 33,
+      "tuning_macro_gain": -0.0017238095238095237
+    },
+    {
+      "minimum_probability": 0.45,
+      "minimum_margin": 0.2,
+      "rescued_references": 48,
+      "true_links_added": 15,
+      "new_singleton_false_positives": 30,
+      "tuning_macro_gain": -0.0015785714285714283
+    },
+    {
+      "minimum_probability": 0.45,
+      "minimum_margin": 0.3,
+      "rescued_references": 46,
+      "true_links_added": 14,
+      "new_singleton_false_positives": 30,
+      "tuning_macro_gain": -0.0016619047619047618
+    },
+    {
+      "minimum_probability": 0.5,
+      "minimum_margin": 0.0,
+      "rescued_references": 53,
+      "true_links_added": 19,
+      "new_singleton_false_positives": 29,
+      "tuning_macro_gain": -0.0012835317460317458
+    },
+    {
+      "minimum_probability": 0.5,
+      "minimum_margin": 0.05,
+      "rescued_references": 48,
+      "true_links_added": 15,
+      "new_singleton_false_positives": 29,
+      "tuning_macro_gain": -0.0015404761904761904
+    },
+    {
+      "minimum_probability": 0.5,
+      "minimum_margin": 0.1,
+      "rescued_references": 45,
+      "true_links_added": 13,
+      "new_singleton_false_positives": 28,
+      "tuning_macro_gain": -0.001595238095238095
+    },
+    {
+      "minimum_probability": 0.5,
+      "minimum_margin": 0.2,
+      "rescued_references": 40,
+      "true_links_added": 11,
+      "new_singleton_false_positives": 26,
+      "tuning_macro_gain": -0.0015499999999999997
+    },
+    {
+      "minimum_probability": 0.5,
+      "minimum_margin": 0.3,
+      "rescued_references": 38,
+      "true_links_added": 10,
+      "new_singleton_false_positives": 26,
+      "tuning_macro_gain": -0.0016333333333333328
+    },
+    {
+      "minimum_probability": 0.55,
+      "minimum_margin": 0.0,
+      "rescued_references": 43,
+      "true_links_added": 18,
+      "new_singleton_false_positives": 20,
+      "tuning_macro_gain": -0.00048353174603174597
+    },
+    {
+      "minimum_probability": 0.55,
+      "minimum_margin": 0.05,
+      "rescued_references": 38,
+      "true_links_added": 14,
+      "new_singleton_false_positives": 20,
+      "tuning_macro_gain": -0.0007404761904761904
+    },
+    {
+      "minimum_probability": 0.55,
+      "minimum_margin": 0.1,
+      "rescued_references": 35,
+      "true_links_added": 12,
+      "new_singleton_false_positives": 19,
+      "tuning_macro_gain": -0.0007952380952380951
+    },
+    {
+      "minimum_probability": 0.55,
+      "minimum_margin": 0.2,
+      "rescued_references": 30,
+      "true_links_added": 10,
+      "new_singleton_false_positives": 17,
+      "tuning_macro_gain": -0.00075
+    },
+    {
+      "minimum_probability": 0.55,
+      "minimum_margin": 0.3,
+      "rescued_references": 28,
+      "true_links_added": 9,
+      "new_singleton_false_positives": 17,
+      "tuning_macro_gain": -0.0008333333333333332
+    },
+    {
+      "minimum_probability": 0.6,
+      "minimum_margin": 0.0,
+      "rescued_references": 33,
+      "true_links_added": 15,
+      "new_singleton_false_positives": 15,
+      "tuning_macro_gain": -0.00026686507936507926
+    },
+    {
+      "minimum_probability": 0.6,
+      "minimum_margin": 0.05,
+      "rescued_references": 28,
+      "true_links_added": 11,
+      "new_singleton_false_positives": 15,
+      "tuning_macro_gain": -0.0005238095238095237
+    },
+    {
+      "minimum_probability": 0.6,
+      "minimum_margin": 0.1,
+      "rescued_references": 25,
+      "true_links_added": 9,
+      "new_singleton_false_positives": 14,
+      "tuning_macro_gain": -0.0005785714285714285
+    },
+    {
+      "minimum_probability": 0.6,
+      "minimum_margin": 0.2,
+      "rescued_references": 20,
+      "true_links_added": 7,
+      "new_singleton_false_positives": 12,
+      "tuning_macro_gain": -0.0005333333333333334
+    },
+    {
+      "minimum_probability": 0.6,
+      "minimum_margin": 0.3,
+      "rescued_references": 20,
+      "true_links_added": 7,
+      "new_singleton_false_positives": 12,
+      "tuning_macro_gain": -0.0005333333333333334
+    },
+    {
+      "minimum_probability": 0.65,
+      "minimum_margin": 0.0,
+      "rescued_references": 25,
+      "true_links_added": 12,
+      "new_singleton_false_positives": 11,
+      "tuning_macro_gain": -0.0001049603174603174
+    },
+    {
+      "minimum_probability": 0.65,
+      "minimum_margin": 0.05,
+      "rescued_references": 20,
+      "true_links_added": 8,
+      "new_singleton_false_positives": 11,
+      "tuning_macro_gain": -0.00036190476190476185
+    },
+    {
+      "minimum_probability": 0.65,
+      "minimum_margin": 0.1,
+      "rescued_references": 17,
+      "true_links_added": 6,
+      "new_singleton_false_positives": 10,
+      "tuning_macro_gain": -0.0004166666666666666
+    },
+    {
+      "minimum_probability": 0.65,
+      "minimum_margin": 0.2,
+      "rescued_references": 16,
+      "true_links_added": 6,
+      "new_singleton_false_positives": 9,
+      "tuning_macro_gain": -0.00031666666666666665
+    },
+    {
+      "minimum_probability": 0.65,
+      "minimum_margin": 0.3,
+      "rescued_references": 16,
+      "true_links_added": 6,
+      "new_singleton_false_positives": 9,
+      "tuning_macro_gain": -0.00031666666666666665
+    },
+    {
+      "minimum_probability": 0.7,
+      "minimum_margin": 0.0,
+      "rescued_references": 17,
+      "true_links_added": 8,
+      "new_singleton_false_positives": 7,
+      "tuning_macro_gain": -8.829365079365077e-05
+    },
+    {
+      "minimum_probability": 0.7,
+      "minimum_margin": 0.05,
+      "rescued_references": 12,
+      "true_links_added": 4,
+      "new_singleton_false_positives": 7,
+      "tuning_macro_gain": -0.00034523809523809523
+    },
+    {
+      "minimum_probability": 0.7,
+      "minimum_margin": 0.1,
+      "rescued_references": 10,
+      "true_links_added": 3,
+      "new_singleton_false_positives": 6,
+      "tuning_macro_gain": -0.0003166666666666666
+    },
+    {
+      "minimum_probability": 0.7,
+      "minimum_margin": 0.2,
+      "rescued_references": 10,
+      "true_links_added": 3,
+      "new_singleton_false_positives": 6,
+      "tuning_macro_gain": -0.0003166666666666666
+    },
+    {
+      "minimum_probability": 0.7,
+      "minimum_margin": 0.3,
+      "rescued_references": 10,
+      "true_links_added": 3,
+      "new_singleton_false_positives": 6,
+      "tuning_macro_gain": -0.0003166666666666666
+    },
+    {
+      "minimum_probability": 0.72,
+      "minimum_margin": 0.0,
+      "rescued_references": 11,
+      "true_links_added": 6,
+      "new_singleton_false_positives": 3,
+      "tuning_macro_gain": 0.00015694444444444447
+    },
+    {
+      "minimum_probability": 0.72,
+      "minimum_margin": 0.05,
+      "rescued_references": 6,
+      "true_links_added": 2,
+      "new_singleton_false_positives": 3,
+      "tuning_macro_gain": -0.0001
+    },
+    {
+      "minimum_probability": 0.72,
+      "minimum_margin": 0.1,
+      "rescued_references": 6,
+      "true_links_added": 2,
+      "new_singleton_false_positives": 3,
+      "tuning_macro_gain": -0.0001
+    },
+    {
+      "minimum_probability": 0.72,
+      "minimum_margin": 0.2,
+      "rescued_references": 6,
+      "true_links_added": 2,
+      "new_singleton_false_positives": 3,
+      "tuning_macro_gain": -0.0001
+    },
+    {
+      "minimum_probability": 0.72,
+      "minimum_margin": 0.3,
+      "rescued_references": 6,
+      "true_links_added": 2,
+      "new_singleton_false_positives": 3,
+      "tuning_macro_gain": -0.0001
+    },
+    {
+      "minimum_probability": 0.74,
+      "minimum_margin": 0.0,
+      "rescued_references": 3,
+      "true_links_added": 1,
+      "new_singleton_false_positives": 2,
+      "tuning_macro_gain": -0.0001375
+    },
+    {
+      "minimum_probability": 0.74,
+      "minimum_margin": 0.05,
+      "rescued_references": 2,
+      "true_links_added": 0,
+      "new_singleton_false_positives": 2,
+      "tuning_macro_gain": -0.0002
+    },
+    {
+      "minimum_probability": 0.74,
+      "minimum_margin": 0.1,
+      "rescued_references": 2,
+      "true_links_added": 0,
+      "new_singleton_false_positives": 2,
+      "tuning_macro_gain": -0.0002
+    },
+    {
+      "minimum_probability": 0.74,
+      "minimum_margin": 0.2,
+      "rescued_references": 2,
+      "true_links_added": 0,
+      "new_singleton_false_positives": 2,
+      "tuning_macro_gain": -0.0002
+    },
+    {
+      "minimum_probability": 0.74,
+      "minimum_margin": 0.3,
+      "rescued_references": 2,
+      "true_links_added": 0,
+      "new_singleton_false_positives": 2,
+      "tuning_macro_gain": -0.0002
+    }
+  ]
+}

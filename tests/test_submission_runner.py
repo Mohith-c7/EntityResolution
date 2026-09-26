@@ -38,7 +38,8 @@ def test_checkpoint_preserves_empty_fields_and_commits_both_scored_sets(tmp_path
     assert not (tmp_path / "0000001.json").exists()
 
 
-def test_frozen_inference_finalizes_validates_and_resumes_without_scoring(tmp_path):
+@pytest.mark.parametrize("postings", [False, True])
+def test_frozen_inference_finalizes_validates_and_resumes_without_scoring(tmp_path, postings):
     submission = tmp_path / "output/submission_01"
     model = submission / "model"
     package = submission / "code/business_entity_resolution"
@@ -59,6 +60,13 @@ def test_frozen_inference_finalizes_validates_and_resumes_without_scoring(tmp_pa
     booster.save_model(str(model / "model.txt"))
     report = {"experiment": "fixture_model", "search_config": asdict(DiskSearchConfig(character_mode="off")), "feature_version": FEATURE_VERSION,
         "threshold": .71, "holdout": {"macro_f05": .5}}
+    if postings:
+        from src.blocking.postings_index import PostingsConfig
+        library = package / "native/erpostings.dylib"
+        subprocess.run([sys.executable, str(ROOT / "scripts/build_postings_native.py"), "--output", str(library)], check=True)
+        report.update(retrieval={"engine": "bounded-postings-v1", "options": asdict(PostingsConfig()),
+            "native_extension": "native/erpostings.dylib"}, pipeline_holdout_macro_f05=None,
+            pipeline_tuning_macro_f05=.5)
     (model / "report.json").write_text(json.dumps(report))
     (submission / "compatibility_report.json").write_text(json.dumps({"compatible": True}))
     (submission / "frozen_assets_sha256.json").write_text(json.dumps({"model/model.txt": runner.digest(model / "model.txt")}))
@@ -80,6 +88,13 @@ def test_frozen_inference_finalizes_validates_and_resumes_without_scoring(tmp_pa
     assert summary["leaderboard_score"] is None
     assert summary["model"] == "fixture_model"
     assert summary["runtime_options"]["mmap_bytes"] == 268435456
+    if postings:
+        import pandas as pd
+        frames = [pd.read_parquet(p) for p in (submission / "feature_cache").glob("*.parquet")]
+        scored = pd.concat(frames)
+        assert len(scored) == summary["scored_candidates"]
+        assert set(scored.candidate_entity_id) == {"S2-A", "S3-A"}
+        assert summary["local_validation_macro_f05"] is None
     expected = (submission / "matching_results.tsv").read_bytes()
     assert (submission.parent / "matching_results.tsv").read_bytes() == expected
     # Resumption validates each checkpoint and regenerates byte-identical outputs.
@@ -87,3 +102,10 @@ def test_frozen_inference_finalizes_validates_and_resumes_without_scoring(tmp_pa
     assert result.returncode == 0, result.stdout + result.stderr
     assert '"generated_this_run": 0' in result.stdout
     assert (submission / "matching_results.tsv").read_bytes() == expected
+    if postings:
+        # Cache evidence participates in the same resumability contract.
+        cache_file = next((submission / "feature_cache").glob("*.parquet"))
+        cache_file.write_bytes(b"corrupt")
+        result = subprocess.run(command, capture_output=True, text=True)
+        assert result.returncode != 0
+        assert "corrupt scored feature cache" in result.stderr

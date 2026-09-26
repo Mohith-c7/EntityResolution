@@ -1,0 +1,7 @@
+{
+  "common_pairs": 227683,
+  "unchanged_feature_columns": 64,
+  "different_values": 0,
+  "expected_changed_feature": "blocking_score (new retrieval provenance)",
+  "native_hash_matches_blob_predictions": true
+}
