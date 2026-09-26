@@ -114,11 +114,14 @@ def chunk(task):
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--output", type=Path, default=Path("models/next_round/context_cache"))
+    p.add_argument("--cache", type=Path, default=Path("models/scale_v1_run/cache_tune"))
+    p.add_argument("--first-stage-model", type=Path, default=Path("models/scale_v1_run/model_300k"))
+    p.add_argument("--references", type=Path, default=Path("models/scale_v1_plan/sampled_references.json"))
     p.add_argument("--workers", type=int, default=4)
     args=p.parse_args()
     if args.output.exists(): raise FileExistsError(args.output)
     args.output.mkdir(parents=True)
-    cache=Path("models/scale_v1_run/cache_tune"); model=Path("models/scale_v1_run/model_300k")
+    cache=args.cache; model=args.first_stage_model
     protocol=json.loads((model/"protocol.json").read_text())
     if digest(cache/"manifest.json") != protocol["tune_manifest_sha256"]: raise ValueError("Tuning cache changed")
     progress=json.loads((cache/"progress.json").read_text())
@@ -135,7 +138,7 @@ def main():
     write_json(args.output/"manifest.json",metadata)
     entities=pairs=0
     with ProcessPoolExecutor(max_workers=args.workers,mp_context=multiprocessing.get_context("spawn"),initializer=init,
-        initargs=(str(cache),str(probability_path),str(args.output),"models/scale_v1_plan/sampled_references.json")) as pool:
+        initargs=(str(cache),str(probability_path),str(args.output),str(args.references))) as pool:
         for ne,npairs in pool.map(chunk,tasks):
             entities+=ne;pairs+=npairs
             if entities%5000==0: print(json.dumps({"entities":entities,"pairs":pairs}),flush=True)

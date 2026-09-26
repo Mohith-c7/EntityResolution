@@ -1,0 +1,82 @@
+{
+  "status": "exploratory_selection_only",
+  "baseline": {
+    "threshold": 0.76,
+    "macro_f05": 0.9691093594489559,
+    "entities": 20000,
+    "true_links": 69137,
+    "predicted_links": 65038,
+    "true_positive_links": 64416,
+    "micro_precision": 0.9904363602816815,
+    "micro_recall": 0.9317152899315851,
+    "singleton_entities": 1130,
+    "singleton_false_positives": 55,
+    "non_singleton_empty_predictions": 101,
+    "country_macro_f05": {
+      "india": {
+        "entities": 7961,
+        "macro_f05": 0.9611992746315252
+      },
+      "us": {
+        "entities": 12039,
+        "macro_f05": 0.9743400418338356
+      }
+    }
+  },
+  "selection": {
+    "context_weight": 0.25,
+    "threshold": 0.69,
+    "macro_f05": 0.9706767337705072,
+    "entities": 20000,
+    "true_links": 69137,
+    "predicted_links": 65564,
+    "true_positive_links": 64879,
+    "micro_precision": 0.9895521932767982,
+    "micro_recall": 0.9384121382183201,
+    "singleton_entities": 1130,
+    "singleton_false_positives": 48,
+    "non_singleton_empty_predictions": 99,
+    "country_macro_f05": {
+      "india": {
+        "entities": 7961,
+        "macro_f05": 0.9637279224174026
+      },
+      "us": {
+        "entities": 12039,
+        "macro_f05": 0.9752717572095027
+      }
+    }
+  },
+  "macro_gain": 0.001567374321551375,
+  "exploratory_paired_gain_95pct_ci": [
+    0.0010817677676239047,
+    0.00208137083441227
+  ],
+  "best_iteration": 1200,
+  "seconds": 41.766133750003064,
+  "fresh_audit_evaluated": false,
+  "submission_generated": false,
+  "retained_candidate_oracle": {
+    "threshold": 0.5,
+    "macro_f05": 0.9889414008585241,
+    "entities": 20000,
+    "true_links": 69137,
+    "predicted_links": 66741,
+    "true_positive_links": 66741,
+    "micro_precision": 1.0,
+    "micro_recall": 0.9653441717170256,
+    "singleton_entities": 1130,
+    "singleton_false_positives": 0,
+    "non_singleton_empty_predictions": 49,
+    "country_macro_f05": {
+      "india": {
+        "entities": 7961,
+        "macro_f05": 0.9822616633482596
+      },
+      "us": {
+        "entities": 12039,
+        "macro_f05": 0.9933584944974658
+      }
+    }
+  }
+}

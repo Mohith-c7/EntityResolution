@@ -1,0 +1,10 @@
+{
+  "references": 100,
+  "source_queries": 200,
+  "retained_pairs": 4000,
+  "exact_candidate_record_score_and_path_equality": true,
+  "original_seconds": 64.92522270900372,
+  "accelerated_seconds": 54.45943879199331,
+  "speedup": 1.1921757577595364,
+  "policy": "Runtime equivalence test on tuning references; no model, threshold or blocking-setting change. Timings are affected by concurrent inference load."
+}

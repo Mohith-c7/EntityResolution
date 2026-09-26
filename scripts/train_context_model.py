@@ -20,7 +20,10 @@ def main():
     p.add_argument("--cache",type=Path,default=Path("models/next_round/context_cache"))
     p.add_argument("--output",type=Path,default=Path("models/next_round/context_model"))
     p.add_argument("--threads",type=int,default=8)
+    p.add_argument("--baseline-threshold",type=float,default=.75)
+    p.add_argument("--report-output",type=Path,default=Path("reports/experiments/round2/context_model.json"))
     args=p.parse_args()
+    if not 0 <= args.baseline_threshold <= 1: p.error("Invalid baseline threshold")
     if args.output.exists():raise FileExistsError(args.output)
     args.output.mkdir(parents=True);os.nice(5);pa.set_cpu_count(1)
     start=time.perf_counter();manifest=json.loads((args.cache/"manifest.json").read_text())
@@ -45,6 +48,7 @@ def main():
         "supervision":"All development probabilities are out of sample with respect to the frozen first-stage training labels. Second-stage train, early-stop and selection references are disjoint.",
         "caveat":"Previously inspected outer tuning data; only a new reserved audit can establish a final gain. The prior 10k audit is not used.",
         "selection":"Maximize macro F0.5 over blend and threshold; precision >= frozen baseline minus .002; singleton errors <= frozen baseline.",
+        "baseline_threshold":args.baseline_threshold,
         "fresh_audit_evaluated":False,"submission_generated":False}
     write_json(args.output/"protocol.json",protocol)
     training=frame[frame.source1_entity_id.isin(train_ids)];early=frame[frame.source1_entity_id.isin(early_ids)]
@@ -60,7 +64,7 @@ def main():
     base=selection.ctx_probability.to_numpy();label=selection.label.to_numpy(dtype=np.uint8)
     positions={e:i for i,e in enumerate(select_ids)};groups=selection.source1_entity_id.map(positions).to_numpy(dtype=np.int32)
     expected=np.array([len(refs[e]["true_ids"]) for e in select_ids]);countries=np.array([refs[e]["country"] for e in select_ids])
-    baseline,baseline_values=score(base,.75,label,groups,expected,countries)
+    baseline,baseline_values=score(base,args.baseline_threshold,label,groups,expected,countries)
     trials=[]
     for weight in (0.,.25,.5,.75,1.):
         blended=(1-weight)*base+weight*probabilities
@@ -81,7 +85,7 @@ def main():
     np.save(args.output/"selection_probabilities.npy",probabilities)
     np.save(args.output/"baseline_selection_probabilities.npy",base)
     write_json(args.output/"threshold_sweep.json",trials);write_json(args.output/"report.json",report)
-    write_json(Path("reports/experiments/round2/context_model.json"),report)
+    write_json(args.report_output,report)
     print(json.dumps(report),flush=True)
 
 
