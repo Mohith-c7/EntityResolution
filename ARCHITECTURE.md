@@ -1,10 +1,12 @@
 # Business Entity Resolution — Amazon ML Challenge 2026
 ## Team Execution Architecture & System Specification
 
-> **Version:** 2.0
+> **Version:** 3.0
 > **Status:** Team Execution Architecture / Locked
 > **Target Metric:** Macro F₀.₅ (precision-weighted, per Source 1 entity, macro-averaged)
 > **Team:** Mohit · Sanhita · Harsha · Sahasra
+
+> **Implementation checkpoint (26 September 2026):** the 36-feature baseline and versioned 50-feature extension are runnable. The improved full-target pilot achieved 0.9511 local macro F₀.₅ on 2,000 held-out S1 entities. Complete official-test inference and release are pending. See the package README and `reports/experiments/PILOT_RESULTS.md` for the measured configuration; the original baseline diagram below is not a claim that every optional stage is selected.
 
 ---
 
@@ -14,7 +16,7 @@ Version 2.0 reconciles the original design with the team-approved execution plan
 1. **Explicit Pipeline Separation**: Cleanly distinguishes between the runtime inference pipeline and the offline EDA/profiling/experimental components.
 2. **Contract-First Engineering**: Defines formal data contracts (Raw Records, Normalized Records, Candidate Table) and component interfaces with early synthetic fixture integration.
 3. **Eight-Path Baseline Blocking**: Expands candidate retrieval from 7 to 8 baseline paths by adding Path 8 (Name character n-gram TF-IDF retrieval) and explicit name/address provenance for numeric tokens.
-4. **Authoritative Feature Registry**: Establishes that the 36-feature baseline specification is maintained in a versioned feature registry published by Sahasra, rather than relying on an informal dictionary.
+4. **Authoritative Feature Registry**: Establishes that the 36-feature baseline specification is maintained in a versioned feature registry published by Mohith, rather than relying on an informal dictionary.
 5. **Rigorous Grouped Validation**: Formally defines connected-component grouping for overlapping labels, distractor partitioning, US↔India transfer checks, and bootstrap resampling.
 6. **Configurable vs Fixed Decisions**: Replaces rigid heuristics with clear boundaries: the architecture fixes contracts, interfaces, and evaluation protocols, while candidate depth (top-K), thresholds, and retrieval weights are empirically calibrated.
 7. **Team Roles & 5-Phase Lifecycle**: Maps explicit deliverables, review pairings, feature branches, and phase exit criteria across all four team members.
@@ -52,14 +54,14 @@ Version 2.0 reconciles the original design with the team-approved execution plan
 | Output File | Description | Scored? |
 | :--- | :--- | :---: |
 | `output/matching_results.tsv` | Exactly one row per test S1 entity. `matched_entity_ids` = comma-separated S2/S3 IDs that match. Empty string if singleton. | ✅ **Yes** — Primary Leaderboard Driver |
-| `output/candidate_pairs.tsv` | Exactly one row per test S1 entity. All S2/S3 IDs considered by the model prior to thresholding. | ❌ **Audit Only** — Verified by Organizers |
+| `output/candidate_pairs.tsv` | Exactly one row per test S1 entity. All S2/S3 IDs considered by the model prior to thresholding. | **Not leaderboard-scored; reviewed for final ranking, including candidate size** |
 
 ### Non-Negotiable Challenge Rules
 - **Reference Entity Constraint**: Source 1 is the reference; each S1 entity may match zero, one, or many Source 2/3 records.
 - **Row Completeness**: Every test Source 1 entity must appear exactly once in both output files.
 - **Source Separation**: `matched_entity_ids` and `candidate_entity_ids` contain only S2 and S3 IDs — never S1 IDs.
 - **Deduplication**: No duplicate IDs within any row's comma-separated list.
-- **Subset Rule**: All IDs in `matching_results.tsv` must be a strict subset of the corresponding row in `candidate_pairs.tsv`.
+- **Subset Rule**: All IDs in `matching_results.tsv` must be a subset of the corresponding row in `candidate_pairs.tsv`.
 - **Open-Set Country**: France appears in ~14.5%–15.0% of the test set but 0% in training. The system must never hard-code country lists, one-hot encode country, or exclude unseen countries.
 - **Data Hermeticity**: No external geocoding, business registry lookups, web scraping, or LLMs as oracles.
 - **Model Constraints**: Final model must be $\le 8\text{B}$ parameters and licensed under MIT or Apache 2.0.
@@ -72,7 +74,7 @@ $$\text{Macro } F_{0.5} = \frac{1}{|S_1|} \sum_{s \in S_1} F_{0.5}(s)$$
 Where for each entity $s$:
 $$F_{0.5} = \frac{1.25 \times \text{Precision} \times \text{Recall}}{0.25 \times \text{Precision} + \text{Recall}}$$
 
-- Precision is weighted **2× over recall**.
+- The score penalizes false positives more heavily: in the count formula, an FP contributes 1 and an FN contributes 0.25 to the denominator.
 - Singletons score **1.0** when predicted empty, and **0.0** when any false match is predicted.
 - **Strategic rule: Default to NOT matching when uncertain.**
 
@@ -187,22 +189,6 @@ The preprocessing module (`src/preprocessing/`) transforms raw records into enri
 3. Ordered tokens retain original sequence; retrieval components derive sets when needed.
 4. Postcode candidates represent uncertain format evidence only — never verified geographical attributes. External postal database lookups are strictly prohibited.
 
-### Current preprocessing contract
-
-- Primary normalized text preserves Unicode letters, numbers, and combining marks.
-  `accent_folded_name` and `accent_folded_address` provide Latin-accent-folded
-  alternate views without removing Indic marks.
-- `norm_address` expands the standard address abbreviations. The separate
-  `norm_address_unexpanded` retains the punctuation-cleaned, unexpanded address
-  view for blocking.
-- `digit_tokens`, `name_tokens`, `address_tokens`, `name_numeric_tokens`,
-  `address_numeric_tokens`, and `postcode_candidates` are `tuple[str, ...]`.
-  Missing or empty inputs produce `()`. Postcode candidates are generic address
-  numeric tokens with four or more digits, retaining leading zeros.
-- `name_missing`, `address_missing`, and `country_missing` are boolean flags.
-  Normalized string fields use `""` for missing input. Raw source columns are
-  retained unchanged.
-
 ---
 
 ## 6. Internal Candidate Table Contract
@@ -303,7 +289,7 @@ The blocking engine executes eight complementary retrieval paths independently a
    $$\text{Score} = \sum_{\text{paths}} w_p \cdot s_p + \text{Bonuses}$$
    Exact name bonus: $+2.0$, Exact core bonus: $+1.5$.
 4. **Deterministic Tie-Breaking**: Broken deterministically by `(score DESC, candidate_entity_id ASC)`.
-5. **Configurable Top-K**: Default $K=20$ per source (yielding up to 40 candidates per S1). Evaluate $K \in \{20, 40, 80\}$ on development folds.
+5. **Configurable Top-K**: Default $K=20$ per source (yielding up to 40 candidates per S1). Evaluate $K \in \{5, 10, 20, 40\}$ on development folds.
 6. **Configurable Rarity Cutoffs**: Rarity cutoffs are configurable experimental parameters. The initial baseline uses the currently agreed cutoff; alternative cutoffs may be evaluated empirically.
 7. **Open-Set Country Gate**: Country agreement is configurable evidence; records with missing or unseen country labels must never be discarded.
 8. **No Truth Rescue**: No validation-label candidate rescue during validation or inference.
@@ -339,7 +325,7 @@ The first model baseline operates on the agreed **36-feature schema**.
 
 ### Feature Registry Authority & Contract:
 - **Role of ARCHITECTURE.md**: ARCHITECTURE.md defines the required feature categories, structural contracts, and broad functional roles.
-- **Authoritative Feature Registry**: The versioned feature registry maintained by Sahasra (`code/business_entity_resolution/src/features/registry.py`) is authoritative for exact feature names, ordering, formulas, types, missing-value imputation behavior, and feature version.
+- **Authoritative Feature Registry**: The versioned feature registry maintained by Mohith (`code/business_entity_resolution/src/features/registry.py`) is authoritative for exact feature names, ordering, formulas, types, missing-value imputation behavior, and feature version.
 - **Prerequisite for Dependent Work**: The number "36" alone is NOT the specification; the versioned feature registry must be formally published before model training and integration work depend on it.
 
 ### Feature Categories:
@@ -381,7 +367,7 @@ All teammates evaluate against a single, shared, entity-disjoint validation spli
    - Unmatched target records (distractors) are partitioned consistently across folds to maintain realistic candidate density and retrieval competition.
 2. **Stratification**: Stratified by country, singleton status, and match-count bucket where feasible (`seed=42`, default 15% holdout).
 3. **Strict Inference Simulation**: Validation retrieval indexes contain held-out target records; validation labels never influence candidate generation.
-4. **Fitted State Isolation**: Document frequencies and vectorizers are fitted only on the training partition.
+4. **Fitted State Isolation**: Supervised transforms, learned retrieval, and model calibration use training/development partitions only. Label-free frequencies used to construct each target search index are corpus-local and documented; validation labels never influence retrieval.
 5. **Geographic Generalization Checks (Transfer Diagnostics)**:
    - Where feasible, cross-partition transfer checks must be run:
      - **US $\to$ India transfer check**: Train on US entities, evaluate on India holdout.
@@ -406,7 +392,7 @@ All teammates evaluate against a single, shared, entity-disjoint validation spli
 
 1. **Empirical Sweep**: Decision threshold $\tau$ is swept from $0.30 \to 0.95$ in steps of $0.01$ on validation predictions.
 2. **Metric Optimization**: Select $\tau^*$ that strictly maximizes official entity Macro $F_{0.5}$.
-3. **Range Clarification**: The $0.60\text{--}0.75$ interval is an expected hypothesis due to precision-weighting; it is **not** a hardcoded requirement.
+3. **Range Clarification**: The initial sweep is refined and extended where validation warrants it. No expected threshold interval is treated as an optimum.
 4. **Per-Source Calibration (Optional)**: If score distributions diverge between S2 and S3, calibrate independent thresholds $(\tau_{S2}, \tau_{S3})$.
 5. **Cardinality Rules**:
    - Singletons: If no candidate exceeds $\tau^*$, output empty string (scores 1.0).
@@ -418,14 +404,16 @@ All teammates evaluate against a single, shared, entity-disjoint validation spli
 
 ## 14. Team Ownership & Responsibilities
 
+The current execution and submission plan is [docs/TEAM_PLAN.md](docs/TEAM_PLAN.md).
+
 | Team Member | Primary Domain | Deliverables & Responsibilities | Primary Reviewer |
 | :--- | :--- | :--- | :--- |
-| **Mohit** | Data, Contracts, Integration, Release | TSV loaders, schema validation, EDA profiling, split manifest support, pipeline orchestration CLI, submission validator, release packaging. | Sahasra |
-| **Sanhitha** | Normalization & Preprocessing | Deterministic text views, legal-suffix stripping, token/digit extraction, postcode candidate extraction, normalization unit tests. | Harsha |
-| **Harsha** | Blocking & Candidate Generation | 8 retrieval paths, sparse inverted indexes, union & deduplication, fused reranker, top-K cap, blocking recall evaluation. | Sanhitha |
-| **Sahasra** | Features, Model & Decision | Versioned feature registry, 36 pairwise features, grouped validation logic, hard negative sampling, LightGBM training, threshold calibration. | Mohit |
+| **Mohith** | Data, Features, Validation Infrastructure, Integration | Loaders, EDA, integrity checks, feature registry and extraction, grouped split manifests, pipeline orchestration, release packaging. | Harsha |
+| **Sanhitha** | Normalization & Preprocessing | Unicode-safe text views, legal suffixes, tokens, numeric evidence, postcode candidates, regression tests. | Mohith |
+| **Harsha** | Retrieval, Model Training & Decisions | Eight retrieval paths, reranking, candidate budgets, hard negatives, LightGBM training, model experiments, calibration, final inference. | Mohith |
+| **Sahasra** | Evaluation Verification & Submission QA | Independent metric tests, scorecards, output checks, error summaries, methodology contributions. | Mohith |
 
-*Coordination Note*: Mohit coordinates shared files, integration, and release packaging; he does not take over component implementations. Each owner maintains configuration, unit tests, and documentation for their domain.
+Mohith coordinates shared configuration, dependencies, integration, and packaging. Harsha selects the retrieval/model configuration using measured validation. Each owner maintains their component's tests and documentation.
 
 ---
 
@@ -459,10 +447,10 @@ Phase E: Release Packaging        ──→ Final clean rerun; validator PASS; s
 
 ### Branching Model
 - `main`: Protected branch; direct pushes prohibited. All changes arrive via reviewed Pull Requests.
-- `feature/data-eda`: Mohit's development branch.
-- `feature/normalization`: Sanhitha's development branch.
-- `feature/blocking`: Harsha's development branch.
-- `feature/features-model`: Sahasra's development branch.
+- `Mohith`: data, features, splits, and integration.
+- `Sanhitha`: normalization and preprocessing.
+- `Harsha`: blocking, training, and decisions.
+- Evaluation and QA use a separate development branch.
 
 ### Experimentation Hygiene
 - **One Change at a Time**: Change one variable per experiment (retrieval path, feature set, sampling ratio).
@@ -497,7 +485,7 @@ Phase E: Release Packaging        ──→ Final clean rerun; validator PASS; s
 - [ ] Exactly one row per test S1 ID in both TSV files.
 - [ ] No duplicate IDs in lists; no duplicate S1 rows.
 - [ ] Every target ID exists in test Source 2 or Source 3.
-- [ ] All matched IDs are strict subsets of candidate IDs.
+- [ ] All matched IDs are subsets of candidate IDs; equality is allowed.
 - [ ] Candidate export matches the exact inputs scored by LightGBM.
 - [ ] All countries represented without filtering.
 - [ ] Full pipeline runs end-to-end via one documented command.
@@ -550,7 +538,7 @@ The architecture locks interfaces, data contracts, evaluation protocol, output i
 ### Explicitly Configurable Parameters:
 The following remain configurable experimental parameters rather than hard architectural constraints:
 1. **Rarity Cutoffs**: Rarity cutoffs are configurable experimental parameters. The initial baseline uses the currently agreed cutoff; alternative cutoffs may be evaluated empirically.
-2. **Candidate Depth ($K$)**: Number of candidates retrieved per source ($K \in \{20, 40, 80\}$).
+2. **Candidate Depth ($K$)**: Number of candidates retrieved per source ($K \in \{5, 10, 20, 40\}$).
 3. **Retrieval Weights ($w_p$)**: Path-specific weights used in candidate fusion.
 4. **Reranking Bonuses**: Additive exact-match or core-match bonuses.
 5. **Feature Additions**: Post-baseline interaction, frequency, or conflict features registered in the feature registry.

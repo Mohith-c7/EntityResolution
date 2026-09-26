@@ -1,0 +1,252 @@
+{
+  "experiment": "pilot_v1",
+  "seed": 42,
+  "feature_version": "pairwise-v1-36",
+  "search_config": {
+    "top_k": 20,
+    "path_top_k": 80,
+    "query_tokens": 6,
+    "max_word_df": 100000,
+    "max_address_df": 10000,
+    "character_terms": 8,
+    "max_character_df": 20000,
+    "character_mode": "always"
+  },
+  "split": {
+    "version": "entity-hash-v1-seed42-70-15-15",
+    "seed": 42,
+    "population_counts": {
+      "train": 1544993,
+      "tune": 330816,
+      "holdout": 331012
+    },
+    "sample_counts": {
+      "train": 2000,
+      "tune": 500,
+      "holdout": 500
+    },
+    "policy": "Hash-based S1 entity folds; not exact stratification. Matching targets follow their owner; unmatched targets use their own stable hash."
+  },
+  "threshold": 0.69,
+  "model": {
+    "library": "lightgbm",
+    "version": "4.3.0",
+    "license": "MIT",
+    "best_iteration": 1200,
+    "parameters": {
+      "boosting_type": "gbdt",
+      "class_weight": null,
+      "colsample_bytree": 0.9,
+      "importance_type": "split",
+      "learning_rate": 0.04,
+      "max_depth": -1,
+      "min_child_samples": 30,
+      "min_child_weight": 0.001,
+      "min_split_gain": 0.0,
+      "n_estimators": 1200,
+      "n_jobs": 4,
+      "num_leaves": 31,
+      "objective": "binary",
+      "random_state": 42,
+      "reg_alpha": 0.0,
+      "reg_lambda": 2.0,
+      "subsample": 0.9,
+      "subsample_for_bin": 200000,
+      "subsample_freq": 1,
+      "max_bin": 127,
+      "verbosity": -1,
+      "deterministic": true,
+      "force_col_wise": true
+    },
+    "artifact_license": "MODEL_LICENSE.txt"
+  },
+  "target_pool": {
+    "S2": 5034616,
+    "S3": 5285603
+  },
+  "validation_protocol": "Full training target-pool stress validation. S1 folds are disjoint; held-out target identities are excluded from all supervised training examples. Corpus-local index frequencies are label-free. This is not a French test estimate or a private leaderboard score.",
+  "blocking": {
+    "train": {
+      "entities": 2000,
+      "scored_pairs": 57791,
+      "retrieved_pairs": 80000,
+      "training_pairs_excluded_for_entity_isolation": 22209,
+      "blocking_recall": 0.8211543929485356,
+      "oracle_macro_f05": 0.8961681039843099,
+      "country_oracle": {
+        "us": {
+          "entities": 1223,
+          "macro_f05": 0.9338174041365795
+        },
+        "india": {
+          "entities": 777,
+          "macro_f05": 0.8369080086352421
+        }
+      },
+      "path_pair_counts": {
+        "exact_core": 15815,
+        "exact_name": 10247,
+        "core_prefix": 17998,
+        "name_character": 16368,
+        "rare_address": 8343,
+        "rare_digits": 2086,
+        "rare_name": 41574,
+        "postcode_name": 1921
+      },
+      "mean_candidates": 40.0,
+      "p95_candidates": 40.0,
+      "seconds": 390.4691808330026
+    },
+    "tune": {
+      "entities": 500,
+      "scored_pairs": 20000,
+      "retrieved_pairs": 20000,
+      "training_pairs_excluded_for_entity_isolation": 0,
+      "blocking_recall": 0.8070374574347332,
+      "oracle_macro_f05": 0.8831855113854264,
+      "country_oracle": {
+        "india": {
+          "entities": 197,
+          "macro_f05": 0.7957550416306762
+        },
+        "us": {
+          "entities": 303,
+          "macro_f05": 0.9400297441962708
+        }
+      },
+      "path_pair_counts": {
+        "exact_core": 5301,
+        "exact_name": 3340,
+        "rare_name": 14271,
+        "rare_address": 2458,
+        "name_character": 5950,
+        "core_prefix": 5948,
+        "postcode_name": 502,
+        "rare_digits": 637
+      },
+      "mean_candidates": 40.0,
+      "p95_candidates": 40.0,
+      "seconds": 98.1945560420063
+    },
+    "holdout": {
+      "entities": 500,
+      "scored_pairs": 20000,
+      "retrieved_pairs": 20000,
+      "training_pairs_excluded_for_entity_isolation": 0,
+      "blocking_recall": 0.8071095571095571,
+      "oracle_macro_f05": 0.8900307349899381,
+      "country_oracle": {
+        "us": {
+          "entities": 312,
+          "macro_f05": 0.9230915474487733
+        },
+        "india": {
+          "entities": 188,
+          "macro_f05": 0.8351638547391051
+        }
+      },
+      "path_pair_counts": {
+        "exact_core": 5718,
+        "exact_name": 3779,
+        "rare_address": 2358,
+        "rare_name": 14328,
+        "postcode_name": 493,
+        "core_prefix": 6031,
+        "rare_digits": 616,
+        "name_character": 5276
+      },
+      "mean_candidates": 40.0,
+      "p95_candidates": 40.0,
+      "seconds": 95.14271204199758
+    }
+  },
+  "tune": {
+    "macro_f05": 0.838244175491225,
+    "entities": 500,
+    "true_positive_links": 1301,
+    "predicted_links": 1339,
+    "true_links": 1762,
+    "micro_precision": 0.9716206123973115,
+    "micro_recall": 0.7383654937570943,
+    "singleton_entities": 28,
+    "singleton_false_positives": 2,
+    "singleton_false_positive_rate": 0.07142857142857142,
+    "non_singleton_empty_rate": 0.08050847457627118,
+    "country_macro_f05": {
+      "india": {
+        "entities": 197,
+        "macro_f05": 0.7355059963986154
+      },
+      "us": {
+        "entities": 303,
+        "macro_f05": 0.905040945396321
+      }
+    }
+  },
+  "holdout": {
+    "macro_f05": 0.8462164303132778,
+    "entities": 500,
+    "true_positive_links": 1278,
+    "predicted_links": 1320,
+    "true_links": 1716,
+    "micro_precision": 0.9681818181818181,
+    "micro_recall": 0.7447552447552448,
+    "singleton_entities": 17,
+    "singleton_false_positives": 1,
+    "singleton_false_positive_rate": 0.058823529411764705,
+    "non_singleton_empty_rate": 0.07039337474120083,
+    "country_macro_f05": {
+      "us": {
+        "entities": 312,
+        "macro_f05": 0.8790485842422027
+      },
+      "india": {
+        "entities": 188,
+        "macro_f05": 0.7917290259205942
+      }
+    }
+  },
+  "holdout_macro_f05_bootstrap_95": [
+    0.8229085020592044,
+    0.8690553334417866
+  ],
+  "feature_gain": {
+    "name_jaro_winkler": 230.60708341142163,
+    "name_levenshtein": 73.50855283485726,
+    "name_token_sort": 232.47930680774152,
+    "name_token_set": 90.66296773406793,
+    "name_partial": 319.3405297254212,
+    "name_jaccard": 195.7475776458159,
+    "name_length_ratio": 130.70992160402238,
+    "name_character_cosine": 78.54981199838221,
+    "address_jaro_winkler": 257.52989543171134,
+    "address_levenshtein": 31.028874444542453,
+    "address_token_sort": 64.40752011357108,
+    "address_token_set": 9313.741326728836,
+    "address_partial": 221.52177470969036,
+    "address_jaccard": 999.0835714852437,
+    "address_length_ratio": 57.731584816938266,
+    "address_numeric_overlap": 298.2884145192802,
+    "digit_token_jaccard": 23.24835752369836,
+    "exact_numeric_match": 0.03758709877729416,
+    "postcode_agreement": 9.40346847800538,
+    "street_number_match": 60.62389556737617,
+    "exact_name": 0.0,
+    "exact_name_core": 13.748731773346663,
+    "any_name_token_match": 6.697695984970778,
+    "name_token_in_address": 16.475581035017967,
+    "address_token_in_name": 11.406323393341154,
+    "country_exact_match": 0.0,
+    "candidate_address_missing": 1.5582076497375965,
+    "postcode_missing": 16.58016906492412,
+    "country_missing": 0.0,
+    "source1_name_length": 82.65853757411242,
+    "candidate_name_length": 324.5939927265281,
+    "source1_address_length": 94.64316670410335,
+    "candidate_address_length": 76.03857367276214,
+    "blocking_score": 1227.286310977157,
+    "source_is_s2": 12.322636754252017,
+    "source_is_s3": 2.7677600225433707
+  },
+  "seconds": 600.3775420409947
+}

@@ -1,0 +1,330 @@
+{
+  "audit_type": "full-file read-only scan of all seven required challenge TSV files",
+  "audit_script_sha256": "7de202d40a5d145e4e68a69c8fd68ac72e93b5986668cfee4db2bc35ccbaced5",
+  "sources": {
+    "train_source1.tsv": {
+      "file": "/Users/sriharsha/Downloads/train_source1.tsv",
+      "file_size_bytes": 210069713,
+      "rows": 2206821,
+      "columns": [
+        "entity_id",
+        "business_name",
+        "business_address",
+        "country"
+      ],
+      "unique_ids": 2206821,
+      "duplicate_ids": 0,
+      "invalid_ids": 0,
+      "malformed_rows": 0,
+      "blank_or_whitespace_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 0,
+        "country": 0
+      },
+      "null_literal_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 0,
+        "country": 0
+      },
+      "non_ascii_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 554,
+        "country": 0
+      },
+      "countries": {
+        "US": 1323633,
+        "India": 883188
+      },
+      "example_errors": [],
+      "unchanged_during_scan": true,
+      "seconds": 2.655285291999462
+    },
+    "train_source2.tsv": {
+      "file": "/Users/sriharsha/Downloads/train_source2.tsv",
+      "file_size_bytes": 489301488,
+      "rows": 5034616,
+      "columns": [
+        "entity_id",
+        "business_name",
+        "business_address",
+        "country"
+      ],
+      "unique_ids": 5034616,
+      "duplicate_ids": 0,
+      "invalid_ids": 0,
+      "malformed_rows": 0,
+      "blank_or_whitespace_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 168967,
+        "country": 0
+      },
+      "null_literal_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 0,
+        "country": 0
+      },
+      "non_ascii_counts": {
+        "entity_id": 0,
+        "business_name": 764608,
+        "business_address": 478453,
+        "country": 0
+      },
+      "countries": {
+        "India": 2017799,
+        "US": 3016817
+      },
+      "example_errors": [],
+      "unchanged_during_scan": true,
+      "seconds": 6.906564583005093
+    },
+    "train_source3.tsv": {
+      "file": "/Users/sriharsha/Downloads/train_source3.tsv",
+      "file_size_bytes": 503705637,
+      "rows": 5285603,
+      "columns": [
+        "entity_id",
+        "business_name",
+        "business_address",
+        "country"
+      ],
+      "unique_ids": 5285603,
+      "duplicate_ids": 0,
+      "invalid_ids": 0,
+      "malformed_rows": 0,
+      "blank_or_whitespace_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 175916,
+        "country": 0
+      },
+      "null_literal_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 0,
+        "country": 0
+      },
+      "non_ascii_counts": {
+        "entity_id": 0,
+        "business_name": 606737,
+        "business_address": 476588,
+        "country": 0
+      },
+      "countries": {
+        "US": 3170056,
+        "India": 2115547
+      },
+      "example_errors": [],
+      "unchanged_during_scan": true,
+      "seconds": 7.210616292002669
+    },
+    "test_source1.tsv": {
+      "file": "/Users/sriharsha/Downloads/test_source1.tsv",
+      "file_size_bytes": 175022086,
+      "rows": 1732544,
+      "columns": [
+        "entity_id",
+        "business_name",
+        "business_address",
+        "country"
+      ],
+      "unique_ids": 1732544,
+      "duplicate_ids": 0,
+      "invalid_ids": 0,
+      "malformed_rows": 0,
+      "blank_or_whitespace_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 0,
+        "country": 0
+      },
+      "null_literal_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 0,
+        "country": 0
+      },
+      "non_ascii_counts": {
+        "entity_id": 0,
+        "business_name": 40789,
+        "business_address": 73800,
+        "country": 0
+      },
+      "countries": {
+        "US": 663106,
+        "France": 259452,
+        "India": 809986
+      },
+      "example_errors": [],
+      "unchanged_during_scan": true,
+      "seconds": 2.42448520900507,
+      "same_source_train_test_id_overlap": 0
+    },
+    "test_source2.tsv": {
+      "file": "/Users/sriharsha/Downloads/test_source2.tsv",
+      "file_size_bytes": 509456422,
+      "rows": 4887273,
+      "columns": [
+        "entity_id",
+        "business_name",
+        "business_address",
+        "country"
+      ],
+      "unique_ids": 4887273,
+      "duplicate_ids": 0,
+      "invalid_ids": 0,
+      "malformed_rows": 0,
+      "blank_or_whitespace_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 129408,
+        "country": 0
+      },
+      "null_literal_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 0,
+        "country": 0
+      },
+      "non_ascii_counts": {
+        "entity_id": 0,
+        "business_name": 928158,
+        "business_address": 720665,
+        "country": 0
+      },
+      "countries": {
+        "India": 2312565,
+        "France": 703378,
+        "US": 1871330
+      },
+      "example_errors": [],
+      "unchanged_during_scan": true,
+      "seconds": 7.272094916996139,
+      "same_source_train_test_id_overlap": 0
+    },
+    "test_source3.tsv": {
+      "file": "/Users/sriharsha/Downloads/test_source3.tsv",
+      "file_size_bytes": 506002772,
+      "rows": 5082316,
+      "columns": [
+        "entity_id",
+        "business_name",
+        "business_address",
+        "country"
+      ],
+      "unique_ids": 5082316,
+      "duplicate_ids": 0,
+      "invalid_ids": 0,
+      "malformed_rows": 0,
+      "blank_or_whitespace_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 136098,
+        "country": 0
+      },
+      "null_literal_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 0,
+        "country": 0
+      },
+      "non_ascii_counts": {
+        "entity_id": 0,
+        "business_name": 737515,
+        "business_address": 729222,
+        "country": 0
+      },
+      "countries": {
+        "India": 2405000,
+        "France": 731615,
+        "US": 1945701
+      },
+      "example_errors": [],
+      "unchanged_during_scan": true,
+      "seconds": 7.4109015420035576,
+      "same_source_train_test_id_overlap": 0
+    }
+  },
+  "ground_truth": {
+    "file": "/Users/sriharsha/Downloads/train_ground_truth.tsv",
+    "file_size_bytes": 127015583,
+    "columns": [
+      "source1_entity_id",
+      "matched_entity_ids"
+    ],
+    "rows": 2206821,
+    "malformed_rows": 0,
+    "duplicate_source1_rows": 0,
+    "invalid_source1_ids": 0,
+    "source1_ids_absent_from_training_source1": 0,
+    "rows_with_duplicate_match_ids": 0,
+    "source2_positive_links": 3693619,
+    "source3_positive_links": 3944746,
+    "source2_targets_absent_from_training_source2": 0,
+    "source3_targets_absent_from_training_source3": 0,
+    "invalid_match_prefixes": 0,
+    "rows_with_malformed_match_lists": 0,
+    "links_to_targets_owned_by_another_source1": 0,
+    "training_source1_ids_without_ground_truth": 0,
+    "unique_source1_ids": 2206821,
+    "positive_links": 7638365,
+    "singleton_count": 123247,
+    "singleton_rate": 0.05584820880352326,
+    "mean_matches_per_source1": 3.4612526344456573,
+    "median_matches_per_source1": 3.0,
+    "max_matches_per_source1": 11,
+    "match_count_distribution": {
+      "0": 123247,
+      "1": 119157,
+      "2": 375212,
+      "3": 530841,
+      "4": 484115,
+      "5": 321957,
+      "6": 164868,
+      "7": 63968,
+      "8": 18680,
+      "9": 4205,
+      "10": 534,
+      "11": 37
+    },
+    "unique_matched_target_ids": 7638365,
+    "targets_linked_to_multiple_source1_entities": 0,
+    "target_ownership_conflict_examples": [],
+    "source3_target_existence_check": "completed full-file check",
+    "cross_reference_target_ownership_check": "completed full-file check",
+    "unchanged_during_scan": true,
+    "seconds": 6.915162375000364
+  },
+  "previous_report_comparison": {
+    "train_source1.tsv": {
+      "row_count_matches_committed_report": true,
+      "byte_size_matches_committed_report": true
+    },
+    "train_source2.tsv": {
+      "row_count_matches_committed_report": true,
+      "byte_size_matches_committed_report": true
+    },
+    "train_source3.tsv": {
+      "row_count_matches_committed_report": true,
+      "byte_size_matches_committed_report": true
+    },
+    "test_source1.tsv": {
+      "row_count_matches_committed_report": true,
+      "byte_size_matches_committed_report": true
+    },
+    "test_source2.tsv": {
+      "row_count_matches_committed_report": true,
+      "byte_size_matches_committed_report": true
+    },
+    "test_source3.tsv": {
+      "row_count_matches_committed_report": true,
+      "byte_size_matches_committed_report": true
+    }
+  },
+  "required_data_files_not_yet_audited": [],
+  "elapsed_seconds": 42.506521041003
+}

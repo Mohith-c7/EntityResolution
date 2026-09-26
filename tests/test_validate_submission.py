@@ -297,7 +297,7 @@ def test_validator_fails_row_without_tab(tmp_path, valid_submission_bundle):
         test_s2_ids=valid_submission_bundle["test_s2_ids"],
         test_s3_ids=valid_submission_bundle["test_s3_ids"],
     )
-    assert any("no tab separator" in e for e in errors)
+    assert any("expected exactly two tab-separated fields" in e for e in errors)
 
 
 def test_validator_fails_empty_tokens_in_comma_list(tmp_path, valid_submission_bundle):
@@ -315,7 +315,7 @@ def test_validator_fails_empty_tokens_in_comma_list(tmp_path, valid_submission_b
         test_s2_ids=valid_submission_bundle["test_s2_ids"],
         test_s3_ids=valid_submission_bundle["test_s3_ids"],
     )
-    assert any("Malformed ID list" in e for e in errors)
+    assert any("malformed id list" in e.lower() for e in errors)
 
 
 def test_validator_fails_unconditional_membership_with_empty_target_set(tmp_path, valid_submission_bundle):

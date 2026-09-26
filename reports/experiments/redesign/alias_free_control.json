@@ -1,0 +1,18 @@
+{
+  "status": "exploratory_tuning_result_not_promoted",
+  "chosen": {
+    "new_model_weight": 0.25,
+    "threshold": 0.74,
+    "macro_f05": 0.9595487399499996,
+    "micro_precision": 0.9867770137830185,
+    "micro_recall": 0.9160120147874307,
+    "singleton_false_positives": 33
+  },
+  "feature_count": 56,
+  "best_iteration": 1197,
+  "seconds": 115.19776829199691,
+  "training_entities": 20000,
+  "training_pairs": 582358,
+  "fresh_holdout_evaluated": false,
+  "training_pairs_sha256": "835a6e38748906203c8206a53cfae2ca9366832b04b5f619e1dccd22e5b0774a"
+}

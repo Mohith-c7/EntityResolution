@@ -1,0 +1,25 @@
+{
+  "scope": "Tuning false-positive target IDs looked up only in provided ground truth",
+  "results": {
+    "original_v3": {
+      "false_positive_links": 424,
+      "target_has_no_labelled_owner": 201,
+      "target_has_another_labelled_owner": 223,
+      "true_owner_outside_tuning_sample": 219,
+      "false_link_on_non_singleton": 203,
+      "false_link_on_singleton": 20,
+      "true_owner_in_tuning_sample": 4
+    },
+    "postings_v1": {
+      "false_positive_links": 427,
+      "target_has_no_labelled_owner": 209,
+      "target_has_another_labelled_owner": 218,
+      "true_owner_outside_tuning_sample": 214,
+      "false_link_on_non_singleton": 199,
+      "false_link_on_singleton": 19,
+      "true_owner_in_tuning_sample": 4
+    }
+  },
+  "interpretation": "Having another true owner is potential leverage, not a measured gain. That owner must be retrieved and scored reliably. Tuning samples omit most competitors.",
+  "future_audit_exclusions": "models/redesign/ownership_audit/sampled_references.json"
+}

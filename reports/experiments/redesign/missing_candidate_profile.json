@@ -1,0 +1,66 @@
+{
+  "split": "previously_inspected_tuning_errors_only",
+  "missed_links_sha256": "a3245a5adf68140ab543cfc5f0925b6025243dd006736930f9e7a961d2b98f8e",
+  "aliases_sha256": "10b2dc52cc6ddab5ed6b1b48c3d89ba6f585c247ef1a28aeaef26d0574886818",
+  "ranker_sha256": "cb65a0c6a0deacfea4a5beaf4df004c653b7244d38a8d37913ffb695e8e9c06f",
+  "original_postings": {
+    "max_postings": 100000,
+    "tokens_per_field": 6,
+    "field_budget": 24,
+    "fused_budget": 64,
+    "cache_bytes": 67108864
+  },
+  "wider_postings": {
+    "max_postings": 100000,
+    "tokens_per_field": 6,
+    "field_budget": 24,
+    "fused_budget": 128,
+    "cache_bytes": 67108864
+  },
+  "final_candidates_per_source": 20,
+  "limitation": "Conditioned on existing misses. Does not measure lost previously retrieved links, precision, runtime, or overall macro F0.5. No promotion from this probe.",
+  "fresh_audit_evaluated": false,
+  "counts": {
+    "missed_links": 1212,
+    "present_before_original_top20": 354,
+    "absent_from_original_shortlist": 858,
+    "present_in_wider_shortlist": 502,
+    "recovered_by_wider_original_ranker": 88,
+    "recovered_by_wider_learned_ranker": 490
+  },
+  "slices": {
+    "missing_address": {
+      "missed_links": 570,
+      "present_before_original_top20": 279,
+      "absent_from_original_shortlist": 291,
+      "present_in_wider_shortlist": 346,
+      "recovered_by_wider_original_ranker": 15,
+      "recovered_by_wider_learned_ranker": 345
+    },
+    "non_ascii_name": {
+      "missed_links": 320,
+      "present_before_original_top20": 60,
+      "absent_from_original_shortlist": 260,
+      "present_in_wider_shortlist": 88,
+      "recovered_by_wider_original_ranker": 16,
+      "recovered_by_wider_learned_ranker": 87
+    },
+    "country_india": {
+      "missed_links": 763,
+      "present_before_original_top20": 179,
+      "absent_from_original_shortlist": 584,
+      "present_in_wider_shortlist": 267,
+      "recovered_by_wider_original_ranker": 56,
+      "recovered_by_wider_learned_ranker": 260
+    },
+    "country_us": {
+      "missed_links": 449,
+      "present_before_original_top20": 175,
+      "absent_from_original_shortlist": 274,
+      "present_in_wider_shortlist": 235,
+      "recovered_by_wider_original_ranker": 32,
+      "recovered_by_wider_learned_ranker": 230
+    }
+  },
+  "seconds": 79.96651841601124
+}

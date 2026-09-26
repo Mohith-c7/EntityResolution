@@ -1,0 +1,182 @@
+{
+  "baseline_artifact": "pilot_alias_v4",
+  "baseline_tune": {
+    "macro_f05": 0.9379287295719644,
+    "entities": 500,
+    "true_positive_links": 1540,
+    "predicted_links": 1571,
+    "true_links": 1762,
+    "micro_precision": 0.98026734563972,
+    "micro_recall": 0.8740068104426788,
+    "singleton_entities": 28,
+    "singleton_false_positives": 2,
+    "singleton_false_positive_rate": 0.07142857142857142,
+    "non_singleton_empty_rate": 0.01059322033898305,
+    "country_macro_f05": {
+      "india": {
+        "entities": 197,
+        "macro_f05": 0.9031220841178607
+      },
+      "us": {
+        "entities": 303,
+        "macro_f05": 0.9605587927879989
+      }
+    }
+  },
+  "rows": [
+    {
+      "name": "without_blocking_score",
+      "features": [
+        "name_jaro_winkler",
+        "name_levenshtein",
+        "name_token_sort",
+        "name_token_set",
+        "name_partial",
+        "name_jaccard",
+        "name_length_ratio",
+        "name_character_cosine",
+        "address_jaro_winkler",
+        "address_levenshtein",
+        "address_token_sort",
+        "address_token_set",
+        "address_partial",
+        "address_jaccard",
+        "address_length_ratio",
+        "address_numeric_overlap",
+        "digit_token_jaccard",
+        "exact_numeric_match",
+        "postcode_agreement",
+        "street_number_match",
+        "exact_name",
+        "exact_name_core",
+        "any_name_token_match",
+        "name_token_in_address",
+        "address_token_in_name",
+        "country_exact_match",
+        "candidate_address_missing",
+        "postcode_missing",
+        "country_missing",
+        "source1_name_length",
+        "candidate_name_length",
+        "source1_address_length",
+        "candidate_address_length",
+        "source_is_s2",
+        "source_is_s3",
+        "canonical_name_sort",
+        "canonical_name_set",
+        "canonical_core_exact",
+        "canonical_name_cosine",
+        "canonical_name_length_ratio",
+        "query_family_log_frequency",
+        "candidate_alias_confidence",
+        "candidate_alias_log_support",
+        "address_ascii_containment",
+        "first_numeric_canonical_exact",
+        "numeric_canonical_jaccard",
+        "name_weighted_jaccard",
+        "address_weighted_jaccard",
+        "strongest_shared_address_idf"
+      ],
+      "threshold": 0.72,
+      "tune": {
+        "macro_f05": 0.9391813847280172,
+        "entities": 500,
+        "true_positive_links": 1551,
+        "predicted_links": 1587,
+        "true_links": 1762,
+        "micro_precision": 0.9773156899810964,
+        "micro_recall": 0.880249716231555,
+        "singleton_entities": 28,
+        "singleton_false_positives": 2,
+        "singleton_false_positive_rate": 0.07142857142857142,
+        "non_singleton_empty_rate": 0.01059322033898305,
+        "country_macro_f05": {
+          "india": {
+            "entities": 197,
+            "macro_f05": 0.9033424796055002
+          },
+          "us": {
+            "entities": 303,
+            "macro_f05": 0.9624825870683995
+          }
+        }
+      },
+      "best_iteration": 1200,
+      "seconds": 7.3830250409955624
+    },
+    {
+      "name": "without_blocking_or_alias_scores",
+      "features": [
+        "name_jaro_winkler",
+        "name_levenshtein",
+        "name_token_sort",
+        "name_token_set",
+        "name_partial",
+        "name_jaccard",
+        "name_length_ratio",
+        "name_character_cosine",
+        "address_jaro_winkler",
+        "address_levenshtein",
+        "address_token_sort",
+        "address_token_set",
+        "address_partial",
+        "address_jaccard",
+        "address_length_ratio",
+        "address_numeric_overlap",
+        "digit_token_jaccard",
+        "exact_numeric_match",
+        "postcode_agreement",
+        "street_number_match",
+        "exact_name",
+        "exact_name_core",
+        "any_name_token_match",
+        "name_token_in_address",
+        "address_token_in_name",
+        "country_exact_match",
+        "candidate_address_missing",
+        "postcode_missing",
+        "country_missing",
+        "source1_name_length",
+        "candidate_name_length",
+        "source1_address_length",
+        "candidate_address_length",
+        "source_is_s2",
+        "source_is_s3",
+        "query_family_log_frequency",
+        "address_ascii_containment",
+        "first_numeric_canonical_exact",
+        "numeric_canonical_jaccard",
+        "name_weighted_jaccard",
+        "address_weighted_jaccard",
+        "strongest_shared_address_idf"
+      ],
+      "threshold": 0.71,
+      "tune": {
+        "macro_f05": 0.9386521755644762,
+        "entities": 500,
+        "true_positive_links": 1558,
+        "predicted_links": 1603,
+        "true_links": 1762,
+        "micro_precision": 0.9719276356830941,
+        "micro_recall": 0.8842224744608399,
+        "singleton_entities": 28,
+        "singleton_false_positives": 3,
+        "singleton_false_positive_rate": 0.10714285714285714,
+        "non_singleton_empty_rate": 0.006355932203389831,
+        "country_macro_f05": {
+          "india": {
+            "entities": 197,
+            "macro_f05": 0.9039836441829401
+          },
+          "us": {
+            "entities": 303,
+            "macro_f05": 0.9611924418422407
+          }
+        }
+      },
+      "best_iteration": 1197,
+      "seconds": 6.372038708002947
+    }
+  ],
+  "policy": "Development comparison only; holdout entities do not contribute to fitting or selection. These subset-feature model files are not production-compatible artifacts until explicitly integrated and independently evaluated."
+}

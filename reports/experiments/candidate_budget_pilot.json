@@ -1,0 +1,209 @@
+{
+  "policy": "Exploratory budget comparison using existing predictions. Pair features are independent of final top-K in wide retrieval. No post-inference export pruning is proposed.",
+  "rows": [
+    {
+      "top_k_per_source": 1,
+      "threshold": 0.39,
+      "tune_macro_f05": 0.7694422799422799,
+      "holdout": {
+        "macro_f05": 0.7891419218036865,
+        "entities": 500,
+        "true_positive_links": 790,
+        "predicted_links": 806,
+        "true_links": 1716,
+        "micro_precision": 0.9801488833746899,
+        "micro_recall": 0.4603729603729604,
+        "singleton_entities": 17,
+        "singleton_false_positives": 0,
+        "singleton_false_positive_rate": 0.0,
+        "non_singleton_empty_rate": 0.035196687370600416,
+        "country_macro_f05": {}
+      },
+      "oracle": {
+        "macro_f05": 0.809659848321613,
+        "entities": 500,
+        "true_positive_links": 806,
+        "predicted_links": 806,
+        "true_links": 1716,
+        "micro_precision": 1.0,
+        "micro_recall": 0.4696969696969697,
+        "singleton_entities": 17,
+        "singleton_false_positives": 0,
+        "singleton_false_positive_rate": 0.0,
+        "non_singleton_empty_rate": 0.031055900621118012,
+        "country_macro_f05": {}
+      },
+      "mean_candidates": 2.0
+    },
+    {
+      "top_k_per_source": 2,
+      "threshold": 0.5,
+      "tune_macro_f05": 0.887514596064485,
+      "holdout": {
+        "macro_f05": 0.889549613332555,
+        "entities": 500,
+        "true_positive_links": 1238,
+        "predicted_links": 1266,
+        "true_links": 1716,
+        "micro_precision": 0.9778830963665087,
+        "micro_recall": 0.7214452214452215,
+        "singleton_entities": 17,
+        "singleton_false_positives": 2,
+        "singleton_false_positive_rate": 0.11764705882352941,
+        "non_singleton_empty_rate": 0.026915113871635612,
+        "country_macro_f05": {}
+      },
+      "oracle": {
+        "macro_f05": 0.9264269730299614,
+        "entities": 500,
+        "true_positive_links": 1285,
+        "predicted_links": 1285,
+        "true_links": 1716,
+        "micro_precision": 1.0,
+        "micro_recall": 0.7488344988344988,
+        "singleton_entities": 17,
+        "singleton_false_positives": 0,
+        "singleton_false_positive_rate": 0.0,
+        "non_singleton_empty_rate": 0.018633540372670808,
+        "country_macro_f05": {}
+      },
+      "mean_candidates": 4.0
+    },
+    {
+      "top_k_per_source": 3,
+      "threshold": 0.5,
+      "tune_macro_f05": 0.918496893511703,
+      "holdout": {
+        "macro_f05": 0.9139412262251702,
+        "entities": 500,
+        "true_positive_links": 1433,
+        "predicted_links": 1478,
+        "true_links": 1716,
+        "micro_precision": 0.969553450608931,
+        "micro_recall": 0.835081585081585,
+        "singleton_entities": 17,
+        "singleton_false_positives": 2,
+        "singleton_false_positive_rate": 0.11764705882352941,
+        "non_singleton_empty_rate": 0.020703933747412008,
+        "country_macro_f05": {}
+      },
+      "oracle": {
+        "macro_f05": 0.958080871921211,
+        "entities": 500,
+        "true_positive_links": 1495,
+        "predicted_links": 1495,
+        "true_links": 1716,
+        "micro_precision": 1.0,
+        "micro_recall": 0.8712121212121212,
+        "singleton_entities": 17,
+        "singleton_false_positives": 0,
+        "singleton_false_positive_rate": 0.0,
+        "non_singleton_empty_rate": 0.014492753623188406,
+        "country_macro_f05": {}
+      },
+      "mean_candidates": 6.0
+    },
+    {
+      "top_k_per_source": 5,
+      "threshold": 0.75,
+      "tune_macro_f05": 0.9302938199295658,
+      "holdout": {
+        "macro_f05": 0.929668740312867,
+        "entities": 500,
+        "true_positive_links": 1480,
+        "predicted_links": 1507,
+        "true_links": 1716,
+        "micro_precision": 0.9820836098208361,
+        "micro_recall": 0.8624708624708625,
+        "singleton_entities": 17,
+        "singleton_false_positives": 1,
+        "singleton_false_positive_rate": 0.058823529411764705,
+        "non_singleton_empty_rate": 0.022774327122153208,
+        "country_macro_f05": {}
+      },
+      "oracle": {
+        "macro_f05": 0.9780377358866449,
+        "entities": 500,
+        "true_positive_links": 1613,
+        "predicted_links": 1613,
+        "true_links": 1716,
+        "micro_precision": 1.0,
+        "micro_recall": 0.9399766899766899,
+        "singleton_entities": 17,
+        "singleton_false_positives": 0,
+        "singleton_false_positive_rate": 0.0,
+        "non_singleton_empty_rate": 0.008281573498964804,
+        "country_macro_f05": {}
+      },
+      "mean_candidates": 10.0
+    },
+    {
+      "top_k_per_source": 10,
+      "threshold": 0.74,
+      "tune_macro_f05": 0.9345846306883918,
+      "holdout": {
+        "macro_f05": 0.9272550727605421,
+        "entities": 500,
+        "true_positive_links": 1494,
+        "predicted_links": 1529,
+        "true_links": 1716,
+        "micro_precision": 0.9771092217135383,
+        "micro_recall": 0.8706293706293706,
+        "singleton_entities": 17,
+        "singleton_false_positives": 2,
+        "singleton_false_positive_rate": 0.11764705882352941,
+        "non_singleton_empty_rate": 0.020703933747412008,
+        "country_macro_f05": {}
+      },
+      "oracle": {
+        "macro_f05": 0.9829902746684056,
+        "entities": 500,
+        "true_positive_links": 1639,
+        "predicted_links": 1639,
+        "true_links": 1716,
+        "micro_precision": 1.0,
+        "micro_recall": 0.9551282051282052,
+        "singleton_entities": 17,
+        "singleton_false_positives": 0,
+        "singleton_false_positive_rate": 0.0,
+        "non_singleton_empty_rate": 0.006211180124223602,
+        "country_macro_f05": {}
+      },
+      "mean_candidates": 20.0
+    },
+    {
+      "top_k_per_source": 20,
+      "threshold": 0.74,
+      "tune_macro_f05": 0.9379287295719644,
+      "holdout": {
+        "macro_f05": 0.9267945889718852,
+        "entities": 500,
+        "true_positive_links": 1496,
+        "predicted_links": 1533,
+        "true_links": 1716,
+        "micro_precision": 0.9758643183300717,
+        "micro_recall": 0.8717948717948718,
+        "singleton_entities": 17,
+        "singleton_false_positives": 2,
+        "singleton_false_positive_rate": 0.11764705882352941,
+        "non_singleton_empty_rate": 0.020703933747412008,
+        "country_macro_f05": {}
+      },
+      "oracle": {
+        "macro_f05": 0.9871679692856163,
+        "entities": 500,
+        "true_positive_links": 1658,
+        "predicted_links": 1658,
+        "true_links": 1716,
+        "micro_precision": 1.0,
+        "micro_recall": 0.9662004662004662,
+        "singleton_entities": 17,
+        "singleton_false_positives": 0,
+        "singleton_false_positive_rate": 0.0,
+        "non_singleton_empty_rate": 0.004140786749482402,
+        "country_macro_f05": {}
+      },
+      "mean_candidates": 40.0
+    }
+  ]
+}

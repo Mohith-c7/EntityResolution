@@ -12,13 +12,13 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.evaluation.metrics import (
+from src.legacy.evaluation.metrics import (
     compute_entity_f_beta,
     compute_macro_f05,
     compute_micro_precision_recall,
 )
-from src.evaluation.validation import validate_outputs
-from src.features.pairwise_features import (
+from src.legacy.evaluation.validation import validate_outputs
+from src.legacy.features.pairwise_features import (
     FEATURE_NAMES,
     build_feature_matrix,
     build_pair_features,
@@ -28,9 +28,9 @@ from src.integration.adapters import (
     adapt_ground_truth,
     adapt_source_records,
 )
-from src.model.predict import predict, select_matches, write_outputs
-from src.model.threshold import sweep_threshold
-from src.model.train import (
+from src.legacy.model.predict import predict, select_matches, write_outputs
+from src.legacy.model.threshold import sweep_threshold
+from src.legacy.model.train import (
     build_training_dataset,
     entity_level_split,
     load_feature_schema,

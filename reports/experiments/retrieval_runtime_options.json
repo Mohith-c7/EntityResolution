@@ -1,0 +1,198 @@
+{
+  "workers": 8,
+  "order": [
+    "baseline",
+    "mmap",
+    "mmap_without_numeric_location",
+    "mmap_without_numeric_location",
+    "mmap",
+    "baseline"
+  ],
+  "sqlite_version": "3.50.4",
+  "platform": "macOS-27.0-arm64-arm-64bit",
+  "reference_ids_sha256": "0ccb91e995b5deefe2d6a10de6c492280286ff0839e5b7a45cdb02b489287400",
+  "model": "models/larger_alias_v4",
+  "complete": true,
+  "runs": [
+    {
+      "variant": "baseline",
+      "seconds": 33.14447141600249,
+      "references_per_second": 18.102566562890303,
+      "requested_mmap_bytes": 0,
+      "effective_mmap_limits": {
+        "S2": 0,
+        "S3": 0
+      },
+      "entities": 600,
+      "mean_candidates": 40.0,
+      "oracle_macro_f05": 0.9922261054928276,
+      "blocking_recall": 0.9704761904761905,
+      "matching": {
+        "macro_f05": 0.9584261910423354,
+        "entities": 600,
+        "true_positive_links": 1911,
+        "predicted_links": 1948,
+        "true_links": 2100,
+        "micro_precision": 0.981006160164271,
+        "micro_recall": 0.91,
+        "singleton_entities": 30,
+        "singleton_false_positives": 3,
+        "singleton_false_positive_rate": 0.1,
+        "non_singleton_empty_rate": 0.0017543859649122807,
+        "country_macro_f05": {}
+      },
+      "exact_candidates_equal_baseline": true,
+      "exact_predictions_equal_baseline": true
+    },
+    {
+      "variant": "mmap",
+      "seconds": 30.161994166992372,
+      "references_per_second": 19.89258391464736,
+      "requested_mmap_bytes": 4294967296,
+      "effective_mmap_limits": {
+        "S2": 2147418112,
+        "S3": 2147418112
+      },
+      "entities": 600,
+      "mean_candidates": 40.0,
+      "oracle_macro_f05": 0.9922261054928276,
+      "blocking_recall": 0.9704761904761905,
+      "matching": {
+        "macro_f05": 0.9584261910423354,
+        "entities": 600,
+        "true_positive_links": 1911,
+        "predicted_links": 1948,
+        "true_links": 2100,
+        "micro_precision": 0.981006160164271,
+        "micro_recall": 0.91,
+        "singleton_entities": 30,
+        "singleton_false_positives": 3,
+        "singleton_false_positive_rate": 0.1,
+        "non_singleton_empty_rate": 0.0017543859649122807,
+        "country_macro_f05": {}
+      },
+      "exact_candidates_equal_baseline": true,
+      "exact_predictions_equal_baseline": true
+    },
+    {
+      "variant": "mmap_without_numeric_location",
+      "seconds": 27.391420125000877,
+      "references_per_second": 21.904669318417852,
+      "requested_mmap_bytes": 4294967296,
+      "effective_mmap_limits": {
+        "S2": 2147418112,
+        "S3": 2147418112
+      },
+      "entities": 600,
+      "mean_candidates": 40.0,
+      "oracle_macro_f05": 0.9925259792302014,
+      "blocking_recall": 0.9709523809523809,
+      "matching": {
+        "macro_f05": 0.9563901266165652,
+        "entities": 600,
+        "true_positive_links": 1908,
+        "predicted_links": 1945,
+        "true_links": 2100,
+        "micro_precision": 0.9809768637532134,
+        "micro_recall": 0.9085714285714286,
+        "singleton_entities": 30,
+        "singleton_false_positives": 3,
+        "singleton_false_positive_rate": 0.1,
+        "non_singleton_empty_rate": 0.0035087719298245615,
+        "country_macro_f05": {}
+      },
+      "exact_candidates_equal_baseline": false,
+      "exact_predictions_equal_baseline": false
+    },
+    {
+      "variant": "mmap_without_numeric_location",
+      "seconds": 27.360515958993346,
+      "references_per_second": 21.929411013273718,
+      "requested_mmap_bytes": 4294967296,
+      "effective_mmap_limits": {
+        "S2": 2147418112,
+        "S3": 2147418112
+      },
+      "entities": 600,
+      "mean_candidates": 40.0,
+      "oracle_macro_f05": 0.9925259792302014,
+      "blocking_recall": 0.9709523809523809,
+      "matching": {
+        "macro_f05": 0.9563901266165652,
+        "entities": 600,
+        "true_positive_links": 1908,
+        "predicted_links": 1945,
+        "true_links": 2100,
+        "micro_precision": 0.9809768637532134,
+        "micro_recall": 0.9085714285714286,
+        "singleton_entities": 30,
+        "singleton_false_positives": 3,
+        "singleton_false_positive_rate": 0.1,
+        "non_singleton_empty_rate": 0.0035087719298245615,
+        "country_macro_f05": {}
+      },
+      "exact_candidates_equal_baseline": false,
+      "exact_predictions_equal_baseline": false
+    },
+    {
+      "variant": "mmap",
+      "seconds": 29.856918499994208,
+      "references_per_second": 20.095844787201212,
+      "requested_mmap_bytes": 4294967296,
+      "effective_mmap_limits": {
+        "S2": 2147418112,
+        "S3": 2147418112
+      },
+      "entities": 600,
+      "mean_candidates": 40.0,
+      "oracle_macro_f05": 0.9922261054928276,
+      "blocking_recall": 0.9704761904761905,
+      "matching": {
+        "macro_f05": 0.9584261910423354,
+        "entities": 600,
+        "true_positive_links": 1911,
+        "predicted_links": 1948,
+        "true_links": 2100,
+        "micro_precision": 0.981006160164271,
+        "micro_recall": 0.91,
+        "singleton_entities": 30,
+        "singleton_false_positives": 3,
+        "singleton_false_positive_rate": 0.1,
+        "non_singleton_empty_rate": 0.0017543859649122807,
+        "country_macro_f05": {}
+      },
+      "exact_candidates_equal_baseline": true,
+      "exact_predictions_equal_baseline": true
+    },
+    {
+      "variant": "baseline",
+      "seconds": 34.515792249992955,
+      "references_per_second": 17.38334718363947,
+      "requested_mmap_bytes": 0,
+      "effective_mmap_limits": {
+        "S2": 0,
+        "S3": 0
+      },
+      "entities": 600,
+      "mean_candidates": 40.0,
+      "oracle_macro_f05": 0.9922261054928276,
+      "blocking_recall": 0.9704761904761905,
+      "matching": {
+        "macro_f05": 0.9584261910423354,
+        "entities": 600,
+        "true_positive_links": 1911,
+        "predicted_links": 1948,
+        "true_links": 2100,
+        "micro_precision": 0.981006160164271,
+        "micro_recall": 0.91,
+        "singleton_entities": 30,
+        "singleton_false_positives": 3,
+        "singleton_false_positive_rate": 0.1,
+        "non_singleton_empty_rate": 0.0017543859649122807,
+        "country_macro_f05": {}
+      },
+      "exact_candidates_equal_baseline": true,
+      "exact_predictions_equal_baseline": true
+    }
+  ]
+}

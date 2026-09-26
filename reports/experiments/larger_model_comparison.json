@@ -1,0 +1,55 @@
+{
+  "entities": 2000,
+  "earlier_model": {
+    "macro_f05": 0.9335970721124325,
+    "entities": 2000,
+    "true_positive_links": 6091,
+    "predicted_links": 6212,
+    "true_links": 6960,
+    "micro_precision": 0.9805215711526079,
+    "micro_recall": 0.8751436781609195,
+    "singleton_entities": 81,
+    "singleton_false_positives": 8,
+    "singleton_false_positive_rate": 0.09876543209876543,
+    "non_singleton_empty_rate": 0.018238665971860343,
+    "country_macro_f05": {
+      "us": {
+        "entities": 1249,
+        "macro_f05": 0.949126091130362
+      },
+      "india": {
+        "entities": 751,
+        "macro_f05": 0.9077705145180334
+      }
+    }
+  },
+  "larger_model": {
+    "macro_f05": 0.9510571966744428,
+    "entities": 2000,
+    "true_positive_links": 6296,
+    "predicted_links": 6393,
+    "true_links": 6960,
+    "micro_precision": 0.9848271547004536,
+    "micro_recall": 0.9045977011494253,
+    "singleton_entities": 81,
+    "singleton_false_positives": 4,
+    "singleton_false_positive_rate": 0.04938271604938271,
+    "non_singleton_empty_rate": 0.012506513809275664,
+    "country_macro_f05": {
+      "us": {
+        "entities": 1249,
+        "macro_f05": 0.9600513722706709
+      },
+      "india": {
+        "entities": 751,
+        "macro_f05": 0.9360988407227935
+      }
+    }
+  },
+  "paired_macro_f05_gain": 0.0174601245620103,
+  "paired_gain_bootstrap_95": [
+    0.01273436829153679,
+    0.022544122400665438
+  ],
+  "policy": "Both models evaluated on identical 2000 held-out S1 entities and target pools, each using its own tuning-selected threshold. Exploratory development comparison; not a leaderboard result."
+}

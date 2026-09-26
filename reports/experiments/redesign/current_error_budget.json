@@ -1,0 +1,165 @@
+{
+  "split": "tuning_only",
+  "threshold": 0.75,
+  "actual": {
+    "macro_f05": 0.959410822586333,
+    "entities": 10000,
+    "true_positive_links": 31707,
+    "predicted_links": 32134,
+    "true_links": 34624,
+    "micro_precision": 0.9867118939441091,
+    "micro_recall": 0.91575207948244,
+    "singleton_entities": 570,
+    "singleton_false_positives": 33,
+    "singleton_false_positive_rate": 0.05789473684210526,
+    "non_singleton_empty_rate": 0.008589607635206787,
+    "country_macro_f05": {
+      "US": {
+        "entities": 5983,
+        "macro_f05": 0.9683212523031499
+      },
+      "India": {
+        "entities": 4017,
+        "macro_f05": 0.9461394506680567
+      }
+    }
+  },
+  "retained_candidate_oracle": {
+    "macro_f05": 0.9885139110589763,
+    "entities": 10000,
+    "true_positive_links": 33412,
+    "predicted_links": 33412,
+    "true_links": 34624,
+    "micro_precision": 1.0,
+    "micro_recall": 0.9649953789279113,
+    "singleton_entities": 570,
+    "singleton_false_positives": 0,
+    "singleton_false_positive_rate": 0.0,
+    "non_singleton_empty_rate": 0.002863202545068929,
+    "country_macro_f05": {
+      "US": {
+        "entities": 5983,
+        "macro_f05": 0.9931666784645693
+      },
+      "India": {
+        "entities": 4017,
+        "macro_f05": 0.981583986391896
+      }
+    }
+  },
+  "counterfactual_no_false_links": {
+    "macro_f05": 0.9706582370290016,
+    "entities": 10000,
+    "true_positive_links": 31707,
+    "predicted_links": 31707,
+    "true_links": 34624,
+    "micro_precision": 1.0,
+    "micro_recall": 0.91575207948244,
+    "singleton_entities": 570,
+    "singleton_false_positives": 0,
+    "singleton_false_positive_rate": 0.0,
+    "non_singleton_empty_rate": 0.0088016967126193,
+    "country_macro_f05": {
+      "US": {
+        "entities": 5983,
+        "macro_f05": 0.9779471993075166
+      },
+      "India": {
+        "entities": 4017,
+        "macro_f05": 0.9598019110861702
+      }
+    }
+  },
+  "counterfactual_recover_retrieved_true_links": {
+    "macro_f05": 0.9773557188554616,
+    "entities": 10000,
+    "true_positive_links": 33412,
+    "predicted_links": 33839,
+    "true_links": 34624,
+    "micro_precision": 0.9873814238009397,
+    "micro_recall": 0.9649953789279113,
+    "singleton_entities": 570,
+    "singleton_false_positives": 33,
+    "singleton_false_positive_rate": 0.05789473684210526,
+    "non_singleton_empty_rate": 0.002757158006362672,
+    "country_macro_f05": {
+      "US": {
+        "entities": 5983,
+        "macro_f05": 0.9836341364599095
+      },
+      "India": {
+        "entities": 4017,
+        "macro_f05": 0.9680045183258594
+      }
+    }
+  },
+  "macro_loss_decomposition": {
+    "unretrieved_true_links": 0.011486088941023653,
+    "retrieved_true_links_rejected": 0.01785567402997479,
+    "false_links_on_singletons": 0.0033,
+    "false_links_on_non_singletons": 0.007947414442668523
+  },
+  "decomposition_note": "Ordered counterfactual attribution, not independent achievable gains.",
+  "missing_links": 1212,
+  "matcher_error_counts": {
+    "rejected_true_match": 1705,
+    "false_merge": 427
+  },
+  "overlapping_error_slices": {
+    "candidate_address_missing": {
+      "false_merge/India": 28,
+      "false_merge/US": 69,
+      "rejected_true_match/India": 103,
+      "rejected_true_match/US": 328
+    },
+    "numeric_containment": {
+      "false_merge/India": 4,
+      "false_merge/US": 19,
+      "rejected_true_match/India": 18,
+      "rejected_true_match/US": 56
+    },
+    "numeric_substitution": {
+      "false_merge/India": 4,
+      "false_merge/US": 13,
+      "rejected_true_match/India": 33,
+      "rejected_true_match/US": 88
+    },
+    "numeric_contradiction": {
+      "false_merge/India": 5,
+      "false_merge/US": 22,
+      "rejected_true_match/India": 84,
+      "rejected_true_match/US": 225
+    },
+    "strong_phonetic_name": {
+      "false_merge/India": 101,
+      "false_merge/US": 135,
+      "rejected_true_match/India": 295,
+      "rejected_true_match/US": 621
+    },
+    "strong_name_weak_address": {
+      "false_merge/India": 30,
+      "false_merge/US": 67,
+      "rejected_true_match/India": 107,
+      "rejected_true_match/US": 328
+    },
+    "strong_address_weak_name": {
+      "false_merge/India": 61,
+      "false_merge/US": 22,
+      "rejected_true_match/India": 217,
+      "rejected_true_match/US": 138
+    },
+    "alias_supported": {
+      "false_merge/India": 49,
+      "false_merge/US": 45,
+      "rejected_true_match/India": 85,
+      "rejected_true_match/US": 55
+    },
+    "threshold_neighbourhood": {
+      "false_merge/India": 69,
+      "false_merge/US": 77,
+      "rejected_true_match/India": 164,
+      "rejected_true_match/US": 202
+    }
+  },
+  "fresh_holdout_evaluated": false
+}

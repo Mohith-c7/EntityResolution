@@ -1,0 +1,83 @@
+{
+  "status": "experimental_not_submission_ready",
+  "split": "previously_inspected_tuning",
+  "entities": 20000,
+  "workers": 6,
+  "seconds": 199.18536012500408,
+  "references_per_second": 100.40898581827734,
+  "options": {
+    "max_postings": 100000,
+    "tokens_per_field": 6,
+    "field_budget": 24,
+    "fused_budget": 128,
+    "cache_bytes": 67108864
+  },
+  "top_k_per_source": 20,
+  "native_extension": "models/runtime/erpostings.dylib",
+  "ranking_model": "models/redesign/cheap_ranker_v1/model.txt",
+  "bridge_options": {
+    "min_probability": 0.99,
+    "max_seeds": 2
+  },
+  "timing_note": "Includes worker startup, retrieval, features, scoring and optional feature-cache writes; excludes full output assembly and validators.",
+  "mean_candidates": 40.0,
+  "profile_worker_seconds_summed": {
+    "features_seconds": 72.9037203015323,
+    "prediction_seconds": 40.67155312174873,
+    "cache_write_seconds": 6.56688490221859,
+    "retrieve_seconds": 278.59509364709083,
+    "rerank_seconds": 691.6689085315156,
+    "queries": 88366,
+    "accumulated_records": 7969653549,
+    "reranked_records": 13271968,
+    "cache_hits": 624232,
+    "cache_misses": 431976,
+    "skipped_large_lists": 0
+  },
+  "reference_ids_sha256": "a049a441025389507c50a21b3dc4b31e00e1bda4381cad56f4f9a79f8c9b9fac",
+  "caveat": "New retrieval changes blocking score distribution; old classifier/threshold are exploratory controls.",
+  "country_counts_unlabelled_when_test": {
+    "India": {
+      "references": 7961,
+      "candidates": 318440,
+      "matches": 25989,
+      "empty": 462,
+      "eight_or_more": 61
+    },
+    "US": {
+      "references": 12039,
+      "candidates": 481560,
+      "matches": 39497,
+      "empty": 698,
+      "eight_or_more": 87
+    }
+  },
+  "matching": {
+    "macro_f05": 0.9681096684282564,
+    "entities": 20000,
+    "true_positive_links": 64694,
+    "predicted_links": 65486,
+    "true_links": 69137,
+    "micro_precision": 0.9879058119292673,
+    "micro_recall": 0.9357362917106614,
+    "singleton_entities": 1130,
+    "singleton_false_positives": 69,
+    "singleton_false_positive_rate": 0.061061946902654866,
+    "non_singleton_empty_rate": 0.005246422893481717,
+    "country_macro_f05": {}
+  },
+  "oracle": {
+    "macro_f05": 0.9934507878463738,
+    "entities": 20000,
+    "true_positive_links": 67870,
+    "predicted_links": 67870,
+    "true_links": 69137,
+    "micro_precision": 1.0,
+    "micro_recall": 0.981674067431332,
+    "singleton_entities": 1130,
+    "singleton_false_positives": 0,
+    "singleton_false_positive_rate": 0.0,
+    "non_singleton_empty_rate": 0.002066772655007949,
+    "country_macro_f05": {}
+  }
+}

@@ -47,7 +47,7 @@ def load_tsv(
 
     Args:
         file_path: Path to the TSV file.
-        dtype: Data types specification. Defaults to string preservation.
+        dtype: Data types specification. Defaults to strings; pass None explicitly for type inference.
         nrows: Optional maximum number of rows to read.
         usecols: Optional subset of columns to load.
         keep_default_na: Whether to convert default strings (like 'NA') to NaN.
