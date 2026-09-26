@@ -35,7 +35,7 @@ GROUND_TRUTH_DTYPES: dict[str, Any] = {
 def load_tsv(
     file_path: Path | str,
     *,
-    dtype: dict[str, Any] | None = None,
+    dtype: dict[str, Any] | type | None = str,
     nrows: int | None = None,
     usecols: list[str] | None = None,
     keep_default_na: bool = False,
@@ -47,7 +47,7 @@ def load_tsv(
 
     Args:
         file_path: Path to the TSV file.
-        dtype: Data types specification. Defaults to string preservation.
+        dtype: Data types specification. Defaults to strings; pass None explicitly for type inference.
         nrows: Optional maximum number of rows to read.
         usecols: Optional subset of columns to load.
         keep_default_na: Whether to convert default strings (like 'NA') to NaN.

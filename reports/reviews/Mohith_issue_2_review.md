@@ -6,7 +6,7 @@ Reviewed commit: `271dc79` on `Mohith`
 
 ## Verdict
 
-Partially resolved. The changes improve the data layer, but the issue should remain open until the remaining loader, validator, and report-provenance problems are fixed. The commit was reviewed in an isolated checkout; it has not been merged into `Harsha`.
+Partially resolved at the reviewed commit. The initial review used an isolated checkout. The subsequent remote Harsha/main merge is now integrated. This branch additionally fixes generic loader string preservation and replaces the pandas validator with a strict stdlib implementation, while preserving its public validation API and fixture checks. EDA wiring and measured report regeneration still need work; the issue remains open for those items.
 
 ## Verified improvements
 

@@ -82,9 +82,8 @@ def inspect_dataframe(
     missing_counts: dict[str, int] = {}
     missing_percentages: dict[str, float] = {}
     for col in columns:
-        cnt = int(df[col].isna().sum())
-        if df[col].dtype == object:
-            cnt += int((df[col].astype(str).str.strip() == "").sum()) - int(df[col].isna().sum())
+        is_missing = df[col].isna() | (df[col].astype(str).str.strip() == "")
+        cnt = int(is_missing.sum())
         missing_counts[col] = cnt
         missing_percentages[col] = (cnt / total_rows * 100.0) if total_rows > 0 else 0.0
 
@@ -198,6 +197,11 @@ def validate_source_dataset(
     if non_str_ids > 0:
         issues.append(f"[{dataset_name}] Found {non_str_ids:,} entity_id values that are not strings")
 
+    # Check whitespace-only IDs
+    whitespace_ids = sum(1 for val in id_series if isinstance(val, str) and val.strip() == "")
+    if whitespace_ids > 0:
+        issues.append(f"[{dataset_name}] Found {whitespace_ids:,} whitespace-only entity_id values")
+
     # Check prefix
     if expected_prefix is not None:
         invalid_prefix_cnt = sum(
@@ -224,17 +228,17 @@ def validate_source_dataset(
         dup_cnt = total_rows - unique_ids
         issues.append(f"[{dataset_name}] Found {dup_cnt:,} duplicate entity_id values")
 
-    # 5. business_name non-null
-    name_nulls = int(df["business_name"].isna().sum())
-    name_empty = int((df["business_name"].fillna("").astype(str).str.strip() == "").sum()) - name_nulls
-    if name_nulls + name_empty > 0:
-        issues.append(f"[{dataset_name}] Found {name_nulls + name_empty:,} null or empty business_name values")
+    # 5. business_name non-null & non-empty
+    name_missing = df["business_name"].isna() | (df["business_name"].astype(str).str.strip() == "")
+    name_missing_cnt = int(name_missing.sum())
+    if name_missing_cnt > 0:
+        issues.append(f"[{dataset_name}] Found {name_missing_cnt:,} null or empty business_name values")
 
-    # 6. country non-null (strictly open-set: accepts any non-empty string)
-    country_nulls = int(df["country"].isna().sum())
-    country_empty = int((df["country"].fillna("").astype(str).str.strip() == "").sum()) - country_nulls
-    if country_nulls + country_empty > 0:
-        issues.append(f"[{dataset_name}] Found {country_nulls + country_empty:,} null or empty country values")
+    # 6. country non-null & non-empty (strictly open-set: accepts any non-empty string)
+    country_missing = df["country"].isna() | (df["country"].astype(str).str.strip() == "")
+    country_missing_cnt = int(country_missing.sum())
+    if country_missing_cnt > 0:
+        issues.append(f"[{dataset_name}] Found {country_missing_cnt:,} null or empty country values")
 
     # 7. business_address: intentionally permitted to be null (no check for non-null address)
 
@@ -243,14 +247,14 @@ def validate_source_dataset(
 
 def validate_ground_truth_contract(
     gt_df: pd.DataFrame,
-    s1_df: pd.DataFrame | None = None,
-    s2_ids: set[str] | None = None,
-    s3_ids: set[str] | None = None,
+    s1_df: pd.DataFrame | set[str] | None = None,
+    s2_ids: set[str] | pd.DataFrame | None = None,
+    s3_ids: set[str] | pd.DataFrame | None = None,
 ) -> list[str]:
     """
     Validate all Stage 0 Ground Truth contract invariants:
     1. Required columns: source1_entity_id, matched_entity_ids
-    2. source1_entity_id is unique and non-null
+    2. source1_entity_id is unique, non-null, and non-whitespace
     3. source1_entity_id starts with 'S1-'
     4. Referential integrity with train S1: 1-to-1 matching (if s1_df provided)
     5. No S1 ID appears inside matched_entity_ids
@@ -278,6 +282,11 @@ def validate_ground_truth_contract(
     if null_s1 > 0:
         issues.append(f"[Ground Truth] Found {null_s1:,} null source1_entity_id values")
 
+    # Whitespace check
+    whitespace_s1 = sum(1 for val in s1_series if isinstance(val, str) and val.strip() == "")
+    if whitespace_s1 > 0:
+        issues.append(f"[Ground Truth] Found {whitespace_s1:,} whitespace-only source1_entity_id values")
+
     # 2. Uniqueness
     unique_s1 = int(s1_series.nunique(dropna=False))
     if unique_s1 != total_rows:
@@ -294,15 +303,17 @@ def validate_ground_truth_contract(
 
     # 4. Referential integrity with train_source1
     if s1_df is not None:
-        if "entity_id" in s1_df.columns:
-            s1_set = set(s1_df["entity_id"])
-            gt_s1_set = set(s1_series)
-            diff_gt_s1 = gt_s1_set - s1_set
-            diff_s1_gt = s1_set - gt_s1_set
-            if diff_gt_s1:
-                issues.append(f"[Ground Truth] Found {len(diff_gt_s1):,} source1 IDs not present in train_source1")
-            if diff_s1_gt:
-                issues.append(f"[Ground Truth] Found {len(diff_s1_gt):,} train_source1 IDs missing from Ground Truth")
+        if isinstance(s1_df, pd.DataFrame):
+            s1_set = set(s1_df["entity_id"]) if "entity_id" in s1_df.columns else set()
+        else:
+            s1_set = set(s1_df)
+        gt_s1_set = set(s1_series)
+        diff_gt_s1 = gt_s1_set - s1_set
+        diff_s1_gt = s1_set - gt_s1_set
+        if diff_gt_s1:
+            issues.append(f"[Ground Truth] Found {len(diff_gt_s1):,} source1 IDs not present in train_source1")
+        if diff_s1_gt:
+            issues.append(f"[Ground Truth] Found {len(diff_s1_gt):,} train_source1 IDs missing from Ground Truth")
 
     # 5, 6, 7, 8, 9. Matched candidate IDs inspection
     matched_col = gt_df["matched_entity_ids"].fillna("")
@@ -311,6 +322,9 @@ def validate_ground_truth_contract(
     invalid_match_prefixes = 0
     unrecognized_s2 = 0
     unrecognized_s3 = 0
+
+    s2_set = set(s2_ids["entity_id"]) if isinstance(s2_ids, pd.DataFrame) else s2_ids
+    s3_set = set(s3_ids["entity_id"]) if isinstance(s3_ids, pd.DataFrame) else s3_ids
 
     for raw in matched_col:
         raw_s = str(raw).strip()
@@ -333,9 +347,9 @@ def validate_ground_truth_contract(
                 invalid_match_prefixes += 1
 
             # 9. Referential integrity with S2 / S3
-            if s2_ids is not None and cid.startswith("S2-") and cid not in s2_ids:
+            if s2_set is not None and cid.startswith("S2-") and cid not in s2_set:
                 unrecognized_s2 += 1
-            if s3_ids is not None and cid.startswith("S3-") and cid not in s3_ids:
+            if s3_set is not None and cid.startswith("S3-") and cid not in s3_set:
                 unrecognized_s3 += 1
 
     if intra_row_dups > 0:
