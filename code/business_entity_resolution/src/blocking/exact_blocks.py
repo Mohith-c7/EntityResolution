@@ -63,3 +63,13 @@ def lookup_postcode_name(index: dict[tuple[str, str], tuple[str, ...]], digit_to
         for record_id in index.get(key, ()):
             scores[record_id] += 1.0
     return {record_id: scores[record_id] for record_id in sorted(scores)}
+
+
+from .token_index import TokenIndex
+
+
+def build_exact_indexes(records, statistics):
+    return {
+        kind: TokenIndex(records, kind, statistics)
+        for kind in ("exact_name", "exact_core", "core_prefix", "postcode_name")
+    }

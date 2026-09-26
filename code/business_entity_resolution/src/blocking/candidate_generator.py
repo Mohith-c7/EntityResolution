@@ -64,6 +64,12 @@ def generate_candidates(
         missing = sorted(required_columns.difference(frame.columns))
         if missing:
             raise KeyError(f"{label} is missing required columns: {', '.join(missing)}")
+        prefix = {"source1": "S1-", "source2": "S2-", "source3": "S3-"}[label]
+        ids = frame[id_column].tolist()
+        if len(ids) != len(set(ids)):
+            raise ValueError(f"{label} contains duplicate entity IDs")
+        if any(not isinstance(value, str) or not value.startswith(prefix) for value in ids):
+            raise ValueError(f"{label} contains invalid source IDs; expected {prefix}")
 
     candidates = pd.concat([source2, source3], ignore_index=True)
     candidate_sources = {
@@ -94,7 +100,12 @@ def generate_candidates(
             lookup_postcode_name(postcode_index, record["digit_tokens"], record["norm_name"]),
         )
 
-        for candidate_id, scores, blocking_score in rerank_candidates(path_scores, top_k=top_k):
+        ranked = []
+        for source in ("S2", "S3"):
+            source_scores = {candidate_id: scores for candidate_id, scores in path_scores.items()
+                             if candidate_sources[candidate_id] == source}
+            ranked.extend(rerank_candidates(source_scores, top_k=top_k))
+        for candidate_id, scores, blocking_score in ranked:
             rows.append(
                 {
                     "source1_entity_id": str(record[id_column]),

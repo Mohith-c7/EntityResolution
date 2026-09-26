@@ -97,6 +97,16 @@ class BlockingTests(unittest.TestCase):
         second = generate_candidates(self.source1, self.source2, self.source3, max_token_df=1.0)
         pd.testing.assert_frame_equal(first, second)
 
+    def test_top_k_is_applied_independently_to_each_source(self) -> None:
+        result = generate_candidates(self.source1, self.source2, self.source3,
+                                     max_token_df=1.0, top_k=1)
+        self.assertEqual(result.groupby("candidate_source").size().to_dict(), {"S2": 1, "S3": 1})
+
+    def test_duplicate_target_ids_are_rejected(self) -> None:
+        duplicate = pd.concat([self.source2, self.source2.iloc[[0]]], ignore_index=True)
+        with self.assertRaisesRegex(ValueError, "duplicate"):
+            generate_candidates(self.source1, duplicate, self.source3)
+
 
 if __name__ == "__main__":
     unittest.main()

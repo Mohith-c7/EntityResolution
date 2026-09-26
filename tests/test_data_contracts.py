@@ -36,13 +36,23 @@ from src.data.schema import (
 )
 
 
-def test_loader_preserves_raw_strings_and_ids() -> None:
-    df = load_train_source1(nrows=10)
-    assert len(df) == 10
+def test_loader_preserves_raw_strings_and_ids(tmp_path) -> None:
+    raw = pd.DataFrame({
+        "entity_id": ["S1-001", "S1-002"],
+        "business_name": ["007 Works", "NA"],
+        "business_address": ["00123", ""],
+        "country": ["France", "NA"],
+    })
+    raw.to_csv(tmp_path / "train_source1.tsv", sep="\t", index=False)
+    df = load_train_source1(train_dir=tmp_path, nrows=2)
+    assert len(df) == 2
     assert list(df.columns) == REQUIRED_SOURCE_COLUMNS
     for eid in df["entity_id"]:
         assert eid.startswith("S1-")
         assert isinstance(eid, str)
+    assert df.loc[0, "business_address"] == "00123"
+    assert df.loc[1, "country"] == "NA"
+    assert df.loc[1, "business_name"] == "NA"
 
 
 def test_loader_raises_on_missing_file() -> None:
@@ -219,7 +229,10 @@ def test_ground_truth_supports_singletons_and_inspection() -> None:
 
 
 def run_all_tests() -> None:
-    test_loader_preserves_raw_strings_and_ids()
+    from tempfile import TemporaryDirectory
+
+    with TemporaryDirectory() as directory:
+        test_loader_preserves_raw_strings_and_ids(Path(directory))
     test_loader_raises_on_missing_file()
     test_valid_source_datasets_pass_contract()
     test_source_dataset_detects_missing_columns()

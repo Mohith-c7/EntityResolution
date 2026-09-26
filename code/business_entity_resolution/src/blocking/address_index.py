@@ -37,3 +37,11 @@ class RareAddressIndex:
         for token in tokenize_address(normalized_address):
             scores.update(self.postings.get(token, ()))
         return {record_id: float(scores[record_id]) for record_id in sorted(scores)}
+
+
+from .token_index import TokenIndex
+
+
+class AddressIndex(TokenIndex):
+    def __init__(self, records, statistics):
+        super().__init__(records, "address", statistics)
