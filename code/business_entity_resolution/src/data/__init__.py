@@ -28,6 +28,15 @@ from src.data.schema import (
     validate_schema,
     validate_source_dataset,
 )
+from src.data.split import (
+    UnionFind,
+    compute_connected_components,
+    create_grouped_validation_split,
+    generate_geographic_transfer_split,
+    load_split_manifest,
+    save_split_manifest,
+    verify_split_leakage,
+)
 
 __all__ = [
     "load_tsv",
@@ -50,4 +59,11 @@ __all__ = [
     "compute_exact_median_from_histogram",
     "find_ground_truth_examples",
     "print_profiling_summary",
+    "UnionFind",
+    "compute_connected_components",
+    "create_grouped_validation_split",
+    "generate_geographic_transfer_split",
+    "verify_split_leakage",
+    "save_split_manifest",
+    "load_split_manifest",
 ]
