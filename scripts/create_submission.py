@@ -40,11 +40,19 @@ def id_digest(rows):
     return hashlib.sha256("\n".join(r["entity_id"] for r in rows).encode()).hexdigest()
 
 
-def initialize(package, model, indexes, config, threshold, version, aliases):
+def initialize(package, model, indexes, config, threshold, version, aliases, mmap_bytes=0):
     sys.path.insert(0, package)
     from src.pipeline.inference import initialize_worker
     from src.blocking.disk_index import DiskSearchConfig
     initialize_worker(model, indexes, DiskSearchConfig(**config), threshold, version, aliases)
+    if mmap_bytes:
+        from src.pipeline import inference
+        for index in inference._WORKER[1]:
+            actual = index.connection.execute(f"PRAGMA main.mmap_size={int(mmap_bytes)}").fetchone()[0]
+            if actual <= 0:
+                raise RuntimeError("Requested SQLite memory mapping is unavailable")
+            if index.frequency_table.startswith("stats."):
+                index.connection.execute(f"PRAGMA stats.mmap_size={int(mmap_bytes)}")
 
 
 def score(rows):
@@ -142,6 +150,7 @@ def run(args):
     manifest = {"version": "frozen-submission-chunks-v1", "test_files": test_info,
         "frozen_assets": frozen, "batch_size": args.batch_size, "expected_entities": expected_entities,
         "config": report["search_config"], "feature_version": report["feature_version"],
+        "runtime_options": {"mmap_bytes": args.mmap_bytes},
         "threshold": report["threshold"], "local_validation_macro_f05": report["holdout"]["macro_f05"],
         "leaderboard_score": None}
     manifest_path = submission / "run_manifest.json"
@@ -164,7 +173,7 @@ def run(args):
     tasks = iter(enumerate(batches(test / "test_source1.tsv", args.batch_size)))
     initargs = (str(package), str(model / "model.txt"),
         [str(indexes / f"index_test_{s}.sqlite") for s in ("S2", "S3")],
-        report["search_config"], report["threshold"], report["feature_version"], str(model / "name_aliases.json"))
+        report["search_config"], report["threshold"], report["feature_version"], str(model / "name_aliases.json"), args.mmap_bytes)
     pending = deque()
     all_chunks = []
     with ProcessPoolExecutor(max_workers=args.workers, mp_context=multiprocessing.get_context("spawn"),
@@ -241,13 +250,14 @@ def run(args):
         "elapsed_seconds_this_run": time.perf_counter() - start, "workers": args.workers,
         "validation": {"strict": "PASS", "official": "PASS", "id_checking": True},
         "output_sha256": output_hashes, "local_validation_macro_f05": report["holdout"]["macro_f05"],
-        "leaderboard_score": None, "threshold": report["threshold"], "model": "larger_alias_v4",
+        "leaderboard_score": None, "threshold": report["threshold"], "model": report.get("experiment", model.name),
+        "runtime_options": {"mmap_bytes": args.mmap_bytes},
         "candidate_contract": "Exactly the retained candidates scored by the frozen matching model; matches are subsets.",
         "singleton_note": "Empty predictions are predicted no-match entities; true test singletons are unknown.",
         "environment": {"python": sys.version, "platform": platform.platform()}}
     write_json(submission / "submission_report.json", summary)
     write_json(submission / "progress.json", summary)
-    summary_lines = ["# Submission 01", "", "Complete inference; both validators passed with ID checks enabled.", "",
+    summary_lines = ["# " + submission.name.replace("_", " ").title(), "", "Complete inference; both validators passed with ID checks enabled.", "",
         f"Upload: [matching_results.tsv]({root_output / 'matching_results.tsv'})", "",
         f"Local validation macro F0.5: **{summary['local_validation_macro_f05']:.9f}**. Leaderboard score: **unknown**.", "",
         f"- Test Source 1 entities: {total['entities']:,}",
@@ -261,7 +271,7 @@ def run(args):
         "|---|---:|---:|---:|---:|"]
     for country, counts in sorted(total["country"].items()):
         summary_lines.append(f"| {country} | {counts['entities']:,} | {counts['predicted_links']:,} | {counts['empty_predictions']:,} | {counts['scored_candidates']:,} |")
-    summary_lines.extend(["", "Both output files and the frozen model/configuration are preserved under `output/submission_01/`.", ""])
+    summary_lines.extend(["", f"Both output files and the frozen model/configuration are preserved under `{submission}`.", ""])
     (submission / "SUBMISSION_REPORT.md").write_text("\n".join(summary_lines))
     print(json.dumps(summary), flush=True)
 
@@ -273,9 +283,10 @@ def main():
     parser.add_argument("--index-dir", type=Path, default=Path("models"))
     parser.add_argument("--workers", type=int, default=12)
     parser.add_argument("--batch-size", type=int, default=100)
+    parser.add_argument("--mmap-bytes", type=int, default=0)
     args = parser.parse_args()
-    if args.workers < 1 or args.batch_size < 1:
-        parser.error("workers and batch-size must be positive")
+    if args.workers < 1 or args.batch_size < 1 or args.mmap_bytes < 0:
+        parser.error("workers and batch-size must be positive; mmap-bytes must be nonnegative")
     run(args)
 
 

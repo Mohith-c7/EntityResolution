@@ -10,7 +10,7 @@ Version 3 uses 65 features, 20,000 classifier-training entities, and 10,000 sepa
 
 Retrieval remains the release bottleneck. A paired 600-reference benchmark measured 17.74 references/second for baseline and 19.99 with memory mapping. Removing numeric/location retrieval reached 21.92 but lowered matching quality, so it was not adopted. The fresh candidate oracle is 0.989322 with 40 candidates per reference; better ranking is needed to make 0.99 attainable on this cohort.
 
-Submission 01 remains stopped at 37,000 completed references, with its original frozen model and checkpoints preserved. No complete test output has been produced. See [the review implementation plan](docs/REVIEW_IMPLEMENTATION_PLAN.md) and [the aggregate audit report](reports/experiments/features_v3_fresh_audit.json).
+Submission 02 is generating full-test predictions with the verified v3 model and resumable checkpoints. See [the frozen-run instructions](docs/SUBMISSION_02.md). Submission 01 remains stopped at 37,000 completed references, with its original model and checkpoints preserved. A complete upload file is published only after both validators pass. See [the review implementation plan](docs/REVIEW_IMPLEMENTATION_PLAN.md) and [the aggregate audit report](reports/experiments/features_v3_fresh_audit.json).
 
 ## Earlier development results
 

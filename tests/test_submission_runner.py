@@ -57,13 +57,13 @@ def test_frozen_inference_finalizes_validates_and_resumes_without_scoring(tmp_pa
     ds = lgb.Dataset(x, label=[0, 1, 0, 1], feature_name=list(FEATURE_NAMES))
     booster = lgb.train({"objective": "binary", "verbosity": -1, "num_threads": 1}, ds, num_boost_round=1)
     booster.save_model(str(model / "model.txt"))
-    report = {"search_config": asdict(DiskSearchConfig(character_mode="off")), "feature_version": FEATURE_VERSION,
+    report = {"experiment": "fixture_model", "search_config": asdict(DiskSearchConfig(character_mode="off")), "feature_version": FEATURE_VERSION,
         "threshold": .71, "holdout": {"macro_f05": .5}}
     (model / "report.json").write_text(json.dumps(report))
     (submission / "compatibility_report.json").write_text(json.dumps({"compatible": True}))
     (submission / "frozen_assets_sha256.json").write_text(json.dumps({"model/model.txt": runner.digest(model / "model.txt")}))
     command = [sys.executable, str(ROOT / "scripts/create_submission.py"), "--submission-dir", str(submission),
-        "--test-dir", str(test), "--index-dir", str(indexes), "--workers", "1", "--batch-size", "1"]
+        "--test-dir", str(test), "--index-dir", str(indexes), "--workers", "1", "--batch-size", "1", "--mmap-bytes", "268435456"]
     with (submission / ".run.lock").open("a+") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         blocked = subprocess.run(command, capture_output=True, text=True)
@@ -78,6 +78,8 @@ def test_frozen_inference_finalizes_validates_and_resumes_without_scoring(tmp_pa
     assert summary["validation"] == {"strict": "PASS", "official": "PASS", "id_checking": True}
     assert summary["country"]["france"]["entities"] == 1
     assert summary["leaderboard_score"] is None
+    assert summary["model"] == "fixture_model"
+    assert summary["runtime_options"]["mmap_bytes"] == 268435456
     expected = (submission / "matching_results.tsv").read_bytes()
     assert (submission.parent / "matching_results.tsv").read_bytes() == expected
     # Resumption validates each checkpoint and regenerates byte-identical outputs.
