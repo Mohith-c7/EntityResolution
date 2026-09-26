@@ -1,0 +1,597 @@
+{
+  "datasets": {
+    "Train S1": {
+      "dataset_name": "Train S1",
+      "filename": "train_source1.tsv",
+      "file_size_bytes": 210069713,
+      "total_rows": 2206821,
+      "columns": [
+        "entity_id",
+        "business_name",
+        "business_address",
+        "country"
+      ],
+      "dtypes": {
+        "entity_id": "object",
+        "business_name": "object",
+        "business_address": "object",
+        "country": "object"
+      },
+      "missing_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 0,
+        "country": 0
+      },
+      "missing_pcts": {
+        "entity_id": 0.0,
+        "business_name": 0.0,
+        "business_address": 0.0,
+        "country": 0.0
+      },
+      "unique_ids": 2206821,
+      "duplicate_ids": 0,
+      "country_counts": {
+        "US": 1323633,
+        "India": 883188
+      },
+      "total_distinct_countries": 2,
+      "name_char_len_stats": {
+        "mean": 24.13764,
+        "median": 24.0,
+        "min": 3,
+        "max": 81,
+        "p95": 37.0
+      },
+      "name_word_len_stats": {
+        "mean": 3.55882,
+        "median": 4.0,
+        "min": 1,
+        "max": 12,
+        "p95": 5.0
+      },
+      "addr_char_len_stats": {
+        "mean": 52.0284,
+        "median": 41.0,
+        "min": 15,
+        "max": 184,
+        "p95": 102.0
+      },
+      "addr_word_len_stats": {
+        "mean": 8.03348,
+        "median": 7.0,
+        "min": 3,
+        "max": 38,
+        "p95": 15.0
+      }
+    },
+    "Train S2": {
+      "dataset_name": "Train S2",
+      "filename": "train_source2.tsv",
+      "file_size_bytes": 489301488,
+      "total_rows": 5034616,
+      "columns": [
+        "entity_id",
+        "business_name",
+        "business_address",
+        "country"
+      ],
+      "dtypes": {
+        "entity_id": "object",
+        "business_name": "object",
+        "business_address": "object",
+        "country": "object"
+      },
+      "missing_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 168967,
+        "country": 0
+      },
+      "missing_pcts": {
+        "entity_id": 0.0,
+        "business_name": 0.0,
+        "business_address": 3.3561050137686768,
+        "country": 0.0
+      },
+      "unique_ids": 5034616,
+      "duplicate_ids": 0,
+      "country_counts": {
+        "US": 3016817,
+        "India": 2017799
+      },
+      "total_distinct_countries": 2,
+      "name_char_len_stats": {
+        "mean": 25.07348,
+        "median": 25.0,
+        "min": 2,
+        "max": 92,
+        "p95": 40.0
+      },
+      "name_word_len_stats": {
+        "mean": 3.48858,
+        "median": 4.0,
+        "min": 1,
+        "max": 13,
+        "p95": 5.0
+      },
+      "addr_char_len_stats": {
+        "mean": 46.08808,
+        "median": 37.0,
+        "min": 0,
+        "max": 176,
+        "p95": 96.0
+      },
+      "addr_word_len_stats": {
+        "mean": 7.26082,
+        "median": 6.0,
+        "min": 0,
+        "max": 34,
+        "p95": 14.0
+      }
+    },
+    "Train S3": {
+      "dataset_name": "Train S3",
+      "filename": "train_source3.tsv",
+      "file_size_bytes": 503705637,
+      "total_rows": 5285603,
+      "columns": [
+        "entity_id",
+        "business_name",
+        "business_address",
+        "country"
+      ],
+      "dtypes": {
+        "entity_id": "object",
+        "business_name": "object",
+        "business_address": "object",
+        "country": "object"
+      },
+      "missing_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 175916,
+        "country": 0
+      },
+      "missing_pcts": {
+        "entity_id": 0.0,
+        "business_name": 0.0,
+        "business_address": 3.3282106128666875,
+        "country": 0.0
+      },
+      "unique_ids": 5285603,
+      "duplicate_ids": 0,
+      "country_counts": {
+        "US": 3170056,
+        "India": 2115547
+      },
+      "total_distinct_countries": 2,
+      "name_char_len_stats": {
+        "mean": 25.21402,
+        "median": 25.0,
+        "min": 2,
+        "max": 76,
+        "p95": 42.0
+      },
+      "name_word_len_stats": {
+        "mean": 3.52678,
+        "median": 4.0,
+        "min": 1,
+        "max": 12,
+        "p95": 6.0
+      },
+      "addr_char_len_stats": {
+        "mean": 46.55362,
+        "median": 42.0,
+        "min": 0,
+        "max": 200,
+        "p95": 90.0
+      },
+      "addr_word_len_stats": {
+        "mean": 7.14492,
+        "median": 6.0,
+        "min": 0,
+        "max": 31,
+        "p95": 14.0
+      }
+    },
+    "Test S1": {
+      "dataset_name": "Test S1",
+      "filename": "test_source1.tsv",
+      "file_size_bytes": 175022086,
+      "total_rows": 1732544,
+      "columns": [
+        "entity_id",
+        "business_name",
+        "business_address",
+        "country"
+      ],
+      "dtypes": {
+        "entity_id": "object",
+        "business_name": "object",
+        "business_address": "object",
+        "country": "object"
+      },
+      "missing_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 0,
+        "country": 0
+      },
+      "missing_pcts": {
+        "entity_id": 0.0,
+        "business_name": 0.0,
+        "business_address": 0.0,
+        "country": 0.0
+      },
+      "unique_ids": 1732544,
+      "duplicate_ids": 0,
+      "country_counts": {
+        "India": 809986,
+        "US": 663106,
+        "France": 259452
+      },
+      "total_distinct_countries": 3,
+      "name_char_len_stats": {
+        "mean": 23.88694,
+        "median": 24.0,
+        "min": 3,
+        "max": 72,
+        "p95": 36.0
+      },
+      "name_word_len_stats": {
+        "mean": 3.52952,
+        "median": 4.0,
+        "min": 1,
+        "max": 12,
+        "p95": 5.0
+      },
+      "addr_char_len_stats": {
+        "mean": 57.19382,
+        "median": 51.0,
+        "min": 16,
+        "max": 235,
+        "p95": 105.0
+      },
+      "addr_word_len_stats": {
+        "mean": 8.58326,
+        "median": 8.0,
+        "min": 2,
+        "max": 43,
+        "p95": 16.0
+      }
+    },
+    "Test S2": {
+      "dataset_name": "Test S2",
+      "filename": "test_source2.tsv",
+      "file_size_bytes": 509456422,
+      "total_rows": 4887273,
+      "columns": [
+        "entity_id",
+        "business_name",
+        "business_address",
+        "country"
+      ],
+      "dtypes": {
+        "entity_id": "object",
+        "business_name": "object",
+        "business_address": "object",
+        "country": "object"
+      },
+      "missing_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 129408,
+        "country": 0
+      },
+      "missing_pcts": {
+        "entity_id": 0.0,
+        "business_name": 0.0,
+        "business_address": 2.647856995097266,
+        "country": 0.0
+      },
+      "unique_ids": 4887273,
+      "duplicate_ids": 0,
+      "country_counts": {
+        "India": 2312565,
+        "US": 1871330,
+        "France": 703378
+      },
+      "total_distinct_countries": 3,
+      "name_char_len_stats": {
+        "mean": 25.68682,
+        "median": 25.0,
+        "min": 2,
+        "max": 75,
+        "p95": 42.0
+      },
+      "name_word_len_stats": {
+        "mean": 3.58672,
+        "median": 4.0,
+        "min": 1,
+        "max": 10,
+        "p95": 5.0
+      },
+      "addr_char_len_stats": {
+        "mean": 50.40668,
+        "median": 43.0,
+        "min": 0,
+        "max": 190,
+        "p95": 99.0
+      },
+      "addr_word_len_stats": {
+        "mean": 7.79622,
+        "median": 7.0,
+        "min": 0,
+        "max": 29,
+        "p95": 15.0
+      }
+    },
+    "Test S3": {
+      "dataset_name": "Test S3",
+      "filename": "test_source3.tsv",
+      "file_size_bytes": 506002772,
+      "total_rows": 5082316,
+      "columns": [
+        "entity_id",
+        "business_name",
+        "business_address",
+        "country"
+      ],
+      "dtypes": {
+        "entity_id": "object",
+        "business_name": "object",
+        "business_address": "object",
+        "country": "object"
+      },
+      "missing_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 136098,
+        "country": 0
+      },
+      "missing_pcts": {
+        "entity_id": 0.0,
+        "business_name": 0.0,
+        "business_address": 2.6778736308407427,
+        "country": 0.0
+      },
+      "unique_ids": 5082316,
+      "duplicate_ids": 0,
+      "country_counts": {
+        "India": 2405000,
+        "US": 1945701,
+        "France": 731615
+      },
+      "total_distinct_countries": 3,
+      "name_char_len_stats": {
+        "mean": 25.73708,
+        "median": 25.0,
+        "min": 2,
+        "max": 80,
+        "p95": 42.0
+      },
+      "name_word_len_stats": {
+        "mean": 3.60928,
+        "median": 4.0,
+        "min": 1,
+        "max": 10,
+        "p95": 6.0
+      },
+      "addr_char_len_stats": {
+        "mean": 48.78998,
+        "median": 43.0,
+        "min": 0,
+        "max": 225,
+        "p95": 94.0
+      },
+      "addr_word_len_stats": {
+        "mean": 7.521,
+        "median": 7.0,
+        "min": 0,
+        "max": 32,
+        "p95": 15.0
+      }
+    }
+  },
+  "ground_truth": {
+    "file_size_bytes": 127015583,
+    "total_rows": 2206821,
+    "unique_s1_ids": 2206821,
+    "duplicate_s1_ids": 0,
+    "intra_row_duplicates": 0,
+    "singleton_count": 123247,
+    "singleton_rate": 5.584820880352326,
+    "one_match_count": 119157,
+    "one_match_rate": 5.399486410542586,
+    "multi_match_count": 1964417,
+    "multi_match_rate": 89.01569270910508,
+    "total_positive_pairs": 7638365,
+    "s2_positives": 3693619,
+    "s3_positives": 3944746,
+    "mean_matches_per_s1": 3.4612526344456573,
+    "median_matches_per_s1": 3.0,
+    "max_matches_per_s1": 11,
+    "match_count_distribution": {
+      "0": 123247,
+      "1": 119157,
+      "2": 375212,
+      "3": 530841,
+      "4": 484115,
+      "5": 321957,
+      "6": 164868,
+      "7": 63968,
+      "8": 18680,
+      "9": 4205,
+      "10": 534,
+      "11": 37
+    }
+  },
+  "examples": [
+    {
+      "s1_id": "S1-819057698",
+      "s1_name": "Department of Aging",
+      "s1_address": "4089 Ethel Road, Bartlett, TN",
+      "s1_country": "US",
+      "cand_id": "S2-432626894",
+      "cand_source": "S2",
+      "cand_name": "Department  Aging",
+      "cand_address": "4089-A ETHEL RD, BARTLETT, TN",
+      "cand_country": "US"
+    },
+    {
+      "s1_id": "S1-819057698",
+      "s1_name": "Department of Aging",
+      "s1_address": "4089 Ethel Road, Bartlett, TN",
+      "s1_country": "US",
+      "cand_id": "S2-472426501",
+      "cand_source": "S2",
+      "cand_name": "#departmentaging",
+      "cand_address": "4089-A ETHEL ROAD, TN, BARTLETT",
+      "cand_country": "US"
+    },
+    {
+      "s1_id": "S1-819057698",
+      "s1_name": "Department of Aging",
+      "s1_address": "4089 Ethel Road, Bartlett, TN",
+      "s1_country": "US",
+      "cand_id": "S2-499205414",
+      "cand_source": "S2",
+      "cand_name": "Department  of Aging",
+      "cand_address": "4089-A ETHEL RD, BARTLETT, TN",
+      "cand_country": "US"
+    },
+    {
+      "s1_id": "S1-819057698",
+      "s1_name": "Department of Aging",
+      "s1_address": "4089 Ethel Road, Bartlett, TN",
+      "s1_country": "US",
+      "cand_id": "S2-531092731",
+      "cand_source": "S2",
+      "cand_name": "Department \u00f3f Aging",
+      "cand_address": "4089-A ETHEL RD, BARTLETT, TN",
+      "cand_country": "US"
+    },
+    {
+      "s1_id": "S1-819057698",
+      "s1_name": "Department of Aging",
+      "s1_address": "4089 Ethel Road, Bartlett, TN",
+      "s1_country": "US",
+      "cand_id": "S3-384924392",
+      "cand_source": "S3",
+      "cand_name": "Department of Aig",
+      "cand_address": NaN,
+      "cand_country": "US"
+    },
+    {
+      "s1_id": "S1-819057698",
+      "s1_name": "Department of Aging",
+      "s1_address": "4089 Ethel Road, Bartlett, TN",
+      "s1_country": "US",
+      "cand_id": "S3-879456469",
+      "cand_source": "S3",
+      "cand_name": "Department Of",
+      "cand_address": "4089 Ethel Road, Bartlett, Tennessee",
+      "cand_country": "US"
+    },
+    {
+      "s1_id": "S1-657215793",
+      "s1_name": "Unique Constro Pvt Ltd",
+      "s1_address": "C/O - Rabindranath Pati, Badagada Main Road, Bhubaneswar, Khordha, Orissa",
+      "s1_country": "India",
+      "cand_id": "S2-578444325",
+      "cand_source": "S2",
+      "cand_name": "PVT UNIQUE CONSTRO LTD",
+      "cand_address": "#62 C/O - RABINDRANATH PATI, BADAGADA MAIN ROAD, BHUBANESWAR, KHORDHA, \u0b13\u0b21\u0b3c\u0b3f\u0b36\u0b3e",
+      "cand_country": "India"
+    },
+    {
+      "s1_id": "S1-657215793",
+      "s1_name": "Unique Constro Pvt Ltd",
+      "s1_address": "C/O - Rabindranath Pati, Badagada Main Road, Bhubaneswar, Khordha, Orissa",
+      "s1_country": "India",
+      "cand_id": "S2-426230901",
+      "cand_source": "S2",
+      "cand_name": "Unique-Constro Pvt Ltd.",
+      "cand_address": "62 C/O - RABINDRANATH PATI, BADAGADA MAIN ROAD, BHUBANESWAR, Odisha",
+      "cand_country": "India"
+    },
+    {
+      "s1_id": "S1-657215793",
+      "s1_name": "Unique Constro Pvt Ltd",
+      "s1_address": "C/O - Rabindranath Pati, Badagada Main Road, Bhubaneswar, Khordha, Orissa",
+      "s1_country": "India",
+      "cand_id": "S2-415147305",
+      "cand_source": "S2",
+      "cand_name": "Unique C0nstro [Pvt]",
+      "cand_address": "#62 C/O - RABINDRANATH PATI, BADAGADA MAIN ROAD, BHUBANESWAR, \u0b13\u0b21\u0b3c\u0b3f\u0b36\u0b3e",
+      "cand_country": "India"
+    },
+    {
+      "s1_id": "S1-657215793",
+      "s1_name": "Unique Constro Pvt Ltd",
+      "s1_address": "C/O - Rabindranath Pati, Badagada Main Road, Bhubaneswar, Khordha, Orissa",
+      "s1_country": "India",
+      "cand_id": "S3-437765157",
+      "cand_source": "S3",
+      "cand_name": "Unique Constro Pvt",
+      "cand_address": NaN,
+      "cand_country": "India"
+    },
+    {
+      "s1_id": "S1-657215793",
+      "s1_name": "Unique Constro Pvt Ltd",
+      "s1_address": "C/O - Rabindranath Pati, Badagada Main Road, Bhubaneswar, Khordha, Orissa",
+      "s1_country": "India",
+      "cand_id": "S3-154489411",
+      "cand_source": "S3",
+      "cand_name": "Unique Constro",
+      "cand_address": "Badagada Main Road, C/o - Rabindranath Pati, Bhubaneswar, Orissa, Khordha",
+      "cand_country": "India"
+    },
+    {
+      "s1_id": "S1-793695932",
+      "s1_name": "Precision Semiconductor Partners",
+      "s1_address": "233 Lavinia Street, Bristol City, VA",
+      "s1_country": "US",
+      "cand_id": "S2-675979336",
+      "cand_source": "S2",
+      "cand_name": "Precision Semicosdutor Partners",
+      "cand_address": "LAVINIA ST, BRISTOL, VA",
+      "cand_country": "US"
+    },
+    {
+      "s1_id": "S1-793695932",
+      "s1_name": "Precision Semiconductor Partners",
+      "s1_address": "233 Lavinia Street, Bristol City, VA",
+      "s1_country": "US",
+      "cand_id": "S3-797745397",
+      "cand_source": "S3",
+      "cand_name": "precision semiconductor partners",
+      "cand_address": NaN,
+      "cand_country": "US"
+    },
+    {
+      "s1_id": "S1-793695932",
+      "s1_name": "Precision Semiconductor Partners",
+      "s1_address": "233 Lavinia Street, Bristol City, VA",
+      "s1_country": "US",
+      "cand_id": "S3-92193188",
+      "cand_source": "S3",
+      "cand_name": "PRECISION SEMICONDUCTOR PARTNERS",
+      "cand_address": "##233 Lavinia Street, Bristol City, Virginia",
+      "cand_country": "US"
+    },
+    {
+      "s1_id": "S1-793695932",
+      "s1_name": "Precision Semiconductor Partners",
+      "s1_address": "233 Lavinia Street, Bristol City, VA",
+      "s1_country": "US",
+      "cand_id": "S3-422559935",
+      "cand_source": "S3",
+      "cand_name": "Precision Semiconductor Partners (LP)",
+      "cand_address": "##233 Lavinia St, Bristol City, Virginia",
+      "cand_country": "US"
+    }
+  ]
+}

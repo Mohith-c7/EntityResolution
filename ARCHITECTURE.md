@@ -1,798 +1,556 @@
 # Business Entity Resolution — Amazon ML Challenge 2026
-## Final Locked Architecture & System Design
+## Team Execution Architecture & System Specification
 
-> **Version:** 1.0 — Final  
-> **Status:** Locked for Implementation  
-> **Metric:** Macro F₀.₅ (precision-weighted, per Source 1 entity, averaged)
+> **Version:** 2.0
+> **Status:** Team Execution Architecture / Locked
+> **Target Metric:** Macro F₀.₅ (precision-weighted, per Source 1 entity, macro-averaged)
+> **Team:** Mohit · Sanhita · Harsha · Sahasra
+
+---
+
+## What Changed in v2.0
+
+Version 2.0 reconciles the original design with the team-approved execution plan:
+1. **Explicit Pipeline Separation**: Cleanly distinguishes between the runtime inference pipeline and the offline EDA/profiling/experimental components.
+2. **Contract-First Engineering**: Defines formal data contracts (Raw Records, Normalized Records, Candidate Table) and component interfaces with early synthetic fixture integration.
+3. **Eight-Path Baseline Blocking**: Expands candidate retrieval from 7 to 8 baseline paths by adding Path 8 (Name character n-gram TF-IDF retrieval) and explicit name/address provenance for numeric tokens.
+4. **Authoritative Feature Registry**: Establishes that the 36-feature baseline specification is maintained in a versioned feature registry published by Sahasra, rather than relying on an informal dictionary.
+5. **Rigorous Grouped Validation**: Formally defines connected-component grouping for overlapping labels, distractor partitioning, US↔India transfer checks, and bootstrap resampling.
+6. **Configurable vs Fixed Decisions**: Replaces rigid heuristics with clear boundaries: the architecture fixes contracts, interfaces, and evaluation protocols, while candidate depth (top-K), thresholds, and retrieval weights are empirically calibrated.
+7. **Team Roles & 5-Phase Lifecycle**: Maps explicit deliverables, review pairings, feature branches, and phase exit criteria across all four team members.
 
 ---
 
 ## Table of Contents
 
-1. [Problem Restatement & Constraints](#1-problem-restatement--constraints)
-2. [Core Design Principles](#2-core-design-principles)
-3. [Architecture Overview](#3-architecture-overview)
-4. [Stage 0 — Data Loading & EDA](#stage-0--data-loading--eda)
-5. [Stage 1 — Preprocessing & Normalization](#stage-1--preprocessing--normalization)
-6. [Stage 2 — Blocking (Candidate Generation)](#stage-2--blocking-candidate-generation)
-7. [Stage 3 — Pairwise Feature Engineering](#stage-3--pairwise-feature-engineering)
-8. [Stage 4 — LightGBM Pair Scorer](#stage-4--lightgbm-pair-scorer)
-9. [Stage 5 — Decision Layer & Threshold Calibration](#stage-5--decision-layer--threshold-calibration)
-10. [Stage 6 — Output & Validation](#stage-6--output--validation)
-11. [Validation Strategy](#validation-strategy)
-12. [Experiment Ladder](#experiment-ladder)
-13. [Project Directory Structure](#project-directory-structure)
-14. [Toolchain & Dependencies](#toolchain--dependencies)
-15. [72-Hour Timeline](#72-hour-timeline)
-16. [What We Are NOT Doing (and Why)](#what-we-are-not-doing-and-why)
-17. [Architecture Validation Against Problem Statement](#architecture-validation-against-problem-statement)
+1. [Problem Definition & Hard Rules](#1-problem-definition--hard-rules)
+2. [Operating Principles](#2-operating-principles)
+3. [Canonical Runtime Pipeline](#3-canonical-runtime-pipeline)
+4. [Data & Raw Record Contract](#4-data--raw-record-contract)
+5. [Normalized Record Contract](#5-normalized-record-contract)
+6. [Internal Candidate Table Contract](#6-internal-candidate-table-contract)
+7. [Component Interfaces](#7-component-interfaces)
+8. [Candidate Blocking Architecture (8 Baseline Paths)](#8-candidate-blocking-architecture-8-baseline-paths)
+9. [Blocking Evaluation Protocol](#9-blocking-evaluation-protocol)
+10. [Pairwise Feature Architecture](#10-pairwise-feature-architecture)
+11. [LightGBM Scoring & Negative Sampling](#11-lightgbm-scoring--negative-sampling)
+12. [Shared Grouped Validation Protocol](#12-shared-grouped-validation-protocol)
+13. [Decision Layer & Threshold Calibration](#13-decision-layer--threshold-calibration)
+14. [Team Ownership & Responsibilities](#14-team-ownership--responsibilities)
+15. [Parallel Work Phases (A–E)](#15-parallel-work-phases-a-e)
+16. [Collaboration & Experimentation Rules](#16-collaboration--experimentation-rules)
+17. [Final Integration & Release Architecture](#17-final-integration--release-architecture)
+18. [Non-Negotiable Constraints](#18-non-negotiable-constraints)
+19. [Configurable Choices vs Fixed Requirements](#19-configurable-choices-vs-fixed-requirements)
 
 ---
 
-## 1. Problem Restatement & Constraints
+## 1. Problem Definition & Hard Rules
 
-### What must be produced
+### Deliverable Output Files
 
 | Output File | Description | Scored? |
-|---|---|---|
-| `output/matching_results.tsv` | One row per S1 entity. `matched_entity_ids` = comma-separated S2/S3 IDs that match. Empty if singleton. | ✅ Yes — this drives the leaderboard |
-| `output/candidate_pairs.tsv` | One row per S1 entity. All S2/S3 IDs your model *considered* before making the final decision. | ❌ Not scored — used by Amazon to audit blocking quality |
+| :--- | :--- | :---: |
+| `output/matching_results.tsv` | Exactly one row per test S1 entity. `matched_entity_ids` = comma-separated S2/S3 IDs that match. Empty string if singleton. | ✅ **Yes** — Primary Leaderboard Driver |
+| `output/candidate_pairs.tsv` | Exactly one row per test S1 entity. All S2/S3 IDs considered by the model prior to thresholding. | ❌ **Audit Only** — Verified by Organizers |
 
-### Hard rules from the problem statement
+### Non-Negotiable Challenge Rules
+- **Reference Entity Constraint**: Source 1 is the reference; each S1 entity may match zero, one, or many Source 2/3 records.
+- **Row Completeness**: Every test Source 1 entity must appear exactly once in both output files.
+- **Source Separation**: `matched_entity_ids` and `candidate_entity_ids` contain only S2 and S3 IDs — never S1 IDs.
+- **Deduplication**: No duplicate IDs within any row's comma-separated list.
+- **Subset Rule**: All IDs in `matching_results.tsv` must be a strict subset of the corresponding row in `candidate_pairs.tsv`.
+- **Open-Set Country**: France appears in ~14.5%–15.0% of the test set but 0% in training. The system must never hard-code country lists, one-hot encode country, or exclude unseen countries.
+- **Data Hermeticity**: No external geocoding, business registry lookups, web scraping, or LLMs as oracles.
+- **Model Constraints**: Final model must be $\le 8\text{B}$ parameters and licensed under MIT or Apache 2.0.
+- **Format Integrity**: Tab-separated files only (`sep="\t"`). Never read or write `.tsv` files with commas or default delimiters.
 
-- Every S1 entity must have exactly one row in both output files.
-- `matched_entity_ids` contains only S2/S3 IDs — never S1 IDs.
-- No duplicate IDs within a single row's list.
-- All IDs in `matching_results.tsv` must also appear in `candidate_pairs.tsv` (subset rule).
-- A match that was never a candidate is a pipeline bug — the validator will warn.
-- Country is **open-set**: France appears only in test, never in train. Do not hard-code or one-hot country.
-- No external APIs, geocoding, or business registry lookups. Code must be fully reproducible from provided data.
-- Final model must be ≤ 8B parameters, MIT or Apache 2.0 license.
-- Run `utils/validate_submission.py` locally before every leaderboard upload.
-- Tab-separated files only. Never read `.tsv` without `sep="\t"`.
+### Evaluation Metric: Macro F₀.₅
 
-### Metric
+$$\text{Macro } F_{0.5} = \frac{1}{|S_1|} \sum_{s \in S_1} F_{0.5}(s)$$
 
-```
-F₀.₅ = (1.25 × Precision × Recall) / (0.25 × Precision + Recall)
-```
+Where for each entity $s$:
+$$F_{0.5} = \frac{1.25 \times \text{Precision} \times \text{Recall}}{0.25 \times \text{Precision} + \text{Recall}}$$
 
-- Computed per S1 entity, then **macro-averaged** across all S1 entities.
 - Precision is weighted **2× over recall**.
-- Singletons score **1.0** when predicted empty, **0.0** when any match is predicted.
-- One false merge (wrong match) damages score more than one missed match.
-- **Strategic implication: default to NOT matching when uncertain.**
+- Singletons score **1.0** when predicted empty, and **0.0** when any false match is predicted.
+- **Strategic rule: Default to NOT matching when uncertain.**
 
 ---
 
-## 2. Core Design Principles
+## 2. Operating Principles
 
-### Principle 1 — Blocking recall is the hard ceiling
-If a true match is not in the candidate set, no downstream component can recover it. No model, no matter how sophisticated, can match what it never sees.
-> **Target: ≥ 95% blocking recall before training any matcher.**
-
-### Principle 2 — Precision over recall at every decision point
-The F₀.₅ metric explicitly weights precision 2× over recall. Every architectural decision must default to precision.
-> **When uncertain between two designs: choose the one that generates fewer false positives.**
-
-### Principle 3 — Singletons are free points
-A correct empty prediction scores 1.0 for that entity. False merges on singletons score 0.0.
-> **Never force a match when the model is not confident.**
-
-### Principle 4 — Country is an open-set string
-France is in the test set but not the training set. No country-specific code paths.
-> **Use country as a plain string feature. Never hard-code country values.**
-
-### Principle 5 — No over-engineering
-LightGBM + rich features beats a complex Transformer pipeline that fails to run in 72 hours.
-> **Build the simple thing well. Add complexity only when validation proves it helps.**
+1. **Contract-First Development**: Components are developed independently against shared, documented contracts.
+2. **Early Integration**: Integrate early using a small end-to-end synthetic fixture bundle before connecting full pipelines.
+3. **Shared Contracts Before Code**: Shared contracts and schemas are committed before implementation integration.
+4. **Configurable Choices**: Retrieval depth, feature additions, model hyperparameters, and thresholds remain configurable rather than fixed prematurely.
+5. **Empirical Evidence Over Intuition**: Every change requires measured validation evidence (Macro $F_{0.5}$, link recall) rather than speculative redesign.
+6. **No Postponed Integration**: Do not wait for all experiments to finish before integrating. A working baseline must exist before advanced features are added.
+7. **Blocking Recall is the Ceiling**: A true match not retrieved during blocking can never be recovered by the model.
 
 ---
 
-## 3. Architecture Overview
+## 3. Canonical Runtime Pipeline
 
 ```
-RAW TSV FILES (train_source1, train_source2, train_source3, train_ground_truth)
-(test_source1, test_source2, test_source3)
-        │
-        ▼
-┌─────────────────────────────────────────────────────────────┐
-│  STAGE 0 — EDA & Data Profiling                             │
-│  Understand: singleton rate, noise patterns, country dist.  │
-└──────────────────────────────┬──────────────────────────────┘
-                               │
-                               ▼
-┌─────────────────────────────────────────────────────────────┐
-│  STAGE 1 — Preprocessing & Normalization                    │
-│  lowercase · abbreviation expansion · legal suffix strip    │
-│  retain raw fields alongside normalized fields              │
-└──────────────────────────────┬──────────────────────────────┘
-                               │
-                               ▼
-┌─────────────────────────────────────────────────────────────┐
-│  STAGE 2 — BLOCKING (Multi-Strategy, Union)                 │
-│                                                             │
-│  Path A: Rare-token inverted index on name tokens           │
-│  Path B: Rare-token inverted index on address tokens        │
-│  Path C: Rare-token inverted index on digit/number tokens   │
-│  Path D: Exact normalized name match                        │
-│  Path E: Exact name-core match (suffix-stripped)            │
-│  Path F: Name-core prefix block (first 8 chars)             │
-│  Path G: Postcode + name token block                        │
-│                                                             │
-│  → Union all 7 paths                                        │
-│  → Fused symmetric rerank with exactness bonuses            │
-│  → Per-source top-k cap (configurable, default 20)          │
-│  → Measure blocking recall on val holdout BEFORE training   │
-└──────────────────────────────┬──────────────────────────────┘
-                               │
-                               ▼  (candidate_pairs.tsv written here)
-┌─────────────────────────────────────────────────────────────┐
-│  STAGE 3 — PAIRWISE FEATURE ENGINEERING (36 features)       │
-│                                                             │
-│  Name features (8):                                         │
-│    jaro_winkler · levenshtein_ratio · fuzz_ratio            │
-│    token_set_ratio · token_sort_ratio · partial_ratio       │
-│    token_jaccard_exact · length_ratio                       │
-│                                                             │
-│  Address features (8):                                      │
-│    jaro_winkler · levenshtein_ratio · fuzz_ratio            │
-│    token_set_ratio · token_sort_ratio · partial_ratio       │
-│    token_jaccard_exact · length_ratio                       │
-│                                                             │
-│  Digit/number features (4):                                 │
-│    digit_token_jaccard · digit_exact_match                  │
-│    numeric_overlap_ratio · postcode_match                   │
-│                                                             │
-│  Agreement flags (6):                                       │
-│    country_exact_match · name_exact_match                   │
-│    core_name_exact_match · any_token_exact_match            │
-│    name_contains_address_token · address_contains_name_token│
-│                                                             │
-│  Length covariates (4):                                     │
-│    s1_name_len · cand_name_len                              │
-│    s1_address_len · cand_address_len                        │
-│                                                             │
-│  Blocking score (1): fused blocking similarity score        │
-│  Source indicator (3): source_is_s2 / source_is_s3          │
-│  Country agreement (2): open-set string match flags         │
-└──────────────────────────────┬──────────────────────────────┘
-                               │
-                               ▼
-┌─────────────────────────────────────────────────────────────┐
-│  STAGE 4 — LightGBM PAIR SCORER                             │
-│                                                             │
-│  Training:                                                  │
-│    Positives: pairs from ground truth                       │
-│    Hard negatives: top-k non-matching blocked candidates    │
-│    Ratio: 1:2 positives to hard negatives (tunable)         │
-│    Validation: entity-level split (seed=42, 15% holdout)    │
-│                                                             │
-│  Model: LightGBM binary classifier                          │
-│    objective: binary                                        │
-│    metric: binary_logloss                                   │
-│    num_leaves: 63                                           │
-│    n_estimators: 500 with early stopping                    │
-│    class_weight: balanced                                   │
-└──────────────────────────────┬──────────────────────────────┘
-                               │
-                               ▼
-┌─────────────────────────────────────────────────────────────┐
-│  STAGE 5 — DECISION LAYER & THRESHOLD CALIBRATION          │
-│                                                             │
-│  Threshold search:                                          │
-│    Sweep 0.30 → 0.95 in steps of 0.01                      │
-│    Evaluate macro F₀.₅ per S1 entity on holdout            │
-│    Lock threshold that maximises F₀.₅ (expect 0.6–0.75)    │
-│                                                             │
-│  Optional: 2-D threshold search (separate threshold         │
-│    for S2 candidates vs S3 candidates)                      │
-│                                                             │
-│  Singleton rule: if no candidate survives threshold → empty │
-└──────────────────────────────┬──────────────────────────────┘
-                               │
-                               ▼
-┌─────────────────────────────────────────────────────────────┐
-│  STAGE 6 — OUTPUT & FORMAT VALIDATION                       │
-│                                                             │
-│  Write matching_results.tsv                                 │
-│  Write candidate_pairs.tsv                                  │
-│  Run: python3 utils/validate_submission.py                  │
-│    --matching output/matching_results.tsv                   │
-│    --candidate output/candidate_pairs.tsv                   │
-│    --test-dir dataset/test                                  │
-│  Must print PASS before any leaderboard upload              │
-└─────────────────────────────────────────────────────────────┘
+Raw TSV Files (Source 1, Source 2, Source 3)
+     │
+     ▼
+[Load & Validate Schema]
+     │
+     ▼
+[Normalize & Preprocess] ──→ Retains raw fields, generates multi-view clean representations
+     │
+     ▼
+[Candidate Blocking]     ──→ 8 baseline retrieval paths run independently on S2 and S3
+     │
+     ▼
+[Union & Deduplicate]    ──→ Retains retrieval path provenance
+     │
+     ▼
+[Rerank & Top-K Cap]     ──→ Symmetric scoring + exactness bonuses; per-source selection
+     │
+     ▼
+[Export candidate_pairs.tsv] ──→ Freezes final candidate pool for scoring and audit
+     │
+     ▼
+[Pairwise Feature Construction] ──→ Computes 36-feature vector from frozen candidate pairs
+     │
+     ▼
+[LightGBM Scoring]       ──→ Evaluates pair match probabilities
+     │
+     ▼
+[Threshold Calibration]  ──→ Empirically swept across 0.30–0.95 optimizing Macro F0.5
+     │
+     ▼
+[Export matching_results.tsv] ──→ Emits final match lists (subsets of candidates)
+     │
+     ▼
+[Submission Validation]  ──→ utils/validate_submission.py must report PASS
 ```
+
+> **Note**: Stage 0 EDA, profiling, and error analysis inform design decisions and experiments; they are development activities, not mandatory runtime components.
 
 ---
 
-## Stage 0 — Data Loading & EDA
+## 4. Data & Raw Record Contract
 
-**Goal:** Understand the data before writing any model code.
+Source loaders return raw DataFrames adhering to the following schema without mutating business text:
 
-### Tasks
+### Source Record Schema (`train_source*.tsv`, `test_source*.tsv`)
 
-```python
-# Load with explicit tab separator — mandatory
-df = pd.read_csv("dataset/train/train_source1.tsv", sep="\t")
-```
+| Column | Type | Requirement |
+| :--- | :--- | :--- |
+| `entity_id` | `String` | Non-null, unique within source, correct prefix (`S1-`, `S2-`, `S3-`). |
+| `business_name` | `Nullable string` | Original text preserved; never coerced to numeric. |
+| `business_address`| `Nullable string` | Original text preserved; permitted to be null (~3.3% missing in S2/S3). |
+| `country` | `Nullable string` | Open-set string label; no country whitelist. |
 
-### Key questions to answer before Stage 1
+> **Country Contract & Challenge Dataset Invariant**:
+> `country` is an open-set string label. The schema remains null-safe, but the supplied challenge datasets currently contain no missing country values. Data validation must preserve and report the actual dataset invariant rather than introducing a country whitelist. Challenge datasets must not be restricted to a closed vocabulary (e.g. US, India, France); any valid string label must be supported without filtering or rejection.
 
-| Question | Why it matters |
-|---|---|
-| What fraction of S1 entities are singletons? | If >30%, singleton detection is a priority |
-| Country distribution in train? | Understand India vs US split |
-| Average matches per S1 entity? | Determines how aggressive blocking needs to be |
-| What abbreviation patterns exist? | Drives the normalization dictionary |
-| Average name length / address length? | Affects feature scaling |
-| Are there null names or null addresses? | Need null-safe feature computation |
-| What noise patterns appear most frequently? | Prioritize which similarity features to add |
+### Ground Truth Record Schema (`train_ground_truth.tsv`)
 
-### Outputs
+| Column | Type | Requirement |
+| :--- | :--- | :--- |
+| `source1_entity_id` | `String` | Non-null, unique, 100% bijective correspondence with `train_source1.tsv`. |
+| `matched_entity_ids`| `Nullable string` | Comma-separated list of true S2/S3 IDs. Empty string for singletons (5.58%). |
 
-- `notebooks/01_eda.ipynb` with all statistics
-- `src/data/profiling.py` that produces a printed summary
-- Ground truth analysis: distribution of match counts per S1 entity
+The ground truth loader parses match lists into sets for internal evaluation while preserving the raw table format.
 
 ---
 
-## Stage 1 — Preprocessing & Normalization
+## 5. Normalized Record Contract
 
-**Goal:** Create clean, comparable representations of every record. Retain raw fields.
+The preprocessing module (`src/preprocessing/`) transforms raw records into enriched records. All original columns are preserved intact, accompanied by deterministic derived views:
 
-### Name normalization
+| Field | Type | Semantics & Meaning |
+| :--- | :--- | :--- |
+| `name_norm` | `String` | Unicode NFKC, casefolded, punctuation stripped, whitespace collapsed, abbreviations expanded. |
+| `name_folded` | `String` | Accent-folded alternate view (removes diacritics while preserving Indic combining characters). |
+| `name_core` | `String` | Legal-suffix-stripped representation (removes `pvt`, `ltd`, `llc`, `corp`, etc.). |
+| `name_tokens` | `Tuple[str, ...]` | Ordered sequence of normalized name tokens. |
+| `address_norm` | `String` | Normalized address text (abbreviations expanded, lowercase, cleaned). |
+| `address_folded`| `String` | Accent-folded address view. |
+| `address_tokens`| `Tuple[str, ...]` | Ordered sequence of normalized address tokens. |
+| `name_digits` | `Tuple[str, ...]` | Ordered numeric tokens extracted from `business_name` (strings preserving leading zeros). |
+| `address_digits`| `Tuple[str, ...]` | Ordered numeric tokens extracted from `business_address` (strings preserving leading zeros).|
+| `postcode_candidates` | `Tuple[str, ...]` | Conservative format-based postal code candidates; empty tuple if none. |
+| `country_norm` | `String` | Normalized open-set country string label (whitespace cleaned, casefolded). |
+| `name_missing` | `Boolean` | Flag indicating if original `business_name` was null/empty. |
+| `address_missing`| `Boolean` | Flag indicating if original `business_address` was null/empty. |
+| `country_missing`| `Boolean` | Flag indicating if original `country` was null/empty. |
 
-```python
-ABBREV_MAP = {
-    "pvt": "private", "ltd": "limited", "llc": "llc",
-    "corp": "corporation", "inc": "incorporated",
-    "co": "company", "&": "and", "intl": "international",
-    "tech": "technology", "svc": "services", "svcs": "services",
-    "dept": "department", "mfg": "manufacturing",
-    # Extend from EDA findings
-}
-
-def normalize_name(raw: str) -> str:
-    s = raw.lower().strip()
-    s = re.sub(r"[^\w\s]", " ", s)          # remove punctuation
-    s = re.sub(r"\s+", " ", s).strip()      # collapse whitespace
-    tokens = s.split()
-    tokens = [ABBREV_MAP.get(t, t) for t in tokens]
-    return " ".join(tokens)
-
-def name_core(normalized: str) -> str:
-    """Strip common legal suffixes to get the business name core."""
-    LEGAL_SUFFIXES = {"private", "limited", "llc", "corporation",
-                      "incorporated", "company", "pvt", "ltd"}
-    tokens = [t for t in normalized.split() if t not in LEGAL_SUFFIXES]
-    return " ".join(tokens)
-```
-
-### Address normalization
-
-```python
-ADDR_ABBREV = {
-    "rd": "road", "st": "street", "ave": "avenue",
-    "blvd": "boulevard", "dr": "drive", "ln": "lane",
-    "apt": "apartment", "ste": "suite", "no": "number",
-    # India-specific
-    "nagar": "nagar", "marg": "marg",
-}
-
-def normalize_address(raw: str) -> str:
-    if pd.isna(raw): return ""
-    s = raw.lower().strip()
-    s = re.sub(r"[^\w\s]", " ", s)
-    s = re.sub(r"\s+", " ", s).strip()
-    tokens = [ADDR_ABBREV.get(t, t) for t in s.split()]
-    return " ".join(tokens)
-```
-
-### Record serialization (for use as text in optional transformer experiments)
-
-```
-COL business_name VAL {normalized_name} COL business_address VAL {normalized_address} COL country VAL {country}
-```
-
-### Fields retained per record
-
-| Field | Description |
-|---|---|
-| `raw_name` | Original name as loaded |
-| `norm_name` | Lowercased, punctuation removed, abbreviations expanded |
-| `name_core` | Legal suffixes stripped |
-| `raw_address` | Original address as loaded |
-| `norm_address` | Lowercased, punctuation removed, abbreviations expanded |
-| `digit_tokens` | Extracted numeric tokens (house numbers, postal codes) |
-| `country` | Original country string — kept as-is (open set) |
+### Contract Guarantees:
+1. Missing text becomes `""` (empty string), missing token collections become `()` (empty tuple).
+2. Numeric tokens remain strings to preserve leading zeros (`"0123"`, `"07"`).
+3. Ordered tokens retain original sequence; retrieval components derive sets when needed.
+4. Postcode candidates represent uncertain format evidence only — never verified geographical attributes. External postal database lookups are strictly prohibited.
 
 ---
 
-## Stage 2 — Blocking (Candidate Generation)
+## 6. Internal Candidate Table Contract
 
-**Goal:** For every S1 entity, produce a small set of S2/S3 candidates that contains ≥ 95% of true matches.
+The candidate blocking module emits an internal table linking reference S1 entities to retrieved candidates:
 
-### Why 7 paths?
+| Column | Type | Invariant / Requirement |
+| :--- | :--- | :--- |
+| `source1_entity_id` | `String` | Reference S1 entity ID. |
+| `candidate_entity_id`| `String` | Target candidate entity ID (prefixed `S2-` or `S3-`). |
+| `candidate_source` | `String` | Literal `"S2"` or `"S3"`. |
+| `blocking_score` | `Float` | Fused similarity score from blocking reranker. |
+| `rank_within_source` | `Integer` | Candidate rank per S1 entity within source ($1, 2, \dots, K$). |
+| `blocking_paths` | `Tuple[str, ...]` | Sorted collection of path names that retrieved this candidate. |
 
-Different noise types are caught by different blocking strategies. Unioning all paths maximizes recall without requiring any single path to be perfect.
-
-| Path | Catches |
-|---|---|
-| A — Rare name tokens | Token overlap despite word-order changes |
-| B — Rare address tokens | Address token overlap |
-| C — Digit tokens | Numeric identifiers, postal codes |
-| D — Exact norm name | Fast exact-match retrieval |
-| E — Exact name core | Names that differ only in legal suffix |
-| F — Name core prefix (8 chars) | Prefix-level name matches |
-| G — Postcode + name token | Address-anchored blocking |
-
-### Rare-token inverted index (Paths A, B, C)
-
-Use token document frequency to identify **rare** tokens. High-frequency tokens (like "pvt", "road", "limited") are poor blocking keys because they match everything. Use only tokens appearing in fewer than `max_token_df` records (configurable, default 10% of corpus).
-
-```python
-# Build inverted index: token → list of record IDs
-# For each S1 record, retrieve candidates sharing ≥ 1 rare token
-# Compute dot-product similarity: query @ postings.T
-# Use sorted token sets for determinism
-```
-
-### Fused symmetric rerank
-
-After collecting raw candidates from all 7 paths:
-1. Sum the path-specific scores for each (S1, candidate) pair
-2. Add exactness bonuses: exact name match +2.0, exact core match +1.5
-3. Apply per-source top-k cap (default k=20)
-4. Keep the fused score as the `blocking_score` feature for Stage 3
-
-### Diagnostic gate (run before training)
-
-```bash
-python run_pipeline.py diag
-```
-
-**Must report** before proceeding:
-- Blocking recall on validation holdout ≥ 90% (target ≥ 95%)
-- Average candidates per S1 entity (target: 10–50)
-- Candidate reduction ratio
-
-**If blocking recall < 90%: tune blocking before writing the matcher.**
-
-### candidate_pairs.tsv is written here
-
-Every S2/S3 record in the union becomes a candidate. This is the file Amazon uses to audit blocking quality. Write it here, before any filtering.
+### Invariants & Freezing Contract:
+1. **Exact Candidate Pool Representation**: `candidate_pairs.tsv` MUST represent the exact frozen candidate dataframe passed to feature construction and matcher scoring. Once scoring begins, candidates cannot be added or removed, and the file must not be independently regenerated from another source.
+2. **Scoring Invariant**: $\text{final\_matches}(S_1) \subseteq \text{candidate\_pairs}(S_1)$, and `candidate_pairs.tsv` equals the actual scored candidate set.
+3. **Uniqueness**: Exactly one row per unique $(S_1, \text{Target})$ candidate pair.
+4. **Universe Completeness**: Reference S1 entities with zero candidates remain represented in the master S1 universe so they receive empty outputs.
 
 ---
 
-## Stage 3 — Pairwise Feature Engineering
+## 7. Component Interfaces
 
-**Goal:** For every (S1, candidate) pair, compute a 36-dimensional feature vector.
-
-### Full feature list
+All components adhere to explicit, functional interfaces:
 
 ```python
-from rapidfuzz import fuzz, distance
+# Ingestion
+load_source(path: Path | str) -> pd.DataFrame
+load_ground_truth(path: Path | str) -> pd.DataFrame
 
-def compute_pair_features(s1: dict, cand: dict) -> dict:
-    n1, n2 = s1["norm_name"], cand["norm_name"]
-    a1, a2 = s1["norm_address"], cand["norm_address"]
+# Preprocessing & Normalization
+normalize_name(value: Any) -> str
+normalize_address(value: Any) -> str
+normalize_country(value: Any) -> str
+extract_digits(value: Any) -> tuple[str, ...]
+name_core(value: Any) -> str
+preprocess_source(records: pd.DataFrame) -> pd.DataFrame
 
-    return {
-        # --- Name features (8) ---
-        "name_jaro_winkler":   jaro_winkler(n1, n2),
-        "name_levenshtein":    levenshtein_ratio(n1, n2),
-        "name_fuzz_ratio":     fuzz.ratio(n1, n2) / 100,
-        "name_token_set":      fuzz.token_set_ratio(n1, n2) / 100,
-        "name_token_sort":     fuzz.token_sort_ratio(n1, n2) / 100,
-        "name_partial_ratio":  fuzz.partial_ratio(n1, n2) / 100,
-        "name_token_jaccard":  token_jaccard(n1, n2),
-        "name_len_ratio":      safe_len_ratio(n1, n2),
+# Candidate Blocking
+generate_candidates(
+    source1: pd.DataFrame,
+    source2: pd.DataFrame,
+    source3: pd.DataFrame,
+    config: dict[str, Any]
+) -> pd.DataFrame
 
-        # --- Address features (8) ---
-        "addr_jaro_winkler":   jaro_winkler(a1, a2),
-        "addr_levenshtein":    levenshtein_ratio(a1, a2),
-        "addr_fuzz_ratio":     fuzz.ratio(a1, a2) / 100,
-        "addr_token_set":      fuzz.token_set_ratio(a1, a2) / 100,
-        "addr_token_sort":     fuzz.token_sort_ratio(a1, a2) / 100,
-        "addr_partial_ratio":  fuzz.partial_ratio(a1, a2) / 100,
-        "addr_token_jaccard":  token_jaccard(a1, a2),
-        "addr_len_ratio":      safe_len_ratio(a1, a2),
+# Feature Engineering
+build_pair_features(
+    s1_record: dict[str, Any],
+    candidate_record: dict[str, Any],
+    candidate_metadata: dict[str, Any]
+) -> dict[str, Any]
 
-        # --- Digit/number features (4) ---
-        "digit_jaccard":       token_jaccard(s1["digit_tokens"], cand["digit_tokens"]),
-        "digit_exact":         int(s1["digit_tokens"] == cand["digit_tokens"]),
-        "numeric_overlap":     numeric_overlap_ratio(s1, cand),
-        "postcode_match":      int(postcode(s1) == postcode(cand)) if postcode(s1) else 0,
+# Model Training & Inference
+train(
+    features: pd.DataFrame,
+    labels: pd.Series,
+    config: dict[str, Any],
+    sample_weight: pd.Series | None = None
+) -> Any
 
-        # --- Agreement flags (6) ---
-        "country_exact":       int(s1["country"] == cand["country"]),
-        "name_exact":          int(n1 == n2),
-        "core_name_exact":     int(s1["name_core"] == cand["name_core"]),
-        "any_token_exact":     int(bool(set(n1.split()) & set(n2.split()))),
-        "name_in_addr":        int(any(t in a2.split() for t in n1.split())),
-        "addr_in_name":        int(any(t in n2.split() for t in a1.split())),
+predict(model: Any, features: pd.DataFrame) -> np.ndarray
 
-        # --- Length covariates (4) ---
-        "s1_name_len":         len(n1),
-        "cand_name_len":       len(n2),
-        "s1_addr_len":         len(a1),
-        "cand_addr_len":       len(a2),
-
-        # --- Blocking score (1) ---
-        "blocking_score":      cand["blocking_score"],
-
-        # --- Source indicators (3) ---
-        "source_is_s2":        int(cand["entity_id"].startswith("S2-")),
-        "source_is_s3":        int(cand["entity_id"].startswith("S3-")),
-
-        # --- Country open-set agreement (2) ---
-        "country_nonempty":    int(bool(s1["country"]) and bool(cand["country"])),
-        "country_mismatch":    int(bool(s1["country"]) and bool(cand["country"])
-                                   and s1["country"] != cand["country"]),
-    }
+# Decision & Export
+select_matches(
+    candidate_pairs: pd.DataFrame,
+    probabilities: np.ndarray,
+    all_source1_ids: list[str],
+    config: dict[str, Any]
+) -> dict[str, list[str]]
 ```
 
-**Total: 36 features.** No embeddings at this stage. No transformer calls. Just fast Python.
-
-### Hard negative mining
-
-For each S1 entity during training:
-- All ground-truth matches → **positives**
-- Top-k blocked candidates that are NOT ground-truth matches → **hard negatives**
-- Target ratio: 1:2 (positives:hard negatives). Adjust based on validation F₀.₅.
-
-This teaches the model the actual decision boundary — "ABC Bank Ltd" vs "ABC Banking Services" — rather than easy cases.
+> **State Isolation Rule**: Any learned retrieval state (TF-IDF vectorizers, document frequencies) must expose an explicit `fit()` step restricted strictly to the permitted training split.
 
 ---
 
-## Stage 4 — LightGBM Pair Scorer
+## 8. Candidate Blocking Architecture (8 Baseline Paths)
 
-**Goal:** Learn a match probability for every candidate pair.
+The blocking engine executes eight complementary retrieval paths independently against Source 2 and Source 3:
 
-### Why LightGBM, not a Transformer?
+| Path | Name | Target Mechanism | Why It Is Essential |
+| :---: | :--- | :--- | :--- |
+| **1** | Rare Name Tokens | Inverted index on `name_tokens` with configurable DF cutoff (initial baseline $\le 10\%$). | Catches word-order changes and token overlap. |
+| **2** | Rare Address Tokens | Inverted index on `address_tokens` with configurable DF cutoff (initial baseline $\le 10\%$). | Catches address matches when names differ significantly. |
+| **3** | Rare Numeric Tokens | Inverted index on `name_digits` and `address_digits`. | Preserves provenance; matches house numbers and tax IDs. |
+| **4** | Exact Normalized Name | Exact lookup on `name_norm`. | High-precision baseline for unmodified names. |
+| **5** | Exact Name Core | Exact lookup on `name_core`. | Matches entities differing only in legal forms (`Pvt Ltd`). |
+| **6** | Name Core Prefix | Prefix lookup on first 8 characters of `name_core`. | Bridges stem variations and minor suffix modifications. |
+| **7** | Postcode + Name Token | Joint key: `postcode_candidate` + highest-IDF name token. | Anchor blocking in dense metropolitan areas. |
+| **8** | Name Character n-gram | TF-IDF retrieval on character 3-grams/4-grams of `name_norm`. | Bridges typographical errors, OCR noise, and leetspeak. |
 
-| Factor | LightGBM | Transformer |
-|---|---|---|
-| Training time (72h budget) | Minutes | Hours |
-| Feature interpretability | Full SHAP support | Black box |
-| Handles missing values | Native | Requires preprocessing |
-| Precision on tabular similarity features | Excellent | Not always better |
-| Risk of overfitting | Low (tree regularization) | Higher (needs more data) |
-| License | MIT | Varies |
-| Parameter count | Thousands | 100M–8B |
-
-LightGBM is the right primary model for this task. A Transformer cross-encoder is an optional upgrade for Stage 2 experiments only after the LightGBM baseline is validated.
-
-### Configuration
-
-```python
-import lightgbm as lgb
-
-params = {
-    "objective": "binary",
-    "metric": "binary_logloss",
-    "num_leaves": 63,
-    "max_depth": -1,
-    "learning_rate": 0.05,
-    "n_estimators": 500,
-    "class_weight": "balanced",
-    "subsample": 0.8,
-    "colsample_bytree": 0.8,
-    "min_child_samples": 20,
-    "reg_alpha": 0.1,
-    "reg_lambda": 0.1,
-    "random_state": 42,
-    "n_jobs": -1,
-    "verbose": -1,
-}
-
-model = lgb.LGBMClassifier(**params)
-model.fit(
-    X_train, y_train,
-    eval_set=[(X_val, y_val)],
-    callbacks=[lgb.early_stopping(50), lgb.log_evaluation(100)],
-)
-```
-
-### Training split
-
-- **Entity-level split**, not row-level.
-- `seed=42`, `validation_fraction=0.15` (fixed, deterministic).
-- All candidate pairs for a given S1 entity go to either train or validation — never split across both.
-- This prevents data leakage where the same S1 entity's easy pairs train the model and hard pairs validate it.
+### Candidate Selection Rules:
+1. **Independent Retrieval**: Query Source 2 and Source 3 independently.
+2. **Union & Deduplication**: Combine candidate pools while tracking path provenance.
+3. **Fused Symmetric Reranker**:
+   $$\text{Score} = \sum_{\text{paths}} w_p \cdot s_p + \text{Bonuses}$$
+   Exact name bonus: $+2.0$, Exact core bonus: $+1.5$.
+4. **Deterministic Tie-Breaking**: Broken deterministically by `(score DESC, candidate_entity_id ASC)`.
+5. **Configurable Top-K**: Default $K=20$ per source (yielding up to 40 candidates per S1). Evaluate $K \in \{20, 40, 80\}$ on development folds.
+6. **Configurable Rarity Cutoffs**: Rarity cutoffs are configurable experimental parameters. The initial baseline uses the currently agreed cutoff; alternative cutoffs may be evaluated empirically.
+7. **Open-Set Country Gate**: Country agreement is configurable evidence; records with missing or unseen country labels must never be discarded.
+8. **No Truth Rescue**: No validation-label candidate rescue during validation or inference.
 
 ---
 
-## Stage 5 — Decision Layer & Threshold Calibration
+## 9. Blocking Evaluation Protocol
 
-**Goal:** Convert pair probabilities into final entity-level match predictions, optimized for F₀.₅.
+Every blocking configuration must be evaluated against the shared validation split across 14 standardized metrics:
 
-### Why threshold matters critically here
+1. **Link recall before reranking** (raw union recall).
+2. **Link recall after final top-K** (effective ceiling for model).
+3. **Fraction of non-singletons with $\ge 1$ true candidate**.
+4. **Fraction of non-singletons with all true matches retrieved**.
+5. **Oracle Macro $F_{0.5}$** (macro score if an oracle perfectly selected true matches from candidates).
+6. **Recall broken down by source** (S2 vs S3).
+7. **Recall broken down by country** (US vs India vs unseen).
+8. **Recall broken down by address missingness**.
+9. **Recall broken down by match-count bucket** (1, 2, 3–4, 5+).
+10. **Incremental recall contribution of each of the 8 retrieval paths**.
+11. **Candidate count statistics**: Mean, Median, P95, Maximum.
+12. **Peak memory usage during indexing and query execution**.
+13. **Runtime throughput** (records processed per second).
+14. **Error analysis**: Reviewed qualitative audit of false negatives (misses).
 
-The default `probability > 0.5` threshold is calibrated for F₁, not F₀.₅. Because F₀.₅ weights precision 2× over recall, the optimal threshold for this metric is typically higher — often 0.60–0.75.
-
-### Threshold search procedure
-
-```python
-def find_optimal_threshold(model, X_val, val_pairs, ground_truth):
-    probs = model.predict_proba(X_val)[:, 1]
-
-    best_threshold, best_f05 = 0.5, 0.0
-    for threshold in np.arange(0.30, 0.96, 0.01):
-        predictions = build_entity_predictions(val_pairs, probs, threshold)
-        f05 = compute_macro_f05(predictions, ground_truth)
-        if f05 > best_f05:
-            best_f05 = f05
-            best_threshold = threshold
-
-    return best_threshold, best_f05
-
-def compute_macro_f05(predictions, ground_truth):
-    """Exact reproduction of the challenge metric."""
-    scores = []
-    for s1_id in ground_truth:
-        pred_set = set(predictions.get(s1_id, []))
-        true_set = set(ground_truth[s1_id])
-
-        if not pred_set and not true_set:
-            scores.append(1.0)  # correct singleton
-        elif not pred_set or not true_set:
-            tp = len(pred_set & true_set)
-            p = tp / len(pred_set) if pred_set else 0
-            r = tp / len(true_set) if true_set else 0
-            if p + r == 0:
-                scores.append(0.0)
-            else:
-                scores.append(1.25 * p * r / (0.25 * p + r))
-        else:
-            tp = len(pred_set & true_set)
-            p = tp / len(pred_set)
-            r = tp / len(true_set)
-            if p + r == 0:
-                scores.append(0.0)
-            else:
-                scores.append(1.25 * p * r / (0.25 * p + r))
-
-    return np.mean(scores)
-```
-
-### Optional: 2-D threshold search
-
-Search separate thresholds for S2 and S3 candidates if diagnostics show their score distributions differ.
-
-### Singleton rule
-
-Any S1 entity where zero candidates survive the threshold → empty `matched_entity_ids`. This is the correct prediction for singleton entities and scores 1.0 for them.
+> **Milestone vs Final Target**: $\ge 95\%$ link recall is an initial milestone. Final release configuration balances recall against downstream feature extraction cost and Macro $F_{0.5}$.
 
 ---
 
-## Stage 6 — Output & Validation
+## 10. Pairwise Feature Architecture
 
-### Write matching_results.tsv
+The first model baseline operates on the agreed **36-feature schema**.
 
-```python
-with open("output/matching_results.tsv", "w") as f:
-    f.write("source1_entity_id\tmatched_entity_ids\n")
-    for s1_id in all_test_s1_ids:  # every S1 entity must appear
-        matches = final_predictions.get(s1_id, [])
-        f.write(f"{s1_id}\t{','.join(matches)}\n")
+### Feature Registry Authority & Contract:
+- **Role of ARCHITECTURE.md**: ARCHITECTURE.md defines the required feature categories, structural contracts, and broad functional roles.
+- **Authoritative Feature Registry**: The versioned feature registry maintained by Sahasra (`code/business_entity_resolution/src/features/registry.py`) is authoritative for exact feature names, ordering, formulas, types, missing-value imputation behavior, and feature version.
+- **Prerequisite for Dependent Work**: The number "36" alone is NOT the specification; the versioned feature registry must be formally published before model training and integration work depend on it.
+
+### Feature Categories:
+1. **Name Similarity Features (8)**: Jaro-Winkler, Levenshtein ratio, token sort ratio, token set ratio, partial ratio, token Jaccard, length ratio, character n-gram cosine similarity.
+2. **Address Similarity Features (8)**: Jaro-Winkler, Levenshtein ratio, token sort ratio, token set ratio, partial ratio, token Jaccard, length ratio, address numeric overlap.
+3. **Numeric & Identifier Evidence (4)**: Digit token Jaccard, exact numeric match flag, postcode candidate agreement, street number match flag.
+4. **Agreement & Contradiction Flags (6)**: Exact name match, exact name core match, any token exact match, name token in address, address token in name, country exact match.
+5. **Missingness Indicators (3)**: S2/S3 address missing flag, postcode missing flag, country missing flag.
+6. **Length Covariates (4)**: S1 name length, candidate name length, S1 address length, candidate address length.
+7. **Blocking Metadata (1)**: Fused blocking score.
+8. **Source Indicators (2)**: `source_is_s2`, `source_is_s3`.
+
+### Priority Feature Experiments (Post-Baseline):
+- Distinctive-token agreements and rare token contradictions.
+- Numeric conflict features with ambiguity handling.
+- Local name/address corpus frequency.
+- Reverse-reference competition (multiple S1 entities competing for the same target).
+
+---
+
+## 11. LightGBM Scoring & Negative Sampling
+
+- **Primary Scorer**: LightGBM binary classifier (`objective: binary`, `metric: binary_logloss`).
+- **Positives**: Ground-truth pairs present in the candidate set.
+- **Hard Negative Mining**: Non-matching candidates retrieved by blocking for that entity. Easy random pairs are strictly avoided.
+- **Ratio & Weighting**: Default $1:2$ or $1:3$ positive-to-negative ratio. Sampling parameters and sample weights are recorded in the experiment log.
+- **Validation Fidelity**: Validation evaluation must score the full candidate pool generated by blocking (never a subsampled pool) to mirror inference.
+
+---
+
+## 12. Shared Grouped Validation Protocol
+
+All teammates evaluate against a single, shared, entity-disjoint validation split created before label-informed tuning:
+
+1. **Entity-Level Grouping & Connected Components**:
+   - An S1 reference entity and all its labeled S2 and S3 counterparts must always remain in the same fold. Row-level random splitting is strictly prohibited.
+   - If match relationships create multi-reference or overlapping clusters, entire connected components remain together in the same fold.
+   - Any unusually large or unexpectedly overlapping connected components must be audited and investigated during split generation.
+   - Unmatched target records (distractors) are partitioned consistently across folds to maintain realistic candidate density and retrieval competition.
+2. **Stratification**: Stratified by country, singleton status, and match-count bucket where feasible (`seed=42`, default 15% holdout).
+3. **Strict Inference Simulation**: Validation retrieval indexes contain held-out target records; validation labels never influence candidate generation.
+4. **Fitted State Isolation**: Document frequencies and vectorizers are fitted only on the training partition.
+5. **Geographic Generalization Checks (Transfer Diagnostics)**:
+   - Where feasible, cross-partition transfer checks must be run:
+     - **US $\to$ India transfer check**: Train on US entities, evaluate on India holdout.
+     - **India $\to$ US transfer check**: Train on India entities, evaluate on US holdout.
+   - **Diagnostic Role**: These checks evaluate the pipeline's sensitivity to country distribution shift. They do NOT establish French test accuracy (since France is entirely unseen in training).
+   - **Non-Target Principle**: These checks are validation diagnostics to detect brittle country-specific features, not new optimization targets.
+6. **Bootstrap Significance Testing**:
+   - For close final configurations, compare score differences using bootstrap resampling of Source 1 entities.
+
+### Validation Scorecard Metrics:
+- Macro $F_{0.5}$ (Primary selection metric)
+- Micro precision and recall
+- Singleton false-positive rate
+- Non-singleton empty-prediction rate
+- Blocking recall and oracle Macro $F_{0.5}$ ceiling
+- Breakdown by country and candidate source
+- Throughput, RAM, and candidate volumes
+
+---
+
+## 13. Decision Layer & Threshold Calibration
+
+1. **Empirical Sweep**: Decision threshold $\tau$ is swept from $0.30 \to 0.95$ in steps of $0.01$ on validation predictions.
+2. **Metric Optimization**: Select $\tau^*$ that strictly maximizes official entity Macro $F_{0.5}$.
+3. **Range Clarification**: The $0.60\text{--}0.75$ interval is an expected hypothesis due to precision-weighting; it is **not** a hardcoded requirement.
+4. **Per-Source Calibration (Optional)**: If score distributions diverge between S2 and S3, calibrate independent thresholds $(\tau_{S2}, \tau_{S3})$.
+5. **Cardinality Rules**:
+   - Singletons: If no candidate exceeds $\tau^*$, output empty string (scores 1.0).
+   - Multi-match: All candidates exceeding $\tau^*$ are emitted.
+   - Predictions must never be forced.
+   - Predictions are strictly constrained to the frozen candidate pool.
+
+---
+
+## 14. Team Ownership & Responsibilities
+
+| Team Member | Primary Domain | Deliverables & Responsibilities | Primary Reviewer |
+| :--- | :--- | :--- | :--- |
+| **Mohit** | Data, Contracts, Integration, Release | TSV loaders, schema validation, EDA profiling, split manifest support, pipeline orchestration CLI, submission validator, release packaging. | Sahasra |
+| **Sanhitha** | Normalization & Preprocessing | Deterministic text views, legal-suffix stripping, token/digit extraction, postcode candidate extraction, normalization unit tests. | Harsha |
+| **Harsha** | Blocking & Candidate Generation | 8 retrieval paths, sparse inverted indexes, union & deduplication, fused reranker, top-K cap, blocking recall evaluation. | Sanhitha |
+| **Sahasra** | Features, Model & Decision | Versioned feature registry, 36 pairwise features, grouped validation logic, hard negative sampling, LightGBM training, threshold calibration. | Mohit |
+
+*Coordination Note*: Mohit coordinates shared files, integration, and release packaging; he does not take over component implementations. Each owner maintains configuration, unit tests, and documentation for their domain.
+
+---
+
+## 15. Parallel Work Phases (A–E)
+
+```
+Phase A: Contracts & Fixtures     ──→ Shared contracts committed; synthetic fixtures available
+     │
+     ▼
+Phase B: Independent Baselines    ──→ Each component passes unit tests on fixtures
+     │
+     ▼
+Phase C: Early Integration        ──→ End-to-end pipeline smoke test passes on synthetic data
+     │
+     ▼
+Phase D: Measured Improvement     ──→ Iterative ablation experiments against shared validation split
+     │
+     ▼
+Phase E: Release Packaging        ──→ Final clean rerun; validator PASS; submission archive produced
 ```
 
-### Write candidate_pairs.tsv
+- **Phase A (Contracts)**: Shared interfaces and synthetic test fixtures committed. *Exit: Contracts committed.*
+- **Phase B (Baselines)**: Modules implemented independently against fixtures. *Exit: Component unit tests pass.*
+- **Phase C (Early Integration)**: Minimal end-to-end pipeline wired and executed on synthetic data. *Exit: Pipeline smoke test passes.*
+- **Phase D (Improvement)**: Controlled experiments logged with ablation reports. *Exit: Measurable Macro $F_{0.5}$ gain.*
+- **Phase E (Release)**: Full dataset execution, validator check, package bundling. *Exit: `validate_submission.py` PASS.*
 
-```python
-with open("output/candidate_pairs.tsv", "w") as f:
-    f.write("source1_entity_id\tcandidate_entity_ids\n")
-    for s1_id in all_test_s1_ids:
-        candidates = all_candidates.get(s1_id, [])
-        f.write(f"{s1_id}\t{','.join(candidates)}\n")
-```
+---
 
-### Validation (mandatory before every upload)
+## 16. Collaboration & Experimentation Rules
 
+### Branching Model
+- `main`: Protected branch; direct pushes prohibited. All changes arrive via reviewed Pull Requests.
+- `feature/data-eda`: Mohit's development branch.
+- `feature/normalization`: Sanhitha's development branch.
+- `feature/blocking`: Harsha's development branch.
+- `feature/features-model`: Sahasra's development branch.
+
+### Experimentation Hygiene
+- **One Change at a Time**: Change one variable per experiment (retrieval path, feature set, sampling ratio).
+- **Mandatory Logging**: Every experiment logs: Hypothesis, Configuration, Split version, Seed (42), Validation Macro $F_{0.5}$, Precision, Recall, Runtime, Decision (Keep/Reject).
+- **No Leaderboard Overfitting**: Decisions are guided by the shared local validation holdout, not public leaderboard noise.
+
+---
+
+## 17. Final Integration & Release Architecture
+
+### Output File Specifications
+1. `matching_results.tsv`:
+   ```text
+   source1_entity_id<TAB>matched_entity_ids
+   S1-1001<TAB>S2-2001,S3-3001
+   S1-1002<TAB>
+   ```
+2. `candidate_pairs.tsv`:
+   ```text
+   source1_entity_id<TAB>candidate_entity_ids
+   S1-1001<TAB>S2-2001,S2-2005,S3-3001
+   S1-1002<TAB>S2-2040
+   ```
+*(Actual tab delimiter; comma-separated IDs without spaces; empty strings for singletons).*
+
+### Candidate Export & Scoring Invariant
+- `candidate_pairs.tsv` MUST represent the exact frozen candidate dataframe passed to feature construction and matcher scoring.
+- Once scoring begins, candidates cannot be added or removed, and the file must not be independently regenerated from another source.
+- **Invariant**: $\text{final\_matches}(S_1) \subseteq \text{candidate\_pairs}(S_1)$, and `candidate_pairs.tsv` equals the actual scored candidate set.
+
+### Release Checklist
+- [ ] Exactly one row per test S1 ID in both TSV files.
+- [ ] No duplicate IDs in lists; no duplicate S1 rows.
+- [ ] Every target ID exists in test Source 2 or Source 3.
+- [ ] All matched IDs are strict subsets of candidate IDs.
+- [ ] Candidate export matches the exact inputs scored by LightGBM.
+- [ ] All countries represented without filtering.
+- [ ] Full pipeline runs end-to-end via one documented command.
+- [ ] `python3 utils/validate_submission.py` passes with exit code 0.
+
+### Mandatory Submission Validator Command
 ```bash
 python3 utils/validate_submission.py \
-    --matching output/matching_results.tsv \
-    --candidate output/candidate_pairs.tsv \
-    --test-dir dataset/test
+  --matching output/matching_results.tsv \
+  --candidate output/candidate_pairs.tsv \
+  --test-dir dataset/test
 ```
 
-**Must print `PASS` (exit 0). Never upload if it prints issues.**
-
----
-
-## Validation Strategy
-
-### Entity-level split (not row-level)
-
-```python
-from sklearn.model_selection import train_test_split
-
-all_s1_ids = list(train_ground_truth["source1_entity_id"].unique())
-train_s1, val_s1 = train_test_split(
-    all_s1_ids, test_size=0.15, random_state=42
-)
-```
-
-All pairs for train S1 entities → training set.
-All pairs for val S1 entities → validation set.
-
-**Never mix pairs from the same S1 entity across train/val.**
-
-### Metrics to track at every experiment
-
-| Metric | Where measured | Acceptable range |
-|---|---|---|
-| Blocking recall | Val holdout before training | ≥ 90% (target: ≥ 95%) |
-| Avg candidates per S1 | After blocking | 5–50 |
-| Pair precision (val) | After LightGBM at threshold | ≥ 80% |
-| Pair recall (val) | After LightGBM at threshold | ≥ 70% |
-| **Entity macro F₀.₅ (val)** | **Primary metric** | **Maximize this** |
-| Singleton correct rate (val) | Singletons predicted empty | ≥ 90% |
-
----
-
-## Experiment Ladder
-
-Work through experiments in order. Only advance when current stage is solid.
-
-| Exp | Change | Expected F₀.₅ delta | Complexity |
-|---|---|---|---|
-| E0 | Rule baseline: blocking score threshold directly | — (baseline) | Trivial |
-| E1 | + 8 name similarity features + LightGBM | +0.05–0.10 | Low |
-| E2 | + full 36 feature set | +0.03–0.07 | Low |
-| E3 | + hard negative mining (1:2 ratio) | +0.02–0.05 | Low |
-| E4 | + F₀.₅-optimized threshold sweep | +0.01–0.04 | Trivial |
-| E5 | + 2-D per-source threshold | +0.01–0.02 | Low |
-| E6 | + country gate (data-driven, not hard-coded) | +0.00–0.03 | Low |
-| E7 | + multilingual bi-encoder blocking path | +0.01–0.03 | Medium |
-| E8 | + XLM-RoBERTa cross-encoder reranker | +0.02–0.05 | High |
-
-**Stop at E5 or E6 if running low on time. The first 5 experiments are where most of the score comes from.**
-
----
-
-## Project Directory Structure
-
-```
+### Final Submission Archive Structure
+```text
 <team_name>_submission.zip
 ├── output/
-│   ├── matching_results.tsv       ← uploaded to leaderboard
-│   └── candidate_pairs.tsv        ← submitted in final zip
-│
+│   ├── matching_results.tsv
+│   └── candidate_pairs.tsv
 ├── code/
 │   └── business_entity_resolution/
 │       ├── src/
-│       │   ├── data/
-│       │   │   ├── loader.py          # TSV loading with tab separator
-│       │   │   ├── schema.py          # Field definitions
-│       │   │   └── profiling.py       # EDA statistics
-│       │   │
-│       │   ├── normalization/
-│       │   │   ├── names.py           # Name normalization + core extraction
-│       │   │   ├── addresses.py       # Address normalization
-│       │   │   └── text.py            # Shared text utilities
-│       │   │
-│       │   ├── blocking/
-│       │   │   ├── inverted_index.py  # Rare-token sparse index
-│       │   │   ├── exact.py           # Exact match paths (D, E, F)
-│       │   │   ├── postcode.py        # Path G
-│       │   │   └── pipeline.py        # Union + rerank + topk cap
-│       │   │
-│       │   ├── features/
-│       │   │   ├── name_features.py   # 8 name similarity features
-│       │   │   ├── addr_features.py   # 8 address similarity features
-│       │   │   ├── digit_features.py  # 4 digit/number features
-│       │   │   ├── flags.py           # 6 agreement flags
-│       │   │   └── pipeline.py        # Assemble full 36-feature vector
-│       │   │
-│       │   ├── models/
-│       │   │   ├── lightgbm_scorer.py # Train, predict, feature importance
-│       │   │   └── rule_scorer.py     # Baseline: threshold blocking score
-│       │   │
-│       │   ├── evaluation/
-│       │   │   ├── metrics.py         # compute_macro_f05() — exact reproduction
-│       │   │   ├── threshold.py       # Threshold sweep + 2-D search
-│       │   │   └── diagnostics.py     # Blocking recall, candidate volume
-│       │   │
-│       │   └── output/
-│       │       └── writer.py          # Write both TSV files
-│       │
-│       ├── run_pipeline.py            # CLI: all/prepare/block/diag/train/predict/validate/score
-│       ├── README.md                  # Exact run instructions
-│       └── requirements.txt           # Pinned versions
-│
-└── Documentation_template.md         # Filled methodology document
+│       ├── README.md
+│       └── requirements.txt
+└── Documentation_template.md
 ```
 
 ---
 
-## Toolchain & Dependencies
+## 18. Non-Negotiable Constraints
 
-```
-# requirements.txt (pinned)
-pandas==2.2.2
-numpy==1.26.4
-scikit-learn==1.5.0
-lightgbm==4.3.0
-rapidfuzz==3.9.0       # Jaro-Winkler, Levenshtein, fuzz ratios
-scipy==1.13.0          # Sparse matrix ops for blocking
-pyarrow==16.0.0        # Parquet caching for normalized records
-tqdm==4.66.4           # Progress bars
-```
-
-**No transformer libraries in the core pipeline.** If you add the optional E7/E8 experiments:
-
-```
-# Optional — only for experiments E7, E8
-sentence-transformers==3.0.1   # MIT license
-faiss-cpu==1.8.0               # MIT license
-transformers==4.41.0           # Apache 2.0
-torch==2.3.0                   # BSD license
-```
+1. **No External Lookups**: No external geocoding, business registries, phone directories, or web APIs.
+2. **No LLM Oracle**: No LLM used as an identity judge.
+3. **No ID or Order Leakage**: No row index, file position, or ID digit values as predictive features.
+4. **No Row-Level Random Split**: Never split pairs from the same reference entity across train and validation.
+5. **No Validation Rescue**: No adding ground-truth matches into candidate sets during validation.
+6. **No Country Whitelist**: No filtering or discarding records from unseen countries.
+7. **No Forced Matching**: Singletons must remain empty if no candidate exceeds the calibrated threshold.
+8. **No 1-to-1 Matching Assumption**: S1 entities can match 0, 1, or multiple S2/S3 entities.
+9. **No Uncalibrated Connected Components**: No transitive closure merging from uncertain pairwise predictions.
+10. **No Fixed Top-K Assumption**: Candidate depth must be empirically justified against recall ceilings.
+11. **No Untested Semantic Models**: Heavyweight transformer models are deferred until baseline LightGBM is validated.
 
 ---
 
-## 72-Hour Timeline
+## 19. Configurable Choices vs Fixed Requirements
 
-| Hours | Milestone | Deliverable |
-|---|---|---|
-| 0–3 | Setup + EDA | `notebooks/01_eda.ipynb` complete, singleton rate known |
-| 3–6 | Normalization layer | `src/normalization/` complete, all fields computed |
-| 6–10 | Blocking implementation | 7 paths built, `diag` command running |
-| 10–12 | **Blocking recall check** | ≥ 90% recall confirmed on val holdout |
-| 12–16 | Feature engineering | All 36 features computing correctly |
-| 16–20 | LightGBM training (E1–E2) | First model trained, val F₀.₅ measured |
-| 20–22 | Hard negatives + retrain (E3) | Improved val F₀.₅ |
-| 22–24 | Threshold calibration (E4–E5) | F₀.₅-optimal threshold locked |
-| 24–25 | **First leaderboard submission** | Validate → upload |
-| 25–35 | Error analysis + iteration | Analyze false merges and missed matches |
-| 35–45 | Optional: E6 country gate | Data-driven, only if beneficial on val |
-| 45–60 | Optional: E7 dense ANN blocking | Only if blocking recall < 93% |
-| 60–65 | Final threshold re-tune | On full training data |
-| 65–68 | Final submission + zip packaging | `scripts/make_submission_zip.sh` |
-| 68–72 | Documentation template | Fill `Documentation_template.md` |
+The architecture locks interfaces, data contracts, evaluation protocol, output invariants, and challenge constraints; it does not claim experimentally optimal hyperparameters prematurely. Hyperparameters and experimental choices must be determined and tuned empirically on the shared validation split.
 
----
+### Explicitly Configurable Parameters:
+The following remain configurable experimental parameters rather than hard architectural constraints:
+1. **Rarity Cutoffs**: Rarity cutoffs are configurable experimental parameters. The initial baseline uses the currently agreed cutoff; alternative cutoffs may be evaluated empirically.
+2. **Candidate Depth ($K$)**: Number of candidates retrieved per source ($K \in \{20, 40, 80\}$).
+3. **Retrieval Weights ($w_p$)**: Path-specific weights used in candidate fusion.
+4. **Reranking Bonuses**: Additive exact-match or core-match bonuses.
+5. **Feature Additions**: Post-baseline interaction, frequency, or conflict features registered in the feature registry.
+6. **Negative Sampling Configuration**: Sampling ratio ($1:2$, $1:3$, $1:5$), hard-negative selection strategy, and sample weights.
+7. **LightGBM Parameters**: Tree depth, number of leaves, learning rate, feature fraction, min child samples.
+8. **Decision Thresholds**: Calibrated decision threshold $\tau^*$ (swept 0.30–0.95), and whether per-source thresholds $(\tau_{S2}, \tau_{S3})$ are applied.
 
-## What We Are NOT Doing (and Why)
+### Architectural Matrix:
 
-| Excluded | Reason |
-|---|---|
-| External geocoding APIs | Explicitly prohibited — instant disqualification |
-| Business registry lookups | Explicitly prohibited |
-| Country-specific code paths | France unseen in train; generalize or lose |
-| One-hot encoding of country | Open-set requirement; use string features |
-| LLM as an oracle judge | Rule ambiguity re: "external lookup"; unnecessary given feature approach |
-| Aggressive early transformer use | 72h budget; LightGBM reaches similar precision in minutes |
-| Row-level train/val split | Data leakage — must use entity-level split |
-| Force-matching singletons | Destroys precision; singletons are free 1.0s when left empty |
-| Random pair negatives | Easy negatives teach nothing — hard negatives only |
-| Threshold = 0.5 by default | F₀.₅ optimal threshold is 0.60–0.75, not 0.5 |
-
----
-
-## Architecture Validation Against Problem Statement
-
-| PS Requirement | Our Architecture | Status |
-|---|---|---|
-| Every S1 entity has exactly one row | Stage 6 iterates over all S1 IDs explicitly | ✅ |
-| `matched_entity_ids` empty for singletons | Threshold default when no candidate passes | ✅ |
-| No duplicate IDs in lists | Set-based deduplication before output | ✅ |
-| All matched IDs must be in candidate set | Candidates written before filtering | ✅ |
-| Only S2/S3 IDs in output | Source prefix checked at output stage | ✅ |
-| Country is open-set (France in test) | String equality feature, no closed vocabulary | ✅ |
-| F₀.₅ optimized (not F₁) | `compute_macro_f05()` exactly reproduces metric; threshold swept on this | ✅ |
-| Singletons included in F₀.₅ average | `compute_macro_f05()` handles empty-vs-empty as 1.0 | ✅ |
-| No external data lookup | Only provided TSV files used | ✅ |
-| Model ≤ 8B params, MIT/Apache 2.0 | LightGBM (thousands of params, MIT) | ✅ |
-| Tab-separated files | `sep="\t"` explicit everywhere | ✅ |
-| Both TSV files in output/ | Stage 6 writes both | ✅ |
-| Validate before submitting | `validate_submission.py` in run pipeline | ✅ |
-| Methodology document | `Documentation_template.md` filled in final step | ✅ |
-
----
-
-*This document is the single source of truth for architecture decisions in this project. Any deviation from this design must be logged in the experiment table with a measured F₀.₅ delta justification.*
+| Dimension | Fixed Architectural Requirement | Configurable Choice |
+| :--- | :--- | :--- |
+| **Data Contracts** | Exact column names, string types, source prefixes (`S1-`, `S2-`, `S3-`). | Internal batching/chunk sizes for processing. |
+| **Country Handling** | Open-set string comparison; no closed whitelist. | Country agreement feature weighting and interaction rules. |
+| **Candidate Retrieval**| 8 baseline paths; union & deduplication; provenance tracking. | Rarity DF cutoffs; per-source candidate depth $K$; retrieval weights; reranking bonuses. |
+| **Pair Features** | Required feature categories; feature registry contract. | Exact registered feature set (baseline 36 + post-baseline additions). |
+| **Scoring Model** | LightGBM binary classifier baseline. | Hyperparameters (num_leaves, learning_rate, depth, subsample). |
+| **Negative Sampling** | Hard negatives mined from blocked non-matches. | Negative ratio ($1:2$ vs $1:3$ vs $1:5$); weighting schemes. |
+| **Decision Layer** | Empirical sweep across 0.30–0.95 optimizing Macro $F_{0.5}$. | Calibrated threshold value $\tau^*$; per-source thresholds $(\tau_{S2}, \tau_{S3})$. |
+| **Output Invariants** | Exact TSV tab-separation; candidate subset constraint; singletons empty. | Output buffering and chunk export sizes. |
