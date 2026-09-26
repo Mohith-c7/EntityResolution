@@ -28,7 +28,7 @@ Submission Validation
 ```
 
 ### Key Architectural Constraints & Decisions
-- **Multi-strategy blocking**: Union of diverse indices (rare-token name, address, digits, exact keys) achieving $\ge 95\%$ candidate recall with default `TOP_K = 20` per source.
+- **Multi-strategy blocking**: Eight retrieval paths with configurable per-source candidate budgets. Recall and candidate size must be measured on the supplied data; 95% recall is an initial milestone, not an achieved result.
 - **36 Pairwise Features**: Comparison metrics spanning token overlaps, edit distances, phonetic matches, digit similarities, and null indicators.
 - **LightGBM Classifier**: Trained with hard negatives mined during blocking, evaluated using entity-level disjoint validation splits (`RANDOM_SEED = 42`).
 - **Metric & Optimization**: Precision-weighted Macro $F_{0.5}$ metric with threshold calibration across candidates.
@@ -165,7 +165,11 @@ python code/business_entity_resolution/run_pipeline.py
 
 ## Current Status
 
-**Stage 0 — Repository Setup**
+**Candidate-generation baseline implemented**
 
-The repository structure, virtual environment, and configuration scaffolding are initialized.
+Data contracts, EDA artifacts, normalization helpers, and an eight-path candidate generator are available. Blocking supports target shards, batched reference queries, a disk-backed top-K merge, and candidate/diagnostic exports. Tests use small fixtures; no real-data blocking recall or matching score has been measured in this checkout.
+
+See [the team execution plan](docs/TEAM_PLAN.md) for ownership and release checkpoints, and [candidate-generation instructions](code/business_entity_resolution/README.md) for the runnable command. Pair features, model training, final decisions, and the organizer validator must be integrated before a competition submission is ready.
+
+The organizer's update also includes candidate generation in the final ranking review. Compare candidate counts and scalability alongside matching quality; the candidate file must equal the model's actual inference set.
 Actual EDA on the challenge dataset is the next implementation step.
