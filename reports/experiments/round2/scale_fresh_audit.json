@@ -1,0 +1,60 @@
+{
+  "status": "fresh_audit_complete",
+  "accepted": true,
+  "model": {
+    "threshold": 0.75,
+    "macro_f05": 0.9658884510888361,
+    "entities": 10000,
+    "true_links": 34738,
+    "predicted_links": 32579,
+    "true_positive_links": 32221,
+    "micro_precision": 0.9890113263144971,
+    "micro_recall": 0.927543324313432,
+    "singleton_entities": 567,
+    "singleton_false_positives": 31,
+    "non_singleton_empty_predictions": 58,
+    "country_macro_f05": {
+      "india": {
+        "entities": 3988,
+        "macro_f05": 0.9606277670579093
+      },
+      "us": {
+        "entities": 6012,
+        "macro_f05": 0.9693780731639088
+      }
+    }
+  },
+  "baseline": {
+    "threshold": 0.75,
+    "macro_f05": 0.9577859341289455,
+    "entities": 10000,
+    "true_links": 34738,
+    "predicted_links": 32234,
+    "true_positive_links": 31775,
+    "micro_precision": 0.9857603772414221,
+    "micro_recall": 0.9147043583395705,
+    "singleton_entities": 567,
+    "singleton_false_positives": 44,
+    "non_singleton_empty_predictions": 78,
+    "country_macro_f05": {
+      "india": {
+        "entities": 3988,
+        "macro_f05": 0.9500714403751865
+      },
+      "us": {
+        "entities": 6012,
+        "macro_f05": 0.9629032663129095
+      }
+    }
+  },
+  "paired_macro_gain": 0.008102516959890537,
+  "paired_gain_95pct_ci": [
+    0.0064287911718930255,
+    0.009760706148794865
+  ],
+  "selection_sha256": "b656d926cfc8323405ad214daa96f86cf3f2a1d9430edf3b48b5ae38fedef1ad",
+  "audit_entities": 10000,
+  "leaderboard_score": null,
+  "france": "No labeled France records; country generalization remains unmeasured.",
+  "acceptance": "Paired gain lower bound > 0, precision drop <= .002, and no increase in singleton false positives."
+}

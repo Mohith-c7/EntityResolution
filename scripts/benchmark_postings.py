@@ -25,10 +25,11 @@ from src.model.name_aliases import NameAliases
 
 STATE = None
 CACHE = None
+BRIDGE_OPTIONS = None
 
 
-def initialize(artifact, index_dir, options, top_k, native_extension, split="train", cache_dir=None, ranking_path=None):
-    global STATE, CACHE
+def initialize(artifact, index_dir, options, top_k, native_extension, split="train", cache_dir=None, ranking_path=None, bridge_options=None):
+    global STATE, CACHE, BRIDGE_OPTIONS
     artifact = Path(artifact)
     report = json.loads((artifact / "report.json").read_text())
     aliases = NameAliases.load(artifact / "name_aliases.json")
@@ -44,6 +45,7 @@ def initialize(artifact, index_dir, options, top_k, native_extension, split="tra
     assert model.feature_name() == list(names_for_version(report["feature_version"]))
     STATE = report, indexes, model
     CACHE = cache_dir
+    BRIDGE_OPTIONS = bridge_options
 
 
 def score(rows):
@@ -52,10 +54,14 @@ def score(rows):
     before = [{k: v for k, v in index.profile.items()} for index in indexes]
     for row in rows:
         reference = normalize_record(row)
+        bridged = None
+        if BRIDGE_OPTIONS:
+            from src.blocking.bridge import retrieve_with_bridges
+            bridged = retrieve_with_bridges(reference, indexes, indexes[0].ranking_model, **BRIDGE_OPTIONS)
         ids = []
         start = len(matrix)
         for index in indexes:
-            pairs = index.query(reference)
+            pairs = bridged[index.source] if bridged is not None else index.query(reference)
             stamp = time.perf_counter()
             for candidate, target in pairs:
                 features = build_versioned_pair_features(reference, target, candidate, index, report["feature_version"])
@@ -104,12 +110,23 @@ def main():
     parser.add_argument("--test", action="store_true", help="Unlabelled test throughput/country diagnostics only")
     parser.add_argument("--cache-dir", type=Path)
     parser.add_argument("--ranking-model", type=Path)
+    parser.add_argument("--baseline-predictions", type=Path, help="Optional saved scores for a same-reference baseline")
+    parser.add_argument("--bridge", action="store_true")
+    parser.add_argument("--bridge-min-probability", type=float, default=.99)
+    parser.add_argument("--informative-bridges-only", action="store_true")
     parser.add_argument("--timing-note", default="Includes worker startup, retrieval, features, scoring and optional feature-cache writes; excludes full output assembly and validators.")
     parser.add_argument("--artifact", type=Path, default=Path("models/features_v3_audit01"))
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     if args.entities < 1 or args.workers < 1:
         parser.error("Entity and worker counts must be positive")
+    if args.baseline_predictions and not args.baseline_predictions.is_file():
+        parser.error("Explicit baseline predictions file does not exist")
+    if args.bridge and not args.ranking_model: parser.error("Bridge retrieval requires a blocking ranker")
+    if not 0 <= args.bridge_min_probability <= 1: parser.error("Invalid bridge seed probability")
+    if args.informative_bridges_only and not args.bridge: parser.error("Informative seed gating requires --bridge")
+    bridge_options = {"min_probability": args.bridge_min_probability, "max_seeds": 2,
+                      "informative_only": args.informative_bridges_only} if args.bridge else None
     if args.test:
         refs = []
         rng = random.Random(42)
@@ -134,12 +151,14 @@ def main():
         (args.cache_dir / "manifest.json").write_text(json.dumps({"complete": False,
             "model_sha256": hashlib.sha256((args.artifact / "model.txt").read_bytes()).hexdigest(),
             "alias_sha256": hashlib.sha256((args.artifact / "name_aliases.json").read_bytes()).hexdigest(),
+            "ranking_model_sha256": hashlib.sha256(args.ranking_model.read_bytes()).hexdigest() if args.ranking_model else None,
+            "bridge_options": bridge_options,
             "config": options, "top_k": args.top_k, "test": args.test,
             "reference_ids": [r["entity_id"] for r in refs]}, indent=2))
     started = time.perf_counter()
     chunks = [refs[i:i+25] for i in range(0, len(refs), 25)]
     if args.workers == 1:
-        initialize(args.artifact, Path("models"), options, args.top_k, args.native_extension, "test" if args.test else "train", args.cache_dir, args.ranking_model)
+        initialize(args.artifact, Path("models"), options, args.top_k, args.native_extension, "test" if args.test else "train", args.cache_dir, args.ranking_model, bridge_options)
         batches = []
         for chunk in chunks:
             batches.append(score(chunk))
@@ -147,7 +166,7 @@ def main():
     else:
         with ProcessPoolExecutor(max_workers=args.workers, mp_context=multiprocessing.get_context("spawn"),
             initializer=initialize, initargs=(args.artifact, Path("models"), options, args.top_k, args.native_extension,
-                                            "test" if args.test else "train", args.cache_dir, args.ranking_model)) as pool:
+                                            "test" if args.test else "train", args.cache_dir, args.ranking_model, bridge_options)) as pool:
             batches = []
             for batch in pool.map(score, chunks):
                 batches.append(batch)
@@ -164,6 +183,7 @@ def main():
         "references_per_second": len(rows)/seconds, "options": options, "top_k_per_source": args.top_k,
         "native_extension": str(args.native_extension) if args.native_extension else None,
         "ranking_model": str(args.ranking_model) if args.ranking_model else None,
+        "bridge_options": bridge_options,
         "timing_note": args.timing_note,
         "mean_candidates": sum(map(len, candidates.values()))/len(rows),
         "profile_worker_seconds_summed": profile,
@@ -184,7 +204,9 @@ def main():
     if truth is not None:
         result["matching"] = score_matches(truth, predictions)
         result["oracle"] = score_matches(truth, {e: truth[e] & ids for e, ids in candidates.items()})
-        previous = pd.read_parquet(args.artifact / "predictions_tune.parquet")
+    baseline_path = args.baseline_predictions or args.artifact / "predictions_tune.parquet"
+    if truth is not None and baseline_path.exists():
+        previous = pd.read_parquet(baseline_path)
         selected = previous[previous.source1_entity_id.isin(truth)]
         baseline = {e: [] for e in truth}
         baseline_candidates = {e: set() for e in truth}

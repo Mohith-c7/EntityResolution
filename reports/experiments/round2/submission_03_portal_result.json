@@ -1,0 +1,10 @@
+{
+  "source": "user_reported_portal_result",
+  "portal_macro_f05": 0.9399,
+  "submission_directory": "output/submission_03",
+  "matching_sha256": "984a5dac0c127e5e8f1281ceed05a6716ae1b73e1e2fe9139381c7ec8dd31da9",
+  "artifact_association": "Current discussion identifies the first complete submission; upload hash not independently verified with portal.",
+  "local_tuning_macro_f05": 0.959410822586333,
+  "observed_difference": 0.019510822586333076,
+  "portal_subset": "Unknown public subset; no country-level scores supplied."
+}

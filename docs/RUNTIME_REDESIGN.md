@@ -2,11 +2,11 @@
 
 ## Current run
 
-`output/submission_03/` contains an independent, frozen submission run. It uses the saved v3 LightGBM matcher, a new bounded-postings retrieval engine, and a threshold of 0.75 selected on tuning data. Submission 01 and 02 remain stopped with their checkpoints preserved.
+`output/submission_03/` contains the completed, frozen first submission. Both validators passed with ID checking enabled. The team reports a portal score of **0.9399**. It uses the saved v3 LightGBM matcher, bounded-postings retrieval, and threshold 0.75. Submission 01 and 02 remain stopped with their checkpoints preserved.
 
 The complete test set contains 1,732,544 Source 1 references. Every reference, including France and empty predictions, must appear once in each output file. The matching file is published to `output/matching_results.tsv` only after strict and official validation pass with ID checking enabled.
 
-The inherited 0.960616 holdout score belongs to the earlier retrieval pipeline. The redesigned pipeline currently has a **0.9594108 tuning score**, not a fresh holdout score or leaderboard score. The portal score is unknown.
+The inherited 0.960616 holdout score belongs to an earlier retrieval pipeline. The submitted pipeline's **0.9594108 tuning score** and reported **0.9399 portal score** measure different datasets. The subsequent 300k matcher passed a new audit at **0.965888** and has not been submitted. New submission generation is paused by request; current model work is documented in [the round-two plan](ROUND_2_MODEL_PLAN.md).
 
 ## Runtime evidence
 
@@ -121,7 +121,7 @@ Larger experiment splits are now reserved under `models/scale_v1_plan/`:
 - 50,000 tuning references, retaining the current 10,000.
 - 10,000 previously uninspected audit references. Their labels have not been used for model selection or error analysis.
 
-The larger training run is now active, as described below. A single cache made with one supervised alias model cannot safely serve every fold. Full-universe out-of-fold ownership experiments require consistent fold-specific supervision throughout retrieval, aliases and matching; shared label-free indexes can still be reused.
+The larger training run has completed. A single cache made with one supervised alias model cannot safely serve every fold. Full-universe out-of-fold ownership experiments require consistent fold-specific supervision throughout retrieval, aliases and matching; shared label-free indexes can still be reused.
 
 A separate complementary-matcher control is testing removal of blocking score and eight alias-derived features. It uses cached training pairs and two CPU threads. Any resulting score is exploratory tuning evidence until confirmed on an untouched audit. None of these experiments changes the running submission.
 
@@ -129,7 +129,7 @@ The complementary-matcher experiment completed: a 25% blend of the 56-feature co
 
 ## Larger matcher experiment
 
-The experiment under `models/scale_v1_run/` runs independently of submission 03. Its source snapshot is frozen and checked before each stage. It implements:
+The completed experiment under `models/scale_v1_run/` ran independently of submission 03. It passed the fresh 10k audit at 0.965888. Its source snapshot was frozen and checked before each stage. It implements:
 
 1. Five inner entity folds within the outer training fold. Each training entity uses an alias model fitted without its entire inner fold, for both candidate retrieval and matching features.
 2. Full outer-training aliases for tuning, audit and test inference. Their 653,487 confident mappings and 46,580 ambiguous mappings exactly match the existing inference aliases.

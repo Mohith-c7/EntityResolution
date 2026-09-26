@@ -4,13 +4,15 @@ Offline business matching using the seven organizer TSVs, bounded disk indexes, 
 
 ## Latest completed result
 
-The verified `models/features_v3_audit01` model achieved **0.960616 macro F₀.₅** on **5,000 unused holdout entities**. On the identical entities, the frozen v2 model scores 0.948512. Precision improves from 0.981779 to 0.988304, recall from 0.901517 to 0.916518, and singleton false positives fall from 27 to 19. Paired macro gain: **0.012104**, with bootstrap 95% interval **[0.009178, 0.015012]**. These are local scores; there is no leaderboard score yet.
+The first completed submission received a **0.9399 portal score**, reported by the team. Its files are preserved under `output/submission_03/`; both strict and official validators passed with ID checking enabled. It covers all 1,732,544 test references, including France.
 
-Version 3 uses 65 features, 20,000 classifier-training entities, and 10,000 separate tuning entities. Threshold 0.76 and model settings were frozen before the fresh audit. All acceptance gates passed. The old 0.951057 score belongs to a different 2,000-reference cohort.
+The larger `models/scale_v1_run/model_300k` matcher achieved **0.965888 local macro F0.5** on a fresh 10,000-entity audit, versus **0.957786** for the previous matcher on the same entities. Precision increased to 0.989011, recall to 0.927543, and singleton false matches fell from 44 to 31. Paired gain: **0.008103**, with 95% interval **[0.006429, 0.009761]**. This model uses 300,000 training references, 65 features and five-fold training aliases. It has not been submitted.
 
-Retrieval remains the release bottleneck. A paired 600-reference benchmark measured 17.74 references/second for baseline and 19.99 with memory mapping. Removing numeric/location retrieval reached 21.92 but lowered matching quality, so it was not adopted. The fresh candidate oracle is 0.989322 with 40 candidates per reference; better ranking is needed to make 0.99 attainable on this cohort.
+Current development experiments combine learned candidate ranking, one-hop blocking expansion and a second-stage candidate-context model. The conservative selection reaches **0.970635 on 20,000 development entities**, with candidate oracle **0.993451** and 40 candidates per reference. This is not a fresh-audit or portal score. See [the round-two model plan and research](docs/ROUND_2_MODEL_PLAN.md).
 
-Submission 03 is running with frozen bounded-postings retrieval and the v3 matcher. Its tuning macro F0.5 is 0.9594108; a fresh holdout score for this retrieval configuration is pending. The official-test benchmark reached 252 references/second on 10,000 sampled references, including France. See [the runtime and score plan](docs/RUNTIME_REDESIGN.md). Submission 02 remains stopped at 3,200 references and Submission 01 at 37,000; their models and checkpoints are preserved. See [the frozen-run instructions](docs/SUBMISSION_02.md), [the review implementation plan](docs/REVIEW_IMPLEMENTATION_PLAN.md) and [the aggregate audit report](reports/experiments/features_v3_fresh_audit.json). A complete upload file is published only after both validators pass.
+**Submission generation is paused by request while working toward 0.99.** Preserve the existing upload and frozen artifacts; do not automatically create another submission from development improvements. The earlier audit sets are consumed and must not be reused for tuning. France still has no labeled evaluation.
+
+Historical v3 results, runtime benchmarks and stopped submission 01/02 checkpoints are documented in [the runtime plan](docs/RUNTIME_REDESIGN.md). The old 0.951057 and 0.960616 results belong to different, earlier holdout cohorts and pipelines.
 
 ## Earlier development results
 
@@ -23,7 +25,7 @@ The complete training target pool contains 5,034,616 S2 records and 5,285,603 S3
 
 These are exploratory local scores, not leaderboard results. The improved pilot's bootstrap 95% interval is 0.9108–0.9412. Its name channel is fitted on all eligible training-fold names and counterparts, separately from the classifier sample. Multiple components changed between pilots; this is not an isolated feature ablation. France is test-only, so these results do not establish French accuracy.
 
-All seven files passed a full schema, ID, ground-truth, ownership, and train/test-ID overlap audit. Sanhitha's normalization fixes at `17c9532` are integrated, with blank-field regression fixes. Full official-test predictions and a submission archive are still pending.
+All seven files passed a full schema, ID, ground-truth, ownership, and train/test-ID overlap audit. Sanhitha's normalization fixes at `17c9532` are integrated, with blank-field regression fixes. Full official-test predictions are complete; final archive packaging remains separate.
 
 ## Run and review
 

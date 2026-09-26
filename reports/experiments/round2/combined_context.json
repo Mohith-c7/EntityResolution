@@ -1,0 +1,102 @@
+{
+  "status": "tuning_only_requires_new_audit",
+  "baseline_context_original_retrieval": {
+    "context_weight": 0.75,
+    "threshold": 0.73,
+    "macro_f05": 0.9691994284487384,
+    "entities": 20000,
+    "true_links": 69137,
+    "predicted_links": 64852,
+    "true_positive_links": 64357,
+    "micro_precision": 0.9923672361685068,
+    "micro_recall": 0.9308619118561696,
+    "singleton_entities": 1130,
+    "singleton_false_positives": 28,
+    "non_singleton_empty_predictions": 152,
+    "country_macro_f05": {
+      "india": {
+        "entities": 7961,
+        "macro_f05": 0.9617448853440256
+      },
+      "us": {
+        "entities": 12039,
+        "macro_f05": 0.9741288758826299
+      }
+    }
+  },
+  "same_context_rule_new_retrieval": {
+    "threshold": 0.73,
+    "macro_f05": 0.9709652596264235,
+    "entities": 20000,
+    "true_links": 69137,
+    "predicted_links": 65407,
+    "true_positive_links": 64845,
+    "micro_precision": 0.9914076474995032,
+    "micro_recall": 0.937920361022318,
+    "singleton_entities": 1130,
+    "singleton_false_positives": 29,
+    "non_singleton_empty_predictions": 139,
+    "country_macro_f05": {
+      "india": {
+        "entities": 7961,
+        "macro_f05": 0.9650368403157343
+      },
+      "us": {
+        "entities": 12039,
+        "macro_f05": 0.9748855309224113
+      }
+    }
+  },
+  "selection": {
+    "context_weight": 0.75,
+    "threshold": 0.76,
+    "macro_f05": 0.9706349723307776,
+    "entities": 20000,
+    "true_links": 69137,
+    "predicted_links": 65023,
+    "true_positive_links": 64549,
+    "micro_precision": 0.9927102717499962,
+    "micro_recall": 0.933639006610064,
+    "singleton_entities": 1130,
+    "singleton_false_positives": 28,
+    "non_singleton_empty_predictions": 145,
+    "country_macro_f05": {
+      "india": {
+        "entities": 7961,
+        "macro_f05": 0.9642799307021944
+      },
+      "us": {
+        "entities": 12039,
+        "macro_f05": 0.9748373551204736
+      }
+    }
+  },
+  "macro_gain": 0.0014355438820391475,
+  "oracle": {
+    "threshold": 0.5,
+    "macro_f05": 0.9934507878463738,
+    "entities": 20000,
+    "true_links": 69137,
+    "predicted_links": 67870,
+    "true_positive_links": 67870,
+    "micro_precision": 1.0,
+    "micro_recall": 0.981674067431332,
+    "singleton_entities": 1130,
+    "singleton_false_positives": 0,
+    "non_singleton_empty_predictions": 39,
+    "country_macro_f05": {
+      "india": {
+        "entities": 7961,
+        "macro_f05": 0.9884617427226937
+      },
+      "us": {
+        "entities": 12039,
+        "macro_f05": 0.9967498814778724
+      }
+    }
+  },
+  "model_sha256": "f66e727e2a12f36fdfb25fab150ff9d5802b2ed75d8bfb245159a9dd35e303a2",
+  "candidate_manifest_sha256": "13fe07f16dda8be6325fcde21def2c4ad500d8c0e780b01c50c3d213ed97cf74",
+  "fresh_audit_evaluated": false,
+  "submission_generated": false
+}
