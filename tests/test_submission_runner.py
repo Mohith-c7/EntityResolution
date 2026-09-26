@@ -1,6 +1,7 @@
 """Durable checkpoints and full finalization on a tiny offline fixture."""
 
 import importlib.util
+import fcntl
 import json
 import shutil
 import subprocess
@@ -63,6 +64,11 @@ def test_frozen_inference_finalizes_validates_and_resumes_without_scoring(tmp_pa
     (submission / "frozen_assets_sha256.json").write_text(json.dumps({"model/model.txt": runner.digest(model / "model.txt")}))
     command = [sys.executable, str(ROOT / "scripts/create_submission.py"), "--submission-dir", str(submission),
         "--test-dir", str(test), "--index-dir", str(indexes), "--workers", "1", "--batch-size", "1"]
+    with (submission / ".run.lock").open("a+") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        blocked = subprocess.run(command, capture_output=True, text=True)
+        assert blocked.returncode != 0
+        assert "already has an active runner" in blocked.stderr
     result = subprocess.run(command, capture_output=True, text=True)
     assert result.returncode == 0, result.stdout + result.stderr
     summary = json.loads((submission / "submission_report.json").read_text())

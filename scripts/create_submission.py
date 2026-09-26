@@ -6,6 +6,7 @@ This runner adds durable chunks and finalization without changing model behavior
 
 import argparse
 import csv
+import fcntl
 import hashlib
 import json
 import multiprocessing
@@ -113,6 +114,13 @@ def percentile(histogram, q, count):
 def run(args):
     start = time.perf_counter()
     submission, test, indexes = args.submission_dir.resolve(), args.test_dir.resolve(), args.index_dir.resolve()
+    lock = (submission / ".run.lock").open("a+")
+    try:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        raise RuntimeError("This submission already has an active runner") from None
+    lock.seek(0); lock.truncate()
+    lock.write(str(os.getpid()) + "\n"); lock.flush()
     package, model = submission / "code/business_entity_resolution", submission / "model"
     sys.path.insert(0, str(package))
     from src.pipeline.inference import batches
@@ -191,6 +199,9 @@ def run(args):
             publish_progress()
     if total["entities"] != expected_entities:
         raise ValueError("Inference did not cover the complete test Source 1 file")
+    for name, details in test_info.items():
+        if digest(test / name) != details["sha256"]:
+            raise ValueError(f"Test file changed during inference: {name}")
     write_json(submission / "progress.json", {**total, "status": "assembling", "ready_for_upload": False})
     for kind, filename, header in (("matching", "matching_results.tsv", "source1_entity_id\tmatched_entity_ids\n"),
         ("candidate", "candidate_pairs.tsv", "source1_entity_id\tcandidate_entity_ids\n")):
@@ -236,6 +247,22 @@ def run(args):
         "environment": {"python": sys.version, "platform": platform.platform()}}
     write_json(submission / "submission_report.json", summary)
     write_json(submission / "progress.json", summary)
+    summary_lines = ["# Submission 01", "", "Complete inference; both validators passed with ID checks enabled.", "",
+        f"Upload: [matching_results.tsv]({root_output / 'matching_results.tsv'})", "",
+        f"Local validation macro F0.5: **{summary['local_validation_macro_f05']:.9f}**. Leaderboard score: **unknown**.", "",
+        f"- Test Source 1 entities: {total['entities']:,}",
+        f"- Predicted matching links: {total['predicted_links']:,}",
+        f"- Empty predictions: {total['empty_predictions']:,} ({summary['predicted_no_match_rate']:.4%})",
+        f"- Scored/exported candidates: {total['scored_candidates']:,}",
+        f"- Mean candidates per Source 1: {summary['mean_candidates_per_s1']:.4f}",
+        f"- p95 candidates per Source 1: {summary['p95_candidates_per_s1']}", "",
+        "Empty predictions are predicted no-match entities. True test singletons are unknown.", "",
+        "| Country | Source 1 entities | Predicted links | Empty predictions | Candidates |",
+        "|---|---:|---:|---:|---:|"]
+    for country, counts in sorted(total["country"].items()):
+        summary_lines.append(f"| {country} | {counts['entities']:,} | {counts['predicted_links']:,} | {counts['empty_predictions']:,} | {counts['scored_candidates']:,} |")
+    summary_lines.extend(["", "Both output files and the frozen model/configuration are preserved under `output/submission_01/`.", ""])
+    (submission / "SUBMISSION_REPORT.md").write_text("\n".join(summary_lines))
     print(json.dumps(summary), flush=True)
 
 
