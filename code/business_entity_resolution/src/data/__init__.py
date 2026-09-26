@@ -14,6 +14,7 @@ from src.data.loader import (
     load_tsv,
 )
 from src.data.profiling import (
+    compute_exact_median_from_histogram,
     find_ground_truth_examples,
     print_profiling_summary,
     profile_ground_truth,
@@ -46,6 +47,7 @@ __all__ = [
     "validate_ground_truth_contract",
     "profile_source_dataset",
     "profile_ground_truth",
+    "compute_exact_median_from_histogram",
     "find_ground_truth_examples",
     "print_profiling_summary",
 ]
