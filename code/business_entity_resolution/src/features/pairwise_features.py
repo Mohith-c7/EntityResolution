@@ -328,7 +328,8 @@ def _address_features(s1: dict, cand: dict) -> list[float]:
     # Digit tokens from address (proxy for postcodes/numbers)
     postal1 = extract_digits(raw_s1)
     postal2 = extract_digits(raw_cand)
-    city_postal = float(postal1 == postal2 and postal1 != "")
+    postal_match = float(bool(postal1) and postal1 == postal2)
+    city_postal = postal_match
 
     # Address component agreement: matching non-empty token subsets
     # Use first, middle and last tokens as proxies for street/city/postcode
@@ -346,7 +347,7 @@ def _address_features(s1: dict, cand: dict) -> list[float]:
     )
 
     tfidf = _tfidf_cosine(a1, a2)
-    postcode = float(postal1 == postal2 and postal1 != "")
+    postcode = postal_match
 
     return [exact, jw, tok_overlap, street_sim, city_postal, float(agree), tfidf, postcode]
 
@@ -373,15 +374,21 @@ def _digit_features(s1: dict, cand: dict) -> list[float]:
     addr_digits_s1 = extract_digits(_safe_str(s1.get("address")))
     addr_digits_cand = extract_digits(_safe_str(cand.get("address")))
 
-    name_exact = float(name_digits_s1 == name_digits_cand and name_digits_s1 != "")
-    name_lev = _levenshtein_norm(name_digits_s1, name_digits_cand) if (name_digits_s1 or name_digits_cand) else 0.0
+    name_exact = float(bool(name_digits_s1) and name_digits_s1 == name_digits_cand)
+    addr_exact = float(bool(addr_digits_s1) and addr_digits_s1 == addr_digits_cand)
 
-    addr_exact = float(addr_digits_s1 == addr_digits_cand and addr_digits_s1 != "")
-    addr_lev = _levenshtein_norm(addr_digits_s1, addr_digits_cand) if (addr_digits_s1 or addr_digits_cand) else 0.0
+    name_str_s1 = " ".join(name_digits_s1) if isinstance(name_digits_s1, (tuple, list)) else str(name_digits_s1)
+    name_str_cand = " ".join(name_digits_cand) if isinstance(name_digits_cand, (tuple, list)) else str(name_digits_cand)
+    addr_str_s1 = " ".join(addr_digits_s1) if isinstance(addr_digits_s1, (tuple, list)) else str(addr_digits_s1)
+    addr_str_cand = " ".join(addr_digits_cand) if isinstance(addr_digits_cand, (tuple, list)) else str(addr_digits_cand)
+
+    name_lev = _levenshtein_norm(name_str_s1, name_str_cand) if (name_str_s1 or name_str_cand) else 0.0
+    addr_lev = _levenshtein_norm(addr_str_s1, addr_str_cand) if (addr_str_s1 or addr_str_cand) else 0.0
 
     # Token Jaccard overlap on digit token sets
-    def _digit_jaccard(a: str, b: str) -> float:
-        sa, sb = set(a.split()), set(b.split())
+    def _digit_jaccard(tokens_a: Any, tokens_b: Any) -> float:
+        sa = set(tokens_a) if isinstance(tokens_a, (tuple, list)) else set(str(tokens_a).split())
+        sb = set(tokens_b) if isinstance(tokens_b, (tuple, list)) else set(str(tokens_b).split())
         sa.discard("")
         sb.discard("")
         if not sa and not sb:

@@ -64,7 +64,7 @@ def entity_level_split(
     """
     if split_manifest_path is not None:
         import json
-        manifest = json.loads(Path(split_manifest_path).read_text())
+        manifest = json.loads(Path(split_manifest_path).read_text(encoding="utf-8"))
         train_ids = set(manifest["train_s1_ids"])
         val_ids = set(manifest["val_s1_ids"])
         train_df = candidate_pairs[candidate_pairs["s1_id"].isin(train_ids)].copy()
@@ -274,7 +274,7 @@ def save_model(model: lgb.Booster, threshold: float, path: str) -> None:
     model.save_model(str(model_path))
 
     sidecar_path = model_path.with_suffix(".threshold.json")
-    sidecar_path.write_text(json.dumps({"threshold": threshold}))
+    sidecar_path.write_text(json.dumps({"threshold": threshold}), encoding="utf-8")
     logger.info("Model saved to %s, threshold to %s", model_path, sidecar_path)
 
 
@@ -292,7 +292,7 @@ def load_model(path: str) -> tuple[lgb.Booster, float]:
     booster = lgb.Booster(model_file=str(model_path))
 
     sidecar_path = model_path.with_suffix(".threshold.json")
-    threshold = json.loads(sidecar_path.read_text())["threshold"]
+    threshold = json.loads(sidecar_path.read_text(encoding="utf-8"))["threshold"]
 
     logger.info("Model loaded from %s, threshold=%.4f", model_path, threshold)
     return booster, threshold
@@ -309,7 +309,7 @@ def save_feature_schema(feature_names: list[str], defaults: dict, path: str) -> 
     Requirements: 5.3
     """
     schema = {"feature_names": feature_names, "defaults": defaults}
-    Path(path).write_text(json.dumps(schema, indent=2))
+    Path(path).write_text(json.dumps(schema, indent=2), encoding="utf-8")
     logger.info("Feature schema saved to %s", path)
 
 
@@ -323,5 +323,5 @@ def load_feature_schema(path: str) -> tuple[list[str], dict]:
 
     Requirements: 5.4
     """
-    schema = json.loads(Path(path).read_text())
+    schema = json.loads(Path(path).read_text(encoding="utf-8"))
     return schema["feature_names"], schema["defaults"]
