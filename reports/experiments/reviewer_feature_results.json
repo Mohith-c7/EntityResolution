@@ -1,0 +1,141 @@
+{
+  "retrained_v2_50": {
+    "threshold": 0.7100000000000004,
+    "best_iteration": 1200,
+    "tune_macro": 0.9549115499833084,
+    "tune_precision": 0.9842792013834303,
+    "tune_recall": 0.9063404748118123,
+    "holdout_macro": 0.9510571966744428,
+    "holdout_precision": 0.9848271547004536,
+    "holdout_recall": 0.9045977011494253,
+    "holdout_singleton_fp": 4,
+    "holdout_country": {
+      "US": 0.960051,
+      "India": 0.936099
+    },
+    "gain_share_new": {},
+    "blocking_score_gain_share": 0.6288
+  },
+  "v2_plus_numeric": {
+    "threshold": 0.6700000000000004,
+    "best_iteration": 1200,
+    "tune_macro": 0.9566436641303973,
+    "tune_precision": 0.9811057766764751,
+    "tune_recall": 0.9170526925303996,
+    "holdout_macro": 0.9544249748295093,
+    "holdout_precision": 0.9825072886297376,
+    "holdout_recall": 0.9199712643678161,
+    "holdout_singleton_fp": 5,
+    "holdout_country": {
+      "US": 0.962639,
+      "India": 0.940765
+    },
+    "gain_share_new": {
+      "num_containment": 0.0046,
+      "num_single_substitution": 0.0025,
+      "num_disjoint_contradiction": 0.0069,
+      "num_left_only": 0.0049,
+      "num_right_only": 0.0065
+    },
+    "blocking_score_gain_share": 0.6503,
+    "holdout_paired_gain": 0.0033677781550664775,
+    "holdout_paired_gain_95": [
+      0.00026053738230464755,
+      0.006454925769989401
+    ]
+  },
+  "v2_plus_name": {
+    "threshold": 0.6900000000000004,
+    "best_iteration": 1200,
+    "tune_macro": 0.9600437032585807,
+    "tune_precision": 0.9852530270102453,
+    "tune_recall": 0.9187898089171974,
+    "holdout_macro": 0.956122587253558,
+    "holdout_precision": 0.9862442040185472,
+    "holdout_recall": 0.9168103448275862,
+    "holdout_singleton_fp": 6,
+    "holdout_country": {
+      "US": 0.960119,
+      "India": 0.949476
+    },
+    "gain_share_new": {
+      "phonetic_name_set": 0.0035,
+      "phonetic_name_sort": 0.0012,
+      "phonetic_char_jaccard": 0.0049,
+      "concat_ratio": 0.0085,
+      "concat_partial": 0.0421,
+      "cand_name_min_log_df": 0.0115,
+      "ref_name_min_log_df": 0.0014
+    },
+    "blocking_score_gain_share": 0.5322,
+    "holdout_paired_gain": 0.005065390579115202,
+    "holdout_paired_gain_95": [
+      0.0011404276306439078,
+      0.009169453183178668
+    ]
+  },
+  "v2_plus_address": {
+    "threshold": 0.6800000000000004,
+    "best_iteration": 1200,
+    "tune_macro": 0.954450207916695,
+    "tune_precision": 0.9813171415226529,
+    "tune_recall": 0.9124203821656051,
+    "holdout_macro": 0.951000151872039,
+    "holdout_precision": 0.9824941905499612,
+    "holdout_recall": 0.9112068965517242,
+    "holdout_singleton_fp": 5,
+    "holdout_country": {
+      "US": 0.95847,
+      "India": 0.938576
+    },
+    "gain_share_new": {
+      "addr_left_unmatched_idf": 0.0049,
+      "addr_right_unmatched_idf": 0.0287,
+      "addr_distinct_mismatch": 0.002
+    },
+    "blocking_score_gain_share": 0.6135,
+    "holdout_paired_gain": -5.704480240380094e-05,
+    "holdout_paired_gain_95": [
+      -0.002167985969129452,
+      0.0020661267264779613
+    ]
+  },
+  "v2_plus_all": {
+    "threshold": 0.7200000000000004,
+    "best_iteration": 1200,
+    "tune_macro": 0.9612207060852513,
+    "tune_precision": 0.9858805275407293,
+    "tune_recall": 0.9198031268094963,
+    "holdout_macro": 0.9571532267644423,
+    "holdout_precision": 0.9867468022807828,
+    "holdout_recall": 0.9199712643678161,
+    "holdout_singleton_fp": 6,
+    "holdout_country": {
+      "US": 0.964722,
+      "India": 0.944565
+    },
+    "gain_share_new": {
+      "num_containment": 0.0041,
+      "num_single_substitution": 0.0017,
+      "num_disjoint_contradiction": 0.0129,
+      "num_left_only": 0.0053,
+      "num_right_only": 0.0069,
+      "phonetic_name_set": 0.0032,
+      "phonetic_name_sort": 0.0009,
+      "phonetic_char_jaccard": 0.0039,
+      "concat_ratio": 0.0149,
+      "concat_partial": 0.0395,
+      "cand_name_min_log_df": 0.0113,
+      "ref_name_min_log_df": 0.0014,
+      "addr_left_unmatched_idf": 0.004,
+      "addr_right_unmatched_idf": 0.031,
+      "addr_distinct_mismatch": 0.0018
+    },
+    "blocking_score_gain_share": 0.5258,
+    "holdout_paired_gain": 0.006096030089999467,
+    "holdout_paired_gain_95": [
+      0.0017382543886870407,
+      0.010336961684002359
+    ]
+  }
+}

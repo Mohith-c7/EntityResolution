@@ -6,7 +6,7 @@ Date: 26 September 2026
 
 Improve macro F₀.₅ while retaining a small, auditable candidate set and practical full-test runtime. A top-10 position is the goal; neither local validation nor model complexity guarantees a rank.
 
-Execution order: finish Submission 01 with the verified `larger_alias_v4` saved baseline before starting further experiments. Its model, normalization, 50-feature schema, wide blocking configuration, and threshold `0.71` are frozen under `output/submission_01/`. Full inference, both validators with ID checks, versioned outputs, and an upload report are automated by `scripts/create_submission.py`. See [Submission 01](SUBMISSION_01.md). Resume the improvement priorities below only after this submission is complete, preserving it unchanged.
+Current execution order (updated after review): Submission 01 remains stopped at 37,000 checkpointed references. Feature version 3 has passed a new 5,000-entity audit at **0.960616 macro F₀.₅** after selection on 10,000 tuning entities. Improve batch retrieval and ranking next; the runtime benchmark remains around 20 references/second and the fresh retained-candidate oracle is 0.989322. Preserve the baseline and do not resume full generation without an explicit decision. See [the review implementation plan](REVIEW_IMPLEMENTATION_PLAN.md) for current results. The sections below retain the earlier baseline evidence and experiment rationale.
 
 The main metric is per-S1 macro F₀.₅, including singletons. For nonempty truth:
 

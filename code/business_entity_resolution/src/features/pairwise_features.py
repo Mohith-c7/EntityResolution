@@ -1,4 +1,4 @@
-"""The baseline 36-feature representation, with explicit empty-field behavior."""
+"""Versioned pair evidence with explicit missingness and stable legacy columns."""
 
 import math
 from functools import lru_cache
@@ -8,8 +8,10 @@ from rapidfuzz import fuzz
 from rapidfuzz.distance import JaroWinkler, Levenshtein
 
 from ..blocking.contracts import BlockingRecord, Candidate
-from ..preprocessing.normalize import extract_digits
-from .registry import FEATURE_NAMES, FEATURE_NAMES_V2
+from ..preprocessing.normalize import accent_fold, extract_digits
+from .registry import (FEATURE_NAMES, FEATURE_NAMES_V2, FEATURE_NAMES_V3_EXTRA,
+                       FEATURE_VERSION, FEATURE_VERSION_V2, FEATURE_VERSION_V3)
+from .evidence import phonetic, grams, numeric_relation, TLD
 
 
 def jaccard(left, right) -> float:
@@ -86,3 +88,46 @@ def build_extended_pair_features(left, right, candidate, index):
     ]
     base.update(zip(FEATURE_NAMES_V2[len(FEATURE_NAMES):],map(float,extras)))
     return base
+
+
+def build_v3_evidence(left, right, index):
+    """Fifteen additional features; preserve all previous 50 feature meanings."""
+    # Only standalone decimal tokens in this view: gui1len/hurtad0 are not
+    # street-number evidence. Keep B12/12A intact in the original numeric view.
+    ld = [t.lstrip("0") or "0" for t in extract_digits(" ".join(t for t in left.address.split() if t.isdecimal()))]
+    rd = [t.lstrip("0") or "0" for t in extract_digits(" ".join(t for t in right.address.split() if t.isdecimal()))]
+    pl, pr = phonetic(left.core or left.name), phonetic(right.core or right.name)
+    gl, gr = grams(pl), grams(pr)
+    cl = "".join(pl.split())
+    cr = "".join(t for t in pr.split() if t not in TLD)
+    rmin = min((index.df("name", accent_fold(t)) for t in right.name_tokens), default=0)
+    lmin = min((index.df("name", accent_fold(t)) for t in left.name_tokens), default=0)
+    at = {accent_fold(t) for t in left.address_tokens if not t.isdecimal()}
+    bt = {accent_fold(t) for t in right.address_tokens if not t.isdecimal()}
+    name_tokens = {accent_fold(t) for t in left.name_tokens | right.name_tokens}
+    if at and bt:
+        weights = {t: index.idf("address", t) for t in sorted(at | bt)}
+        lu = sum(weights[t] for t in sorted(at - bt)) / sum(weights[t] for t in sorted(at))
+        ru = sum(weights[t] for t in sorted(bt - at)) / sum(weights[t] for t in sorted(bt))
+        mismatch = float(any(len(t) >= 3 and weights[t] >= 6 for t in at - bt - name_tokens)
+                         and any(len(t) >= 3 and weights[t] >= 6 for t in bt - at - name_tokens))
+    else:
+        lu = ru = mismatch = -1.0
+    values = [*numeric_relation(ld, rd),
+        fuzz.token_set_ratio(pl, pr) / 100 if pl and pr else 0,
+        fuzz.token_sort_ratio(pl, pr) / 100 if pl and pr else 0,
+        jaccard(gl, gr), fuzz.ratio(cl, cr) / 100 if cl and cr else 0,
+        fuzz.partial_ratio(cl, cr) / 100 if cl and cr and min(len(cl), len(cr)) >= 4 else 0,
+        math.log1p(rmin), math.log1p(lmin), lu, ru, mismatch]
+    return dict(zip(FEATURE_NAMES_V3_EXTRA, map(float, values)))
+
+
+def build_versioned_pair_features(left, right, candidate, index, version):
+    if version == FEATURE_VERSION:
+        return build_pair_features(left, right, candidate)
+    if version not in (FEATURE_VERSION_V2, FEATURE_VERSION_V3):
+        raise ValueError(f"Unsupported feature version: {version}")
+    features = build_extended_pair_features(left, right, candidate, index)
+    if version == FEATURE_VERSION_V3:
+        features.update(build_v3_evidence(left, right, index))
+    return features

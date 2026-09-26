@@ -5,7 +5,9 @@ Main metric: macro F₀.₅, averaged over every Source 1 entity.
 
 ## Current state
 
-All seven official TSVs are downloaded and audited. Sanhitha's Unicode, null-handling, and preprocessing fixes are integrated. The latest full-target run reached 0.9511 local macro F₀.₅ on 2,000 held-out entities; this is not a leaderboard score. The runnable pipeline includes disk retrieval, 36/50 pair features, train-only name-channel fitting, LightGBM, threshold tuning, inference, and strict output validation.
+All seven official TSVs are audited. Feature version 3 now passes a fresh 5,000-entity audit at **0.960616 local macro F₀.₅**, compared with 0.948512 for the frozen baseline on those same entities. Precision and recall improve and singleton errors fall. The 10,000-entity tuning set selected threshold 0.76. There is no leaderboard score. Submission 01 remains stopped at 37,000 checkpointed references.
+
+Retrieval is now the immediate release priority: batch key joins, improved ranking before top-K, and a measured candidate budget. Memory mapping alone improves the short benchmark by about 13%; removing numeric/location queries lowers matching quality and is not adopted. See [the review implementation plan](REVIEW_IMPLEMENTATION_PLAN.md) for the measured results and team deliverables.
 
 ## Ownership and immediate work
 
@@ -18,7 +20,7 @@ All seven official TSVs are downloaded and audited. Sanhitha's Unicode, null-han
 
 ## Release order
 
-1. Implement targeted address/numeric and name-alignment features based on the remaining tuning errors.
+1. Implement batch retrieval and learned reranking against the verified version 3 matcher; keep the completed audit unused for further selection.
 2. Select the smallest candidate budget that preserves matching quality and retrieval coverage.
 3. Freeze model, feature version, alias asset, retrieval settings, and threshold.
 4. Evaluate a larger fresh audit population and unseen-name/transfer scenarios.

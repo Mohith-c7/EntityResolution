@@ -20,8 +20,8 @@ from ..blocking.disk_index import DiskSearchConfig, DiskSourceIndex, build_disk_
 from ..blocking.anchor_index import build_anchor_index
 from ..evaluation.metrics import bootstrap_interval, score_matches
 from ..evaluation.validation import entity_fold, sample_references
-from ..features.pairwise_features import build_pair_features, build_extended_pair_features
-from ..features.registry import DEFINITIONS, FEATURE_NAMES, FEATURE_VERSION, FEATURE_NAMES_V2, FEATURE_VERSION_V2
+from ..features.pairwise_features import build_pair_features, build_extended_pair_features, build_versioned_pair_features
+from ..features.registry import DEFINITIONS, FEATURE_NAMES, FEATURE_VERSION, FEATURE_NAMES_V2, FEATURE_VERSION_V2, names_for_version
 from ..model.name_aliases import fit_name_aliases
 from ..model.predict import predict
 from ..model.threshold import select_matches, tune_threshold
@@ -58,7 +58,10 @@ def load_labels(path: Path, selected: set[str], seed: int = 42):
         "source_match_cardinalities": {source: dict(sorted(hist.items())) for source, hist in source_cardinalities.items()}}
 
 
-def build_pairs(references: list[dict], indexes, truth: dict, fold: str, target_folds: dict, seed: int = 42, *, extended=False, filter_training=True, log_progress=True):
+def build_pairs(references: list[dict], indexes, truth: dict, fold: str, target_folds: dict, seed: int = 42, *, extended=False, feature_version=None, filter_training=True, log_progress=True):
+    version = feature_version or (FEATURE_VERSION_V2 if extended else FEATURE_VERSION)
+    names = names_for_version(version)
+    extended = version != FEATURE_VERSION
     start = time.perf_counter()
     rows, candidate_map, countries = [], {}, {}
     filtered = 0
@@ -80,12 +83,11 @@ def build_pairs(references: list[dict], indexes, truth: dict, fold: str, target_
                 "candidate_source": candidate.candidate_source, "rank_within_source": candidate.rank_within_source,
                 "blocking_paths": ",".join(candidate.blocking_paths),
                 "label": int(target.entity_id in truth[ref.entity_id]),
-                **(build_extended_pair_features(ref, target, candidate, index_by_source[candidate.candidate_source])
+                **(build_versioned_pair_features(ref, target, candidate, index_by_source[candidate.candidate_source], version)
                    if extended else build_pair_features(ref, target, candidate))})
         if log_progress and number % 100 == 0:
             print(json.dumps({"stage": "pair_features", "fold": fold, "references": number,
                 "pairs": len(rows), "seconds": round(time.perf_counter() - start, 1)}), flush=True)
-    names = FEATURE_NAMES_V2 if extended else FEATURE_NAMES
     columns = ["source1_entity_id", "candidate_entity_id", "candidate_source", "rank_within_source", "blocking_paths", "label", *names]
     frame = pd.DataFrame(rows, columns=columns)
     for name in names:
@@ -113,18 +115,18 @@ def initialize_training_worker(paths, config, alias_path):
 
 
 def training_chunk(task):
-    raw, truth, fold, seed, extended = task
-    return build_pairs(raw,_TRAIN_INDEXES,truth,fold,{},seed,extended=extended,filter_training=False,log_progress=False)
+    raw, truth, fold, seed, extended, feature_version = task
+    return build_pairs(raw,_TRAIN_INDEXES,truth,fold,{},seed,extended=extended,feature_version=feature_version,filter_training=False,log_progress=False)
 
 
-def parallel_pairs(references,indexes,truth,fold,target_folds,artifact_dir,config,workers,seed,extended):
+def parallel_pairs(references,indexes,truth,fold,target_folds,artifact_dir,config,workers,seed,extended,feature_version=None):
     if workers == 1:
-        return build_pairs(references,indexes,truth,fold,target_folds,seed,extended=extended)
+        return build_pairs(references,indexes,truth,fold,target_folds,seed,extended=extended,feature_version=feature_version)
     start = time.perf_counter()
     tasks=[]
     for offset in range(0,len(references),250):
         raw=references[offset:offset+250]
-        tasks.append((raw,{row["entity_id"]:truth[row["entity_id"]] for row in raw},fold,seed,extended))
+        tasks.append((raw,{row["entity_id"]:truth[row["entity_id"]] for row in raw},fold,seed,extended,feature_version))
     frames,countries,paths=[],{},Counter()
     with ProcessPoolExecutor(max_workers=workers,mp_context=multiprocessing.get_context("spawn"),
             initializer=initialize_training_worker,initargs=([idx.path for idx in indexes],config,artifact_dir/"name_aliases.json" if extended else None)) as executor:
@@ -154,10 +156,14 @@ def parallel_pairs(references,indexes,truth,fold,target_folds,artifact_dir,confi
 
 
 def run_training(train_dir: Path, index_dir: Path, artifact_dir: Path, *, train_entities=2000, tune_entities=500,
-                 holdout_entities=500, config: DiskSearchConfig | None = None, threads=4, seed=42,workers=4):
+                 holdout_entities=500, config: DiskSearchConfig | None = None, threads=4, seed=42,workers=4,feature_version=None):
     if workers < 1:
         raise ValueError("workers must be positive")
     config = config or DiskSearchConfig()
+    if feature_version and feature_version != FEATURE_VERSION and not config.use_name_aliases:
+        raise ValueError("Extended feature versions require fitted name aliases")
+    if feature_version:
+        names_for_version(feature_version)
     train_dir, index_dir, artifact_dir = Path(train_dir), Path(index_dir), Path(artifact_dir)
     if (artifact_dir / "model.txt").exists():
         raise FileExistsError(f"Completed experiment exists at {artifact_dir}; choose a new artifact directory")
@@ -167,7 +173,8 @@ def run_training(train_dir: Path, index_dir: Path, artifact_dir: Path, *, train_
     try:
         aliases = fit_name_aliases(train_dir, artifact_dir / "name_aliases.json", seed=seed) if config.use_name_aliases else None
         extended = config.use_name_aliases
-        names, version = (FEATURE_NAMES_V2, FEATURE_VERSION_V2) if extended else (FEATURE_NAMES, FEATURE_VERSION)
+        version = feature_version or (FEATURE_VERSION_V2 if extended else FEATURE_VERSION)
+        names = names_for_version(version)
         for source, number in (("S2", 2), ("S3", 3)):
             path = index_dir / f"index_train_{source}.sqlite"
             build_disk_index(train_dir / f"train_source{number}.tsv", path, source)
@@ -184,7 +191,7 @@ def run_training(train_dir: Path, index_dir: Path, artifact_dir: Path, *, train_
         print(json.dumps({"stage": "split_ready", **split["sample_counts"]}), flush=True)
         frames, country_maps, blocking = {}, {}, {}
         for fold, records in references.items():
-            frames[fold], country_maps[fold], blocking[fold] = parallel_pairs(records,indexes,truth,fold,target_folds,artifact_dir,config,workers,seed,extended)
+            frames[fold], country_maps[fold], blocking[fold] = parallel_pairs(records,indexes,truth,fold,target_folds,artifact_dir,config,workers,seed,extended,version)
             frames[fold].to_parquet(artifact_dir / f"pairs_{fold}.parquet", index=False)
             json_write(artifact_dir / "blocking_progress.json", blocking)
         del target_folds

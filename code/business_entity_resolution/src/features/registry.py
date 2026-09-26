@@ -22,6 +22,16 @@ FEATURE_NAMES_V2 = FEATURE_NAMES + (
     "name_weighted_jaccard", "address_weighted_jaccard", "strongest_shared_address_idf",
 )
 assert len(FEATURE_NAMES_V2) == 50
+FEATURE_VERSION_V3 = "pairwise-v3-65"
+FEATURE_NAMES_V3_EXTRA = (
+    "num_containment", "num_single_substitution", "num_disjoint_contradiction",
+    "num_left_only", "num_right_only", "phonetic_name_set", "phonetic_name_sort",
+    "phonetic_char_jaccard", "concat_ratio", "concat_partial",
+    "cand_name_min_log_df", "ref_name_min_log_df", "addr_left_unmatched_idf",
+    "addr_right_unmatched_idf", "addr_distinct_mismatch",
+)
+FEATURE_NAMES_V3 = FEATURE_NAMES_V2 + FEATURE_NAMES_V3_EXTRA
+assert len(FEATURE_NAMES_V3) == 65
 
 
 def names_for_version(version):
@@ -29,6 +39,8 @@ def names_for_version(version):
         return FEATURE_NAMES
     if version == FEATURE_VERSION_V2:
         return FEATURE_NAMES_V2
+    if version == FEATURE_VERSION_V3:
+        return FEATURE_NAMES_V3
     raise ValueError(f"Unsupported feature version: {version}")
 
 DEFINITIONS = {
@@ -42,4 +54,8 @@ DEFINITIONS = {
     "country_exact_match": "Equality of nonempty normalized strings; no country vocabulary or categorical encoding.",
     "metadata": "Only fused blocking score and S2/S3 flags enter the model; IDs, folds and labels never do.",
     "flags": "Exact equality and token-overlap flags require nonempty evidence; cross-field flags use whitespace-token intersections.",
+    "v3_numeric": "Zero-stripped standalone address numbers only in the additive view. Containment and one-position substitution compare unmatched tokens of length >=2. Missing numbers are not contradictions; original alphanumeric evidence remains in legacy columns.",
+    "v3_phonetic": "Approximate alternate names from Python Unicode character names, consonant/vowel simplification and contextual leetspeak folding. Preserve original text. Compare token-set, token-sort and character trigrams; collapse spaces for ratio/partial ratio. Candidate domain tokens are omitted from its collapsed view.",
+    "v3_rarity": "Log(1 + minimum target-source name-token document frequency), with Latin accent folding; label-free and zero for empty/absent tokens.",
+    "v3_address": "Fraction of each side's nondecimal address-token IDF absent on the other side. Distinctive mismatch requires unmatched non-name tokens of length >=3 and IDF >=6 on both sides. Values are -1 if either side has no such address tokens.",
 }

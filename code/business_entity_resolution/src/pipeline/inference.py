@@ -15,7 +15,7 @@ import numpy as np
 
 from ..blocking.disk_index import DiskSearchConfig, DiskSourceIndex, build_disk_index, normalize_record
 from ..blocking.anchor_index import build_anchor_index
-from ..features.pairwise_features import feature_vector, build_extended_pair_features
+from ..features.pairwise_features import feature_vector, build_versioned_pair_features
 from ..features.registry import FEATURE_VERSION, FEATURE_VERSION_V2, names_for_version
 from ..model.name_aliases import NameAliases
 from .export import validate_submission
@@ -42,9 +42,9 @@ def score_batch(raw_rows):
         reference = normalize_record(raw)
         pairs = [pair for index in indexes for pair in index.query(reference)]
         start = len(features)
-        if version == FEATURE_VERSION_V2:
-            features.extend(np.fromiter(build_extended_pair_features(reference,target,candidate,index_by_source[candidate.candidate_source]).values(),
-                dtype=np.float32,count=50) for candidate,target in pairs)
+        if version != FEATURE_VERSION:
+            features.extend(np.fromiter(build_versioned_pair_features(reference,target,candidate,index_by_source[candidate.candidate_source], version).values(),
+                dtype=np.float32,count=len(names_for_version(version))) for candidate,target in pairs)
         else:
             features.extend(feature_vector(reference, target, candidate) for candidate, target in pairs)
         groups.append((reference.entity_id, [c.candidate_entity_id for c, _ in pairs], start, len(features)))

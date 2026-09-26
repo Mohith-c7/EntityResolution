@@ -44,6 +44,23 @@ The completed `models/larger_alias_v4` run uses 20,000 training, 2,000 tuning, a
 
 On the same 2,000 held-out entities, the earlier model scores 0.933597. The paired gain is 0.017460, with bootstrap 95% interval 0.012734–0.022544. Further capacity changes gave only small tuning gains with reduced precision and are not promoted. See `docs/SCORE_IMPROVEMENT_PLAN.md` in the repository for the next experiments. Full test outputs remain pending.
 
+## Feature version 3
+
+The `pairwise-v3-65` registry adds numeric edit types, approximate script/phonetic comparisons, collapsed names, name rarity and unmatched address evidence. It preserves all prior 50 columns and primary normalization. Saved model feature names and order are checked at inference.
+
+For a new end-to-end experiment, add `--feature-version pairwise-v3-65` to the training command above. To reproduce the measured cached-training experiment from the full repository, first reproduce `models/larger_alias_v4`, then run:
+
+```bash
+python scripts/run_features_v3.py \
+  --baseline models/larger_alias_v4 \
+  --artifact-dir models/features_v3_audit01 \
+  --tune-entities 10000 --audit-entities 5000 --workers 8 --threads 8
+```
+
+The runner excludes IDs in previous reference manifests, so preserve `sampled_references.json` and `audit_protocol.json` when reproducing an exact cohort. An ordinary `run_training.py` sample is a different experiment. The completed artifact also contains an exact source snapshot and frozen hashes.
+
+On 5,000 unused audit entities, version 3 scores **0.960616**, compared with **0.948512** for the frozen baseline on the same entities. Precision is 0.988304, recall 0.916518, and 19 of 258 singletons receive a false match, versus 27 for baseline. All predefined audit gates pass. The threshold is 0.76, chosen on 10,000 tuning entities before the audit. This is a local result, not a leaderboard score. Retrieval runtime and final test generation remain unresolved.
+
 ## Name channel and features
 
 The name channel learns reusable name strings from only matched training-fold targets. It does not use entity IDs as model features. Confident mappings require support ≥2 and dominance ≥0.98. Ambiguous names retain up to three supported alternatives as conditional evidence without forced canonical rewriting.

@@ -4,9 +4,13 @@ Offline business matching using the seven organizer TSVs, bounded disk indexes, 
 
 ## Latest completed result
 
-The 20,000-training-entity run achieved **0.951057 macro F₀.₅** on 2,000 held-out entities, with 0.984827 precision and 0.904598 recall. The earlier model scores 0.933597 on these same entities. Paired gain: 0.017460 (bootstrap 95% interval 0.012734–0.022544). These are exploratory local results, not leaderboard scores.
+The verified `models/features_v3_audit01` model achieved **0.960616 macro F₀.₅** on **5,000 unused holdout entities**. On the identical entities, the frozen v2 model scores 0.948512. Precision improves from 0.981779 to 0.988304, recall from 0.901517 to 0.916518, and singleton false positives fall from 27 to 19. Paired macro gain: **0.012104**, with bootstrap 95% interval **[0.009178, 0.015012]**. These are local scores; there is no leaderboard score yet.
 
-See [the score improvement plan](docs/SCORE_IMPROVEMENT_PLAN.md) for the next experiments.
+Version 3 uses 65 features, 20,000 classifier-training entities, and 10,000 separate tuning entities. Threshold 0.76 and model settings were frozen before the fresh audit. All acceptance gates passed. The old 0.951057 score belongs to a different 2,000-reference cohort.
+
+Retrieval remains the release bottleneck. A paired 600-reference benchmark measured 17.74 references/second for baseline and 19.99 with memory mapping. Removing numeric/location retrieval reached 21.92 but lowered matching quality, so it was not adopted. The fresh candidate oracle is 0.989322 with 40 candidates per reference; better ranking is needed to make 0.99 attainable on this cohort.
+
+Submission 01 remains stopped at 37,000 completed references, with its original frozen model and checkpoints preserved. No complete test output has been produced. See [the review implementation plan](docs/REVIEW_IMPLEMENTATION_PLAN.md) and [the aggregate audit report](reports/experiments/features_v3_fresh_audit.json).
 
 ## Earlier development results
 

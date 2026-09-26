@@ -1,0 +1,215 @@
+{
+  "artifact": "models/features_v3_audit01",
+  "feature_version": "pairwise-v3-65",
+  "threshold": 0.76,
+  "training_entities": 20000,
+  "training_pairs": 582358,
+  "tune_entities": 10000,
+  "audit_entities": 5000,
+  "tune": {
+    "threshold": 0.76,
+    "macro_f05": 0.9602383773342271,
+    "entities": 10000,
+    "true_positive_links": 31765,
+    "predicted_links": 32189,
+    "true_links": 34624,
+    "micro_precision": 0.9868277983161949,
+    "micro_recall": 0.9174272181146026,
+    "singleton_entities": 570,
+    "singleton_false_positives": 34,
+    "singleton_false_positive_rate": 0.05964912280701754,
+    "non_singleton_empty_rate": 0.008059384941675504,
+    "country_macro_f05": {}
+  },
+  "baseline_same_tune": {
+    "macro_f05": 0.9525494314028485,
+    "entities": 10000,
+    "true_positive_links": 31407,
+    "predicted_links": 32024,
+    "true_links": 34624,
+    "micro_precision": 0.980733200099925,
+    "micro_recall": 0.9070875693160814,
+    "singleton_entities": 570,
+    "singleton_false_positives": 34,
+    "singleton_false_positive_rate": 0.05964912280701754,
+    "non_singleton_empty_rate": 0.009544008483563097,
+    "country_macro_f05": {
+      "India": {
+        "entities": 4017,
+        "macro_f05": 0.9379456872584248
+      },
+      "US": {
+        "entities": 5983,
+        "macro_f05": 0.9623544189054644
+      }
+    }
+  },
+  "audit": {
+    "baseline": {
+      "macro_f05": 0.9485119769218039,
+      "entities": 5000,
+      "true_positive_links": 15626,
+      "predicted_links": 15916,
+      "true_links": 17333,
+      "micro_precision": 0.9817793415431013,
+      "micro_recall": 0.901517336871863,
+      "singleton_entities": 258,
+      "singleton_false_positives": 27,
+      "singleton_false_positive_rate": 0.10465116279069768,
+      "non_singleton_empty_rate": 0.01033319274567693,
+      "country_macro_f05": {
+        "US": {
+          "entities": 3072,
+          "macro_f05": 0.9594629781270171
+        },
+        "India": {
+          "entities": 1928,
+          "macro_f05": 0.9310630787359045
+        }
+      }
+    },
+    "candidate": {
+      "macro_f05": 0.9606164624965063,
+      "entities": 5000,
+      "true_positive_links": 15886,
+      "predicted_links": 16074,
+      "true_links": 17333,
+      "micro_precision": 0.9883040935672515,
+      "micro_recall": 0.9165176253389489,
+      "singleton_entities": 258,
+      "singleton_false_positives": 19,
+      "singleton_false_positive_rate": 0.07364341085271318,
+      "non_singleton_empty_rate": 0.00780261493040911,
+      "country_macro_f05": {
+        "US": {
+          "entities": 3072,
+          "macro_f05": 0.9684396694534966
+        },
+        "India": {
+          "entities": 1928,
+          "macro_f05": 0.9481512696687708
+        }
+      }
+    },
+    "paired_macro_gain": 0.01210448557470232,
+    "paired_gain_95": [
+      0.009178364881913982,
+      0.015011899431197162
+    ],
+    "candidate_macro_95": [
+      0.9572219362609532,
+      0.9639274316736905
+    ],
+    "acceptance_gates": {
+      "positive_gain_lower_bound": true,
+      "precision_loss_at_most_002": true,
+      "singleton_false_positives_do_not_rise": true
+    },
+    "accepted": true,
+    "seconds": 891.8908661669993,
+    "leaderboard_score": null
+  },
+  "blocking": {
+    "tune": {
+      "entities": 10000,
+      "scored_pairs": 400000,
+      "retrieved_pairs": 400000,
+      "training_pairs_excluded_for_entity_isolation": 0,
+      "blocking_recall": 0.9681723659889094,
+      "oracle_macro_f05": 0.9901411198078899,
+      "country_oracle": {
+        "us": {
+          "entities": 5983,
+          "macro_f05": 0.9937700812169213
+        },
+        "india": {
+          "entities": 4017,
+          "macro_f05": 0.9847360722325262
+        }
+      },
+      "path_pair_counts": {
+        "numeric_location": 94426,
+        "postcode_name": 11963,
+        "rare_address": 175994,
+        "rare_digits": 39282,
+        "rare_name": 159357,
+        "core_prefix": 75049,
+        "name_alias_address": 14468,
+        "exact_core": 70115,
+        "exact_name": 43948,
+        "name_alias_numeric": 21636
+      },
+      "mean_candidates": 40.0,
+      "p95_candidates": 40.0,
+      "seconds": 522.9842794169963
+    },
+    "holdout": {
+      "entities": 5000,
+      "scored_pairs": 200000,
+      "retrieved_pairs": 200000,
+      "training_pairs_excluded_for_entity_isolation": 0,
+      "blocking_recall": 0.9680378468816708,
+      "oracle_macro_f05": 0.989322182255361,
+      "country_oracle": {
+        "india": {
+          "entities": 1928,
+          "macro_f05": 0.9840021509829737
+        },
+        "us": {
+          "entities": 3072,
+          "macro_f05": 0.992661056048708
+        }
+      },
+      "path_pair_counts": {
+        "core_prefix": 36790,
+        "exact_core": 34458,
+        "exact_name": 22070,
+        "rare_address": 88840,
+        "rare_name": 79740,
+        "numeric_location": 46947,
+        "rare_digits": 19489,
+        "name_alias_address": 6492,
+        "name_alias_numeric": 10121,
+        "postcode_name": 6130
+      },
+      "mean_candidates": 40.0,
+      "p95_candidates": 40.0,
+      "seconds": 267.6011825000023
+    }
+  },
+  "inference_compatibility": {
+    "compatible": true,
+    "feature_count": 65,
+    "feature_version": "pairwise-v3-65",
+    "reloaded_model_pairs": 120,
+    "maximum_probability_difference": 0.0,
+    "threshold": 0.76,
+    "alias_sha256": "10b2dc52cc6ddab5ed6b1b48c3d89ba6f585c247ef1a28aeaef26d0574886818",
+    "feature_replay": "feature_replay_check.json",
+    "scope": "Schema, saved-probability replay, raw-record feature replay and frozen selection consistency. No full test inference."
+  },
+  "model_sha256": "848360f05a437c93b2866f2d3d1ba1ea1b9b48d34811991ba92ffbe0a61234f2",
+  "retuned_control": {
+    "frozen_at_utc": "2026-09-26T11:08:13.980592+00:00",
+    "selection_uses": "10,000 tuning entities only; same precision and singleton constraints as v3",
+    "model": "models/larger_alias_v4/model.txt",
+    "tune_selection": {
+      "threshold": 0.71,
+      "macro_f05": 0.9525494314028485,
+      "entities": 10000,
+      "true_positive_links": 31407,
+      "predicted_links": 32024,
+      "true_links": 34624,
+      "micro_precision": 0.980733200099925,
+      "micro_recall": 0.9070875693160814,
+      "singleton_entities": 570,
+      "singleton_false_positives": 34,
+      "singleton_false_positive_rate": 0.05964912280701754,
+      "non_singleton_empty_rate": 0.009544008483563097,
+      "country_macro_f05": {}
+    },
+    "primary_audit_unchanged": true,
+    "purpose": "Secondary comparison controlling for expanded threshold-tuning data; no audit-driven threshold changes."
+  },
+  "leaderboard_score": null
+}

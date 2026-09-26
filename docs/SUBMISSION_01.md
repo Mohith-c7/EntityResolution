@@ -4,7 +4,7 @@
 
 Use the saved `models/larger_alias_v4` model for the first complete submission. Its local held-out macro F0.5 is **0.9510571967** on 2,000 entities. Its official leaderboard score is unknown until the portal scores the uploaded file.
 
-Freeze the model, training-fitted name channel, normalization, ordered 50-feature schema, wide retrieval settings, and threshold `0.71`. Do not change the model or start further experiments until this submission is complete.
+Freeze the model, training-fitted name channel, normalization, ordered 50-feature schema, wide retrieval settings, and threshold `0.71`. These frozen assets remain unchanged. The run was stopped at user request with 37,000 completed references; there are no upload-ready TSVs. Feature and runtime experiments now run separately. Resume this frozen job only after an explicit decision.
 
 ## Compatibility evidence
 
@@ -41,6 +41,6 @@ The upload gate is `ready_for_upload: true` in `submission_report.json`. The rat
 
 ## Submission 02
 
-Preserve Submission 01 unchanged. Resume the score-improvement plan only after it is complete: diagnose missed candidates, false merges, and rejected true matches; select changes using tuning data; freeze a configuration and evaluate it on a fresh S1-level holdout. Country-transfer checks provide stress evidence, while French accuracy remains unmeasured locally.
+Preserve Submission 01 unchanged. Continue the score-improvement plan separately while this run remains stopped: diagnose missed candidates, false merges, and rejected true matches; select changes using tuning data; freeze a configuration and evaluate it on a fresh S1-level holdout. Country-transfer checks provide stress evidence, while French accuracy remains unmeasured locally.
 
 All identity evidence and training examples must come from the supplied challenge data. Each additional model must independently satisfy the organizer's model-license, parameter-count, offline-inference, and training-data requirements.

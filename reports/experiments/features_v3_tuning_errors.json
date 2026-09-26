@@ -1,0 +1,125 @@
+{
+  "artifact": "features_v3_audit01",
+  "fold": "tune",
+  "threshold": 0.76,
+  "policy": "Tuning diagnostics only. Counterfactual scores require ground truth and are not deployable predictions. Slices overlap.",
+  "actual": {
+    "macro_f05": 0.9602383773342271,
+    "entities": 10000,
+    "true_positive_links": 31765,
+    "predicted_links": 32189,
+    "true_links": 34624,
+    "micro_precision": 0.9868277983161949,
+    "micro_recall": 0.9174272181146026,
+    "singleton_entities": 570,
+    "singleton_false_positives": 34,
+    "singleton_false_positive_rate": 0.05964912280701754,
+    "non_singleton_empty_rate": 0.008059384941675504,
+    "country_macro_f05": {
+      "us": {
+        "entities": 5983,
+        "macro_f05": 0.9684225924821978
+      },
+      "india": {
+        "entities": 4017,
+        "macro_f05": 0.9480486438937719
+      }
+    }
+  },
+  "blocked_true_links": 1102,
+  "rejected_true_links": 1757,
+  "false_positive_links": 424,
+  "counterfactual_macro_f05": {
+    "remove_all_false_predictions": 0.9715378253676729,
+    "recover_all_retrieved_true_links": 0.9789315423865861,
+    "perfect_matcher_on_retained_candidates": 0.9901411198078899
+  },
+  "slices": {
+    "candidate_address_missing": {
+      "pairs": 11712,
+      "outcomes": {
+        "true_negative": 10716,
+        "true_positive": 487,
+        "rejected_true_link": 411,
+        "false_positive": 98
+      }
+    },
+    "weak_raw_name_similarity": {
+      "pairs": 189632,
+      "outcomes": {
+        "true_negative": 185770,
+        "true_positive": 3167,
+        "rejected_true_link": 598,
+        "false_positive": 97
+      }
+    },
+    "high_address_token_similarity": {
+      "pairs": 67141,
+      "outcomes": {
+        "true_negative": 44957,
+        "true_positive": 21301,
+        "rejected_true_link": 674,
+        "false_positive": 209
+      }
+    },
+    "no_learned_alias_evidence": {
+      "pairs": 328107,
+      "outcomes": {
+        "true_negative": 301374,
+        "true_positive": 24862,
+        "rejected_true_link": 1553,
+        "false_positive": 318
+      }
+    },
+    "learned_alias_evidence_present": {
+      "pairs": 71893,
+      "outcomes": {
+        "true_negative": 64680,
+        "true_positive": 6903,
+        "rejected_true_link": 204,
+        "false_positive": 106
+      }
+    },
+    "first_numeric_agreement_absent": {
+      "pairs": 285570,
+      "outcomes": {
+        "true_negative": 276753,
+        "true_positive": 7358,
+        "rejected_true_link": 1220,
+        "false_positive": 239
+      }
+    }
+  },
+  "source_metrics": {
+    "S2": {
+      "macro_f05": 0.948896223815221,
+      "entities": 10000,
+      "true_positive_links": 15418,
+      "predicted_links": 15624,
+      "true_links": 16721,
+      "micro_precision": 0.9868151561699949,
+      "micro_recall": 0.922074038634053,
+      "singleton_entities": 1304,
+      "singleton_false_positives": 30,
+      "singleton_false_positive_rate": 0.023006134969325152,
+      "non_singleton_empty_rate": 0.03518859245630175,
+      "country_macro_f05": {}
+    },
+    "S3": {
+      "macro_f05": 0.944431237676908,
+      "entities": 10000,
+      "true_positive_links": 16347,
+      "predicted_links": 16565,
+      "true_links": 17903,
+      "micro_precision": 0.986839722306067,
+      "micro_recall": 0.9130871920907111,
+      "singleton_entities": 1218,
+      "singleton_false_positives": 36,
+      "singleton_false_positive_rate": 0.029556650246305417,
+      "non_singleton_empty_rate": 0.036893646094283764,
+      "country_macro_f05": {}
+    }
+  },
+  "errors_within_005_of_threshold": 285,
+  "total_matcher_errors": 2181
+}

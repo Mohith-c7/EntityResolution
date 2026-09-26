@@ -5,6 +5,7 @@ from pathlib import Path
 
 from src.blocking.disk_index import DiskSearchConfig
 from src.pipeline.training import run_training
+from src.features.registry import FEATURE_VERSION, FEATURE_VERSION_V2, FEATURE_VERSION_V3
 
 
 def main():
@@ -25,6 +26,7 @@ def main():
     parser.add_argument("--numeric-location-queries", action="store_true")
     parser.add_argument("--use-name-aliases", action="store_true")
     parser.add_argument("--retrieval-mode", choices=("wide","anchored"), default="wide")
+    parser.add_argument("--feature-version", choices=(FEATURE_VERSION, FEATURE_VERSION_V2, FEATURE_VERSION_V3))
     args = parser.parse_args()
     run_training(args.train_dir, args.index_dir, args.artifact_dir,
         train_entities=args.train_entities, tune_entities=args.tune_entities,
@@ -32,7 +34,7 @@ def main():
         config=DiskSearchConfig(top_k=args.top_k, character_mode=args.character_mode,
             reranker_version=args.reranker_version, numeric_conjunctions=args.numeric_conjunctions,
             max_address_df=args.max_address_df, numeric_location_queries=args.numeric_location_queries,
-            use_name_aliases=args.use_name_aliases, retrieval_mode=args.retrieval_mode), threads=args.threads,workers=args.workers)
+            use_name_aliases=args.use_name_aliases, retrieval_mode=args.retrieval_mode), threads=args.threads,workers=args.workers,feature_version=args.feature_version)
 
 
 if __name__ == "__main__":
