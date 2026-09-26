@@ -250,6 +250,7 @@ def validate_ground_truth_contract(
     s1_df: pd.DataFrame | set[str] | None = None,
     s2_ids: set[str] | pd.DataFrame | None = None,
     s3_ids: set[str] | pd.DataFrame | None = None,
+    check_target_ownership: bool = False,
 ) -> list[str]:
     """
     Validate all Stage 0 Ground Truth contract invariants:
@@ -326,7 +327,10 @@ def validate_ground_truth_contract(
     s2_set = set(s2_ids["entity_id"]) if isinstance(s2_ids, pd.DataFrame) else s2_ids
     s3_set = set(s3_ids["entity_id"]) if isinstance(s3_ids, pd.DataFrame) else s3_ids
 
-    for raw in matched_col:
+    target_to_s1: dict[str, str] = {}
+    ambiguous_targets: set[str] = set()
+
+    for s1_val, raw in zip(s1_series, matched_col):
         raw_s = str(raw).strip()
         if not raw_s:
             # Singletons are valid
@@ -339,6 +343,12 @@ def validate_ground_truth_contract(
             intra_row_dups += 1
 
         for cid in cands:
+            # Target ownership uniqueness check
+            if cid in target_to_s1 and target_to_s1[cid] != s1_val:
+                ambiguous_targets.add(cid)
+            else:
+                target_to_s1[cid] = str(s1_val)
+
             # 5. No S1 ID in matches
             if cid.startswith("S1-"):
                 s1_inside_matches += 1
@@ -354,6 +364,8 @@ def validate_ground_truth_contract(
 
     if intra_row_dups > 0:
         issues.append(f"[Ground Truth] Found {intra_row_dups:,} rows with duplicate matched IDs within the same list")
+    if check_target_ownership and ambiguous_targets:
+        issues.append(f"[Ground Truth] Found {len(ambiguous_targets):,} target candidate IDs linked to multiple S1 entities (ambiguous target ownership)")
     if s1_inside_matches > 0:
         issues.append(f"[Ground Truth] Found {s1_inside_matches:,} S1 IDs appearing inside matched_entity_ids (forbidden)")
     if invalid_match_prefixes > 0:

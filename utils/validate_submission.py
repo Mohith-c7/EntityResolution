@@ -1,17 +1,18 @@
 """
 Submission validation script for Amazon Business Entity Resolution 2026.
 Validates schemas, formatting, candidate freezing, ID coverage, duplicate rows,
-and cross-file subset invariants prior to submission.
+and cross-file subset invariants prior to submission using streaming standard library.
 """
 
 from __future__ import annotations
 
 import argparse
+import csv
+import sqlite3
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any
-
-import pandas as pd
 
 MATCHING_COLUMNS = ["source1_entity_id", "matched_entity_ids"]
 CANDIDATE_COLUMNS = ["source1_entity_id", "candidate_entity_ids"]
@@ -19,7 +20,7 @@ CANDIDATE_COLUMNS = ["source1_entity_id", "candidate_entity_ids"]
 
 def load_test_ids(test_dir: Path) -> tuple[set[str], set[str], set[str]]:
     """
-    Load test entity IDs memory-consciously using usecols.
+    Load test entity IDs memory-consciously using standard library csv streaming.
     """
     s1_path = test_dir / "test_source1.tsv"
     s2_path = test_dir / "test_source2.tsv"
@@ -32,15 +33,17 @@ def load_test_ids(test_dir: Path) -> tuple[set[str], set[str], set[str]]:
     if not s3_path.is_file():
         raise FileNotFoundError(f"Missing test source 3 file: {s3_path}")
 
-    s1_df = pd.read_csv(s1_path, sep="\t", usecols=["entity_id"], dtype=str)
-    s2_df = pd.read_csv(s2_path, sep="\t", usecols=["entity_id"], dtype=str)
-    s3_df = pd.read_csv(s3_path, sep="\t", usecols=["entity_id"], dtype=str)
+    def _read_col_ids(p: Path) -> set[str]:
+        ids = set()
+        with open(p, "r", encoding="utf-8-sig", errors="replace") as f:
+            reader = csv.DictReader(f, delimiter="\t")
+            if "entity_id" not in (reader.fieldnames or []):
+                raise ValueError(f"Missing entity_id column in {p}")
+            for row in reader:
+                ids.add(row["entity_id"])
+        return ids
 
-    s1_ids = set(s1_df["entity_id"])
-    s2_ids = set(s2_df["entity_id"])
-    s3_ids = set(s3_df["entity_id"])
-
-    return s1_ids, s2_ids, s3_ids
+    return _read_col_ids(s1_path), _read_col_ids(s2_path), _read_col_ids(s3_path)
 
 
 def validate_submission(
@@ -95,28 +98,98 @@ def validate_submission(
             errors.append("No test IDs or test_dir provided for validation.")
             return errors
 
+    # Helper to stream and validate file structure
+    def _validate_file_stream(
+        p: Path,
+        expected_cols: list[str],
+        file_label: str,
+        is_candidate: bool,
+    ) -> tuple[set[str], dict[str, list[str]]]:
+        seen_s1: set[str] = set()
+        data_map: dict[str, list[str]] = {}
+
+        with open(p, "r", encoding="utf-8-sig", errors="replace") as f:
+            header_line = f.readline()
+            if not header_line:
+                errors.append(f"File {p.name} is empty.")
+                return seen_s1, data_map
+
+            header_cols = header_line.rstrip("\r\n").split("\t")
+            if header_cols != expected_cols:
+                errors.append(
+                    f"Invalid columns in {p.name}. Expected {expected_cols}, found {header_cols}"
+                )
+                return seen_s1, data_map
+
+            for line_idx, line in enumerate(f, start=2):
+                stripped = line.rstrip("\r\n")
+                if not stripped:
+                    continue
+
+                if "\t" not in stripped:
+                    errors.append(
+                        f"Malformed row (no tab separator) in {p.name} at line {line_idx}: {stripped!r}"
+                    )
+                    continue
+
+                parts = stripped.split("\t")
+                if len(parts) != 2:
+                    errors.append(
+                        f"Malformed row (expected exactly 2 fields) in {p.name} at line {line_idx}: found {len(parts)} fields"
+                    )
+                    continue
+
+                s1_id, raw_cands = parts
+                s1_id_clean = s1_id.strip()
+
+                if not s1_id_clean or s1_id != s1_id_clean:
+                    errors.append(f"Malformed or empty Source 1 ID in {p.name} at line {line_idx}: {s1_id!r}")
+
+                if s1_id_clean in seen_s1:
+                    errors.append(f"Found duplicate S1 rows in {p.name}: {s1_id_clean}")
+                seen_s1.add(s1_id_clean)
+
+                if not raw_cands.strip():
+                    cands = []
+                else:
+                    tokens = raw_cands.split(",")
+                    # Check for empty or malformed tokens like ",S2-A,,"
+                    if any(not tok.strip() for tok in tokens) or any(tok != tok.strip() for tok in tokens):
+                        errors.append(
+                            f"Malformed ID list containing empty or whitespace tokens in {p.name} for {s1_id_clean}: {raw_cands!r}"
+                        )
+                        cands = [t.strip() for t in tokens if t.strip()]
+                    else:
+                        cands = tokens
+
+                # Check duplicate candidate IDs within list
+                if len(cands) != len(set(cands)):
+                    list_type = "candidate" if is_candidate else "match"
+                    errors.append(f"Duplicate candidate IDs found in {list_type} list for {s1_id_clean}")
+
+                for cid in cands:
+                    if cid.startswith("S1-"):
+                        target_col = "candidate_entity_ids" if is_candidate else "matched_entity_ids"
+                        errors.append(f"Forbidden S1 ID '{cid}' found inside {target_col} for {s1_id_clean}")
+                    elif not (cid.startswith("S2-") or cid.startswith("S3-")):
+                        errors.append(f"Invalid candidate prefix for '{cid}' in {p.name} for {s1_id_clean} (must be S2- or S3-)")
+                    else:
+                        # Unconditional membership check (strict check regardless of whether set is empty)
+                        if cid.startswith("S2-") and test_s2_ids is not None and cid not in test_s2_ids:
+                            errors.append(f"Candidate '{cid}' does not exist in test Source 2 ({p.name})")
+                        elif cid.startswith("S3-") and test_s3_ids is not None and cid not in test_s3_ids:
+                            errors.append(f"Candidate '{cid}' does not exist in test Source 3 ({p.name})")
+
+                data_map[s1_id_clean] = cands
+
+        return seen_s1, data_map
+
     # 2. Validate matching_results.tsv
-    try:
-        m_df = pd.read_csv(m_path, sep="\t", dtype=str, keep_default_na=False)
-    except Exception as e:
-        errors.append(f"Failed to parse matching_results.tsv as TSV: {e}")
-        return errors
+    m_s1_set, matching_map = _validate_file_stream(
+        m_path, MATCHING_COLUMNS, "matching_results.tsv", is_candidate=False
+    )
 
-    if list(m_df.columns) != MATCHING_COLUMNS:
-        errors.append(
-            f"Invalid columns in matching_results.tsv. Expected {MATCHING_COLUMNS}, found {list(m_df.columns)}"
-        )
-        return errors
-
-    m_s1_series = m_df["source1_entity_id"]
-    m_s1_set = set(m_s1_series)
-
-    # Duplicate S1 rows in matching
-    if len(m_s1_series) != len(m_s1_set):
-        dup_count = len(m_s1_series) - len(m_s1_set)
-        errors.append(f"Found {dup_count:,} duplicate S1 rows in matching_results.tsv")
-
-    # S1 ID coverage check
+    # Coverage check for matching
     missing_m_s1 = test_s1_ids - m_s1_set
     extra_m_s1 = m_s1_set - test_s1_ids
     if missing_m_s1:
@@ -124,55 +197,12 @@ def validate_submission(
     if extra_m_s1:
         errors.append(f"matching_results.tsv contains {len(extra_m_s1):,} S1 IDs not in test_source1")
 
-    # Parse match lists
-    matching_map: dict[str, list[str]] = {}
-    for _, row in m_df.iterrows():
-        s1_id = row["source1_entity_id"]
-        raw_m = str(row["matched_entity_ids"]).strip()
-        if not raw_m:
-            cands = []
-        else:
-            cands = [c.strip() for c in raw_m.split(",") if c.strip()]
-
-        # Check duplicate matches within list
-        if len(cands) != len(set(cands)):
-            errors.append(f"Duplicate candidate IDs found in match list for {s1_id}")
-
-        for cid in cands:
-            if cid.startswith("S1-"):
-                errors.append(f"Forbidden S1 ID '{cid}' found inside matched_entity_ids for {s1_id}")
-            elif not (cid.startswith("S2-") or cid.startswith("S3-")):
-                errors.append(f"Invalid candidate prefix for '{cid}' in match list for {s1_id} (must be S2- or S3-)")
-            else:
-                if cid.startswith("S2-") and test_s2_ids and cid not in test_s2_ids:
-                    errors.append(f"Candidate '{cid}' in match list does not exist in test Source 2")
-                elif cid.startswith("S3-") and test_s3_ids and cid not in test_s3_ids:
-                    errors.append(f"Candidate '{cid}' in match list does not exist in test Source 3")
-
-        matching_map[s1_id] = cands
-
     # 3. Validate candidate_pairs.tsv
-    try:
-        c_df = pd.read_csv(c_path, sep="\t", dtype=str, keep_default_na=False)
-    except Exception as e:
-        errors.append(f"Failed to parse candidate_pairs.tsv as TSV: {e}")
-        return errors
+    c_s1_set, candidate_map = _validate_file_stream(
+        c_path, CANDIDATE_COLUMNS, "candidate_pairs.tsv", is_candidate=True
+    )
 
-    if list(c_df.columns) != CANDIDATE_COLUMNS:
-        errors.append(
-            f"Invalid columns in candidate_pairs.tsv. Expected {CANDIDATE_COLUMNS}, found {list(c_df.columns)}"
-        )
-        return errors
-
-    c_s1_series = c_df["source1_entity_id"]
-    c_s1_set = set(c_s1_series)
-
-    # Duplicate S1 rows in candidate
-    if len(c_s1_series) != len(c_s1_set):
-        dup_count = len(c_s1_series) - len(c_s1_set)
-        errors.append(f"Found {dup_count:,} duplicate S1 rows in candidate_pairs.tsv")
-
-    # S1 ID coverage check
+    # Coverage check for candidates
     missing_c_s1 = test_s1_ids - c_s1_set
     extra_c_s1 = c_s1_set - test_s1_ids
     if missing_c_s1:
@@ -180,51 +210,24 @@ def validate_submission(
     if extra_c_s1:
         errors.append(f"candidate_pairs.tsv contains {len(extra_c_s1):,} S1 IDs not in test_source1")
 
-    # Parse candidate lists
-    candidate_map: dict[str, set[str]] = {}
-    for _, row in c_df.iterrows():
-        s1_id = row["source1_entity_id"]
-        raw_c = str(row["candidate_entity_ids"]).strip()
-        if not raw_c:
-            cands = []
-        else:
-            cands = [c.strip() for c in raw_c.split(",") if c.strip()]
-
-        # Check duplicate candidates within list
-        if len(cands) != len(set(cands)):
-            errors.append(f"Duplicate candidate IDs found in candidate list for {s1_id}")
-
-        for cid in cands:
-            if cid.startswith("S1-"):
-                errors.append(f"Forbidden S1 ID '{cid}' found inside candidate_entity_ids for {s1_id}")
-            elif not (cid.startswith("S2-") or cid.startswith("S3-")):
-                errors.append(f"Invalid candidate prefix for '{cid}' in candidate list for {s1_id} (must be S2- or S3-)")
-            else:
-                if cid.startswith("S2-") and test_s2_ids and cid not in test_s2_ids:
-                    errors.append(f"Candidate '{cid}' in candidate list does not exist in test Source 2")
-                elif cid.startswith("S3-") and test_s3_ids and cid not in test_s3_ids:
-                    errors.append(f"Candidate '{cid}' in candidate list does not exist in test Source 3")
-
-        candidate_map[s1_id] = set(cands)
-
-    # 4. Cross-file subset invariant: final_matches(S1) ⊆ candidate_pairs(S1)
-    for s1_id, matches in matching_map.items():
-        cands_set = candidate_map.get(s1_id, set())
-        for mid in matches:
-            if mid not in cands_set:
+    # 4. Check candidate subset invariant (final matches must be subset of candidates)
+    for s1_id, match_cands in matching_map.items():
+        if match_cands:
+            cand_pool = set(candidate_map.get(s1_id, []))
+            invalid_matches = set(match_cands) - cand_pool
+            if invalid_matches:
                 errors.append(
-                    f"Match '{mid}' for entity {s1_id} is not in the frozen candidate pool (violates subset invariant)"
+                    f"Final match is not in candidate pool for {s1_id}; violates subset invariant"
                 )
 
     return errors
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description="Validate submission outputs for Business Entity Resolution.")
-    parser.add_argument("--matching", required=True, help="Path to output/matching_results.tsv")
-    parser.add_argument("--candidate", required=True, help="Path to output/candidate_pairs.tsv")
-    parser.add_argument("--test-dir", required=True, help="Path to dataset/test directory")
-
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Validate submission files.")
+    parser.add_argument("--matching", "-m", required=True, help="Path to matching_results.tsv")
+    parser.add_argument("--candidate", "-c", required=True, help="Path to candidate_pairs.tsv")
+    parser.add_argument("--test-dir", "-t", required=True, help="Path to test dataset directory")
     args = parser.parse_args()
 
     errors = validate_submission(
@@ -234,16 +237,14 @@ def main() -> None:
     )
 
     if errors:
-        print(f"FAILED: Found {len(errors)} submission validation errors:")
-        for err in errors[:20]:
-            print(f"  - {err}")
-        if len(errors) > 20:
-            print(f"  ... and {len(errors) - 20} more errors.")
-        sys.exit(1)
-    else:
-        print("SUCCESS: Submission passed all validation checks with exit code 0.")
-        sys.exit(0)
+        print(f"FAILED: Found {len(errors)} validation errors:")
+        for idx, err in enumerate(errors, 1):
+            print(f"  {idx}. {err}")
+        return 1
+
+    print("SUCCESS: Submission bundle is 100% valid and verified against all invariants.")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

@@ -282,3 +282,50 @@ def test_validator_fails_subset_invariant_violation(tmp_path, valid_submission_b
         test_s3_ids=valid_submission_bundle["test_s3_ids"],
     )
     assert any("violates subset invariant" in e for e in errors)
+
+
+def test_validator_fails_row_without_tab(tmp_path, valid_submission_bundle):
+    """FAIL: physical row has no tab separator."""
+    bad_matching_path = tmp_path / "no_tab_matching.tsv"
+    # Row 2 has S1-1001 with no tab
+    bad_matching_path.write_text("source1_entity_id\tmatched_entity_ids\nS1-1001\n", encoding="utf-8")
+
+    errors = validate_submission(
+        matching_path=bad_matching_path,
+        candidate_path=valid_submission_bundle["candidate_path"],
+        test_s1_ids=valid_submission_bundle["test_s1_ids"],
+        test_s2_ids=valid_submission_bundle["test_s2_ids"],
+        test_s3_ids=valid_submission_bundle["test_s3_ids"],
+    )
+    assert any("no tab separator" in e for e in errors)
+
+
+def test_validator_fails_empty_tokens_in_comma_list(tmp_path, valid_submission_bundle):
+    """FAIL: match list has empty tokens like ,S2-A,,"""
+    bad_matching_path = tmp_path / "empty_tokens_matching.tsv"
+    bad_matching_path.write_text(
+        "source1_entity_id\tmatched_entity_ids\nS1-1001\t,S2-2001,,\nS1-1002\t\nS1-1003\t\nS1-1004\t\n",
+        encoding="utf-8",
+    )
+
+    errors = validate_submission(
+        matching_path=bad_matching_path,
+        candidate_path=valid_submission_bundle["candidate_path"],
+        test_s1_ids=valid_submission_bundle["test_s1_ids"],
+        test_s2_ids=valid_submission_bundle["test_s2_ids"],
+        test_s3_ids=valid_submission_bundle["test_s3_ids"],
+    )
+    assert any("Malformed ID list" in e for e in errors)
+
+
+def test_validator_fails_unconditional_membership_with_empty_target_set(tmp_path, valid_submission_bundle):
+    """FAIL: S2-ghost must be rejected even when test_s2_ids is passed as an empty set."""
+    errors = validate_submission(
+        matching_path=valid_submission_bundle["matching_path"],
+        candidate_path=valid_submission_bundle["candidate_path"],
+        test_s1_ids=valid_submission_bundle["test_s1_ids"],
+        test_s2_ids=set(),  # Empty set: should NOT bypass membership check!
+        test_s3_ids=valid_submission_bundle["test_s3_ids"],
+    )
+    assert any("does not exist in test Source 2" in e for e in errors)
+

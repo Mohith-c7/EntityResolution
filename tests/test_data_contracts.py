@@ -311,6 +311,16 @@ def test_exact_median_from_histogram_known() -> None:
     assert compute_exact_median_from_histogram(hist) == 1.0
 
 
+def test_ground_truth_detects_target_ownership_collision() -> None:
+    """FAIL: S2 target candidate matched to multiple S1 entities."""
+    gt_df = pd.DataFrame([
+        {"source1_entity_id": "S1-A", "matched_entity_ids": "S2-TARGET_1"},
+        {"source1_entity_id": "S1-B", "matched_entity_ids": "S2-TARGET_1"},
+    ])
+    issues = validate_ground_truth_contract(gt_df, check_target_ownership=True)
+    assert any("ambiguous target ownership" in msg for msg in issues)
+
+
 def run_all_tests() -> None:
     import tempfile
     with tempfile.TemporaryDirectory() as tmp_dir:

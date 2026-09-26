@@ -175,6 +175,21 @@ def profile_source_dataset(
     addr_char_lens = [len(s) for s in sample_addrs]
     addr_word_lens = [len(s.split()) for s in sample_addrs]
 
+    n_sample = len(sample_names)
+    dup_name_cnt = n_sample - len(set(sample_names))
+    dup_addr_cnt = n_sample - len(set(sample_addrs))
+    dup_pair_cnt = n_sample - len(set(zip(sample_names, sample_addrs)))
+
+    sample_duplicate_stats = {
+        "sample_size": n_sample,
+        "duplicate_names_count": dup_name_cnt,
+        "duplicate_names_pct": round((dup_name_cnt / n_sample * 100.0) if n_sample > 0 else 0.0, 2),
+        "duplicate_addrs_count": dup_addr_cnt,
+        "duplicate_addrs_pct": round((dup_addr_cnt / n_sample * 100.0) if n_sample > 0 else 0.0, 2),
+        "duplicate_name_addr_count": dup_pair_cnt,
+        "duplicate_name_addr_pct": round((dup_pair_cnt / n_sample * 100.0) if n_sample > 0 else 0.0, 2),
+    }
+
     missing_pcts = {
         col: (missing_counts[col] / total_rows * 100.0) if total_rows > 0 else 0.0
         for col in columns
@@ -191,6 +206,7 @@ def profile_source_dataset(
         "missing_pcts": missing_pcts,
         "unique_ids": unique_ids,
         "duplicate_ids": dup_id_count,
+        "sample_duplicate_stats": sample_duplicate_stats,
         "country_counts": dict(country_counts.most_common(20)),
         "total_distinct_countries": len([c for c in country_counts if c != "<MISSING>"]),
         "sampling_metadata": {

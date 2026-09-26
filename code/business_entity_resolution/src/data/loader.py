@@ -35,7 +35,7 @@ GROUND_TRUTH_DTYPES: dict[str, Any] = {
 def load_tsv(
     file_path: Path | str,
     *,
-    dtype: dict[str, Any] | None = None,
+    dtype: dict[str, Any] | type | None = str,
     nrows: int | None = None,
     usecols: list[str] | None = None,
     keep_default_na: bool = False,

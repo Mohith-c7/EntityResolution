@@ -165,12 +165,15 @@ Measured using streaming reservoir sampling (50,000 records per source, Algorith
 
 | Source | Duplicate Names % | Duplicate Addresses % | Duplicate (Name + Address) % |
 | :--- | :--- | :--- | :--- |
-| **Train S1** | 19.42% | 1.28% | **0.00%** |
-| **Train S2** | 4.10% | 4.65% | **0.05%** |
-| **Train S3** | 3.71% | 4.37% | **0.03%** |
+| **Train S1** | 6.00% | 0.15% | **0.00%** |
+| **Train S2** | 0.75% | 3.54% | **0.01%** |
+| **Train S3** | 0.72% | 3.40% | **0.00%** |
+| **Test S1** | 5.83% | 0.13% | **0.00%** |
+| **Test S2** | 0.67% | 2.89% | **0.01%** |
+| **Test S3** | 0.62% | 2.69% | **0.00%** |
 
-- In S1, **19.42%** of business names recur at different geographic locations (national retail, healthcare providers, banking branches).
-- However, combining `business_name` + `business_address` produces a nearly **100% unique tuple**. Exact duplicate records in raw data are virtually non-existent (<0.05%).
+- In S1, **~6.0%** of business names recur at different geographic locations (national retail, healthcare providers, banking branches).
+- However, combining `business_name` + `business_address` produces a nearly **100% unique tuple**. Exact duplicate records in raw data are virtually non-existent (<=0.01%).
 
 ---
 

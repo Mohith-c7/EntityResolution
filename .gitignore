@@ -16,6 +16,8 @@ models/
 # Outputs and logs
 output/*.tsv
 *.log
+reports/splits/
+reports/github_issues.json
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
