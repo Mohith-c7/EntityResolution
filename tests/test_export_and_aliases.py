@@ -83,7 +83,7 @@ def test_compound_retrieval_learned_name_numbers_and_open_country(tmp_path):
         "business_address":"00123 Rue Mozart 75001","country":"France"})
     pairs=index.query(ref)
     assert pairs[0][0].candidate_entity_id=="S2-A"
-    assert "family_numeric" in pairs[0][0].blocking_paths
+    assert any(path.startswith("family_numeric_") for path in pairs[0][0].blocking_paths)
     assert "S2-C" not in {candidate.candidate_entity_id for candidate,target in index.query(ref,return_all=True)}
     index.close()
     with pytest.raises(ValueError,match="fingerprint"):

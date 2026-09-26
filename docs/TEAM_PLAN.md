@@ -6,7 +6,7 @@
 **Goal:** Produce a strong, reproducible first submission, then improve toward the leading leaderboard scores.  
 **Primary metric:** Macro F₀.₅ across Source 1 entities, including singletons.
 
-**Development checkpoint, 26 September 2026:** all seven datasets are audited; Sanhitha's preprocessing fixes are integrated. The full-target 2,000/500/500 pilot achieved 0.9268 local macro F₀.₅ with the versioned 50-feature extension. This is an exploratory validation result, not a leaderboard score. Larger training, candidate-budget selection, fresh audit evaluation, and complete test outputs remain pending. See `reports/experiments/PILOT_RESULTS.md` and `docs/NEXT_STEPS.md`.
+**Development checkpoint, 26 September 2026:** all seven datasets are audited; Sanhitha's preprocessing fixes are integrated. The full-target 20,000/2,000/2,000 run achieved 0.9511 local macro F₀.₅ with the versioned 50-feature extension. This is an exploratory validation result, not a leaderboard score. Further model experiments, candidate-budget selection, fresh audit evaluation, and complete test outputs remain pending. See `reports/experiments/PILOT_RESULTS.md` and `docs/NEXT_STEPS.md`.
 
 ## 1. Submission and Ranking Requirements
 

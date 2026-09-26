@@ -6,7 +6,7 @@
 > **Target Metric:** Macro F₀.₅ (precision-weighted, per Source 1 entity, macro-averaged)
 > **Team:** Mohit · Sanhita · Harsha · Sahasra
 
-> **Implementation checkpoint (26 September 2026):** the 36-feature baseline and versioned 50-feature extension are runnable. The improved full-target pilot achieved 0.9268 local macro F₀.₅ on 500 held-out S1 entities. Complete official-test inference and release are pending. See the package README and `reports/experiments/PILOT_RESULTS.md` for the measured configuration; the original baseline diagram below is not a claim that every optional stage is selected.
+> **Implementation checkpoint (26 September 2026):** the 36-feature baseline and versioned 50-feature extension are runnable. The improved full-target pilot achieved 0.9511 local macro F₀.₅ on 2,000 held-out S1 entities. Complete official-test inference and release are pending. See the package README and `reports/experiments/PILOT_RESULTS.md` for the measured configuration; the original baseline diagram below is not a claim that every optional stage is selected.
 
 ---
 

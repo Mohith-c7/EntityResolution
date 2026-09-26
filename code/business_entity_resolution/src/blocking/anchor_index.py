@@ -107,7 +107,7 @@ class AnchorIndex:
 
     def search(self, expression, limit):
         return [row[0] for row in self.connection.execute(
-            "SELECT rowid FROM anchors WHERE anchors MATCH ? ORDER BY rank LIMIT ?",(expression,limit))]
+            "SELECT rowid FROM anchors WHERE anchors MATCH ? LIMIT ?",(expression,limit))]
 
     def query(self, reference, base):
         paths = {}
@@ -124,7 +124,8 @@ class AnchorIndex:
         # Compound keys retrieve branches before truncation; shared chain names
         # alone cannot exhaust every retrieval path.
         if family and digits:
-            find("family_numeric",family + " AND " + expr("digits",digits))
+            for i,digit in enumerate(digits):
+                find(f"family_numeric_{i}",family + " AND " + expr("digits",[digit]))
         if family and address:
             find("family_address",family + " AND " + expr("address",address))
         if digits:

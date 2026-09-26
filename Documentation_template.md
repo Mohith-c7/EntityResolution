@@ -7,7 +7,7 @@
 
 ## 1. Executive Summary
 
-The current system combines complete disk-backed target indexes, bounded candidate retrieval, a training-only learned name channel, 50 pair features, and a LightGBM classifier. A full-target pilot achieved 0.9267946 local macro F₀.₅ on 500 held-out S1 entities. This is exploratory validation evidence, not a leaderboard score or a completed submission.
+The current system combines complete disk-backed target indexes, bounded candidate retrieval, a training-only learned name channel, 50 pair features, and a LightGBM classifier. The latest full-target run achieved 0.9510572 local macro F₀.₅ on 2,000 held-out S1 entities. This is exploratory validation evidence, not a leaderboard score or a completed submission.
 
 ## 2. Methodology
 
@@ -31,7 +31,7 @@ The learned name channel maps noisy target name strings to reference name cores 
 
 The measured pilot indexes every training S2/S3 record with SQLite FTS5 and exact-name/core B-trees. Paths use rare names, rare addresses, numeric tokens, exact names/cores, core prefixes, postcode/name combinations, numeric/location conjunctions, and training-only alias families. Character retrieval exists but is disabled in the selected pilot.
 
-Candidates are unioned and deterministically reranked using name, address, numeric, IDF, alias, and path evidence. At most 20 candidates per source are retained. The pilot averaged 40 candidates per S1 and achieved 0.9662005 held-out link recall; its oracle macro F₀.₅ ceiling was 0.9871680.
+Candidates are unioned and deterministically reranked using name, address, numeric, IDF, alias, and path evidence. At most 20 candidates per source are retained. The pilot averaged 40 candidates per S1 and achieved 0.9701149 held-out link recall; its oracle macro F₀.₅ ceiling was 0.9893790.
 
 Compound family/address indexing is an experiment, not the selected system: smaller candidate sets caused unacceptable tuning recall losses.
 
@@ -45,26 +45,26 @@ Compound family/address indexing is an experiment, not the selected system: smal
 
 **Training:** all retrieved positives and difficult retrieved nonmatches; no label-based positive rescue. Each S1 has equal total pair weight. Held-out counterparts are excluded from training even when retrieved as negatives.
 
-**Decision:** select a global threshold using tuning macro F₀.₅; empty predictions are allowed and no match is forced. The measured pilot selected 0.74. Outputs are classification scores without a probability-calibration claim.
+**Decision:** select a global threshold using tuning macro F₀.₅; empty predictions are allowed and no match is forced. The measured pilot selected 0.71. Outputs are classification scores without a probability-calibration claim.
 
 ## 5. Results and Error Analysis
 
 | Metric | Improved pilot |
 |---|---:|
-| Held-out macro F₀.₅ | 0.9267946 |
-| Link precision | 0.9758643 |
-| Link recall | 0.8717949 |
-| Retrieval recall | 0.9662005 |
-| Oracle macro F₀.₅ | 0.9871680 |
+| Held-out macro F₀.₅ | 0.9510572 |
+| Link precision | 0.9848272 |
+| Link recall | 0.9045977 |
+| Retrieval recall | 0.9701149 |
+| Oracle macro F₀.₅ | 0.9893790 |
 | Mean candidates per S1 | 40 |
-| Holdout US macro F₀.₅ | 0.9387401 |
-| Holdout India macro F₀.₅ | 0.9069702 |
+| Holdout US macro F₀.₅ | 0.9600514 |
+| Holdout India macro F₀.₅ | 0.9360988 |
 
-Entity-bootstrap 95% interval: 0.9107670–0.9412080. Two of 17 held-out singletons received a false match; this sample is too small for a stable singleton estimate. Larger training and evaluation are in progress.
+Entity-bootstrap 95% interval: 0.9448411–0.9568818. Four of 81 held-out singletons received a false match. Further modeling and a fresh audit evaluation remain pending.
 
 Errors include branch-name ambiguity, missing addresses, severe name changes absent from the alias channel, and true links removed by candidate caps or the matching threshold. The retrieval ceiling substantially exceeds achieved matching quality, so classifier coverage is a priority.
 
-These results use 2,000 classifier-training S1 entities, 500 tuning, and 500 holdout, against the complete training target pool. The name channel is fitted separately on 1,544,990 eligible training-fold names and 5,348,430 matched targets. A pilot comparison changed several components jointly and is not a clean component ablation.
+These results use 20,000 classifier-training S1 entities, 2,000 tuning, and 2,000 holdout, against the complete training target pool. The name channel is fitted separately on 1,544,990 eligible training-fold names and 5,348,430 matched targets. A pilot comparison changed several components jointly and is not a clean component ablation.
 
 Stable whole-file hashing creates 70/15/15 S1 folds; targets follow their owners. Sampling is row-order independent, not exact stratification. Pilot holdout inspection during development makes these exploratory results. A fresh larger audit should follow configuration freezing. No French accuracy, private leaderboard performance, or final competition rank is inferred.
 

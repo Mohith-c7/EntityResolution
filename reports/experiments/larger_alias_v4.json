@@ -1,0 +1,310 @@
+{
+  "experiment": "larger_alias_v4",
+  "seed": 42,
+  "feature_version": "pairwise-v2-50",
+  "name_alias_model": {
+    "version": "name-noise-channel-v2",
+    "seed": 42,
+    "fitted_fold": "train",
+    "training_files": {
+      "train_source1.tsv": {
+        "size": 210069713,
+        "mtime_ns": 1790405297214695841
+      },
+      "train_source2.tsv": {
+        "size": 489301488,
+        "mtime_ns": 1790406032917483323
+      },
+      "train_source3.tsv": {
+        "size": 503705637,
+        "mtime_ns": 1790406886878641173
+      },
+      "train_ground_truth.tsv": {
+        "size": 127015583,
+        "mtime_ns": 1790405070961590423
+      }
+    },
+    "fitted_references": 1544990,
+    "fitted_targets": 5348430,
+    "min_support": 2,
+    "min_dominance": 0.98,
+    "alias_strings": 653487,
+    "ambiguous_alias_strings": 46580,
+    "observed_strings": 3124439,
+    "seconds": 45.020978375003324,
+    "license": "MIT",
+    "policy": "Only matched targets owned by training-fold S1 references contribute. No external lookup, validation labels, or entity-ID features."
+  },
+  "search_config": {
+    "top_k": 20,
+    "path_top_k": 80,
+    "query_tokens": 6,
+    "max_word_df": 100000,
+    "max_address_df": 100000,
+    "character_terms": 8,
+    "max_character_df": 20000,
+    "character_mode": "off",
+    "reranker_version": "v4",
+    "numeric_conjunctions": true,
+    "numeric_location_queries": true,
+    "use_name_aliases": true,
+    "retrieval_mode": "wide"
+  },
+  "split": {
+    "version": "entity-hash-v1-seed42-70-15-15",
+    "seed": 42,
+    "population_counts": {
+      "train": 1544993,
+      "tune": 330816,
+      "holdout": 331012
+    },
+    "sample_counts": {
+      "train": 20000,
+      "tune": 2000,
+      "holdout": 2000
+    },
+    "policy": "Hash-based S1 entity folds; not exact stratification. Matching targets follow their owner; unmatched targets use their own stable hash."
+  },
+  "threshold": 0.71,
+  "model": {
+    "library": "lightgbm",
+    "version": "4.3.0",
+    "license": "MIT",
+    "artifact_license": "MODEL_LICENSE.txt",
+    "best_iteration": 1200,
+    "parameters": {
+      "boosting_type": "gbdt",
+      "class_weight": null,
+      "colsample_bytree": 0.9,
+      "importance_type": "split",
+      "learning_rate": 0.04,
+      "max_depth": -1,
+      "min_child_samples": 30,
+      "min_child_weight": 0.001,
+      "min_split_gain": 0.0,
+      "n_estimators": 1200,
+      "n_jobs": 4,
+      "num_leaves": 31,
+      "objective": "binary",
+      "random_state": 42,
+      "reg_alpha": 0.0,
+      "reg_lambda": 2.0,
+      "subsample": 0.9,
+      "subsample_for_bin": 200000,
+      "subsample_freq": 1,
+      "max_bin": 127,
+      "verbosity": -1,
+      "deterministic": true,
+      "force_col_wise": true
+    }
+  },
+  "target_pool": {
+    "S2": 5034616,
+    "S3": 5285603
+  },
+  "validation_protocol": "Full training target-pool stress validation. S1 folds are disjoint; held-out target identities are excluded from all supervised training examples. Corpus-local index frequencies are label-free. This is not a French test estimate or a private leaderboard score.",
+  "blocking": {
+    "train": {
+      "entities": 20000,
+      "scored_pairs": 582358,
+      "retrieved_pairs": 800000,
+      "training_pairs_excluded_for_entity_isolation": 217642,
+      "blocking_recall": 0.9728233517866129,
+      "oracle_macro_f05": 0.9910467720177621,
+      "country_oracle": {
+        "india": {
+          "entities": 7839,
+          "macro_f05": 0.9880458594084914
+        },
+        "us": {
+          "entities": 12161,
+          "macro_f05": 0.9929811650729446
+        }
+      },
+      "path_pair_counts": {
+        "numeric_location": 191702,
+        "rare_address": 350899,
+        "rare_digits": 79984,
+        "exact_core": 138759,
+        "name_alias_numeric": 48398,
+        "core_prefix": 147740,
+        "name_alias_address": 35359,
+        "exact_name": 87445,
+        "rare_name": 321279,
+        "postcode_name": 24174
+      },
+      "mean_candidates": 40.0,
+      "p95_candidates": 40.0,
+      "seconds": 1197.4031260420015
+    },
+    "tune": {
+      "entities": 2000,
+      "scored_pairs": 80000,
+      "retrieved_pairs": 80000,
+      "training_pairs_excluded_for_entity_isolation": 0,
+      "blocking_recall": 0.9669947886508397,
+      "oracle_macro_f05": 0.9910052651662591,
+      "country_oracle": {
+        "india": {
+          "entities": 815,
+          "macro_f05": 0.9860577741111728
+        },
+        "us": {
+          "entities": 1185,
+          "macro_f05": 0.9944079699847359
+        }
+      },
+      "path_pair_counts": {
+        "core_prefix": 14806,
+        "rare_address": 35514,
+        "exact_core": 13979,
+        "rare_name": 31644,
+        "exact_name": 8624,
+        "name_alias_address": 2825,
+        "name_alias_numeric": 4382,
+        "numeric_location": 18904,
+        "rare_digits": 7997,
+        "postcode_name": 2283
+      },
+      "mean_candidates": 40.0,
+      "p95_candidates": 40.0,
+      "seconds": 114.37143358300091
+    },
+    "holdout": {
+      "entities": 2000,
+      "scored_pairs": 80000,
+      "retrieved_pairs": 80000,
+      "training_pairs_excluded_for_entity_isolation": 0,
+      "blocking_recall": 0.9701149425287356,
+      "oracle_macro_f05": 0.9893790284018624,
+      "country_oracle": {
+        "us": {
+          "entities": 1249,
+          "macro_f05": 0.9927814407109488
+        },
+        "india": {
+          "entities": 751,
+          "macro_f05": 0.9837204225775631
+        }
+      },
+      "path_pair_counts": {
+        "name_alias_address": 2864,
+        "name_alias_numeric": 4020,
+        "numeric_location": 18165,
+        "postcode_name": 2575,
+        "rare_address": 34307,
+        "rare_digits": 8294,
+        "core_prefix": 15451,
+        "rare_name": 32797,
+        "exact_core": 14174,
+        "exact_name": 9033
+      },
+      "mean_candidates": 40.0,
+      "p95_candidates": 40.0,
+      "seconds": 119.25646504099859
+    }
+  },
+  "tune": {
+    "macro_f05": 0.9549115499833084,
+    "entities": 2000,
+    "true_positive_links": 6261,
+    "predicted_links": 6361,
+    "true_links": 6908,
+    "micro_precision": 0.9842792013834303,
+    "micro_recall": 0.9063404748118123,
+    "singleton_entities": 122,
+    "singleton_false_positives": 8,
+    "singleton_false_positive_rate": 0.06557377049180328,
+    "non_singleton_empty_rate": 0.006922257720979766,
+    "country_macro_f05": {
+      "india": {
+        "entities": 815,
+        "macro_f05": 0.9437663561315535
+      },
+      "us": {
+        "entities": 1185,
+        "macro_f05": 0.9625768098897897
+      }
+    }
+  },
+  "holdout": {
+    "macro_f05": 0.9510571966744428,
+    "entities": 2000,
+    "true_positive_links": 6296,
+    "predicted_links": 6393,
+    "true_links": 6960,
+    "micro_precision": 0.9848271547004536,
+    "micro_recall": 0.9045977011494253,
+    "singleton_entities": 81,
+    "singleton_false_positives": 4,
+    "singleton_false_positive_rate": 0.04938271604938271,
+    "non_singleton_empty_rate": 0.012506513809275664,
+    "country_macro_f05": {
+      "us": {
+        "entities": 1249,
+        "macro_f05": 0.9600513722706709
+      },
+      "india": {
+        "entities": 751,
+        "macro_f05": 0.9360988407227935
+      }
+    }
+  },
+  "holdout_macro_f05_bootstrap_95": [
+    0.9448411342795207,
+    0.9568818321510919
+  ],
+  "feature_gain": {
+    "name_jaro_winkler": 3067.620064927265,
+    "name_levenshtein": 536.4587208498269,
+    "name_token_sort": 1043.82858915627,
+    "name_token_set": 315.12964371033013,
+    "name_partial": 1387.2351928520948,
+    "name_jaccard": 1038.5452932082117,
+    "name_length_ratio": 1408.682536298409,
+    "name_character_cosine": 538.520599545911,
+    "address_jaro_winkler": 1751.4392453208566,
+    "address_levenshtein": 122.10762678086758,
+    "address_token_sort": 624.705191321671,
+    "address_token_set": 800.5819012261927,
+    "address_partial": 797.0134798027575,
+    "address_jaccard": 330.5886284299195,
+    "address_length_ratio": 1089.009746618569,
+    "address_numeric_overlap": 246.78204049170017,
+    "digit_token_jaccard": 133.79060999304056,
+    "exact_numeric_match": 5.868878953158855,
+    "postcode_agreement": 52.617479138076305,
+    "street_number_match": 38.947555631399155,
+    "exact_name": 0.0,
+    "exact_name_core": 134.57768334634602,
+    "any_name_token_match": 46.699290692806244,
+    "name_token_in_address": 98.3651433493942,
+    "address_token_in_name": 77.48619248345494,
+    "country_exact_match": 0.0,
+    "candidate_address_missing": 1.2774819731712341,
+    "postcode_missing": 108.20124224200845,
+    "country_missing": 0.0,
+    "source1_name_length": 410.46126647107303,
+    "candidate_name_length": 2258.7845696359873,
+    "source1_address_length": 229.54262601025403,
+    "candidate_address_length": 1036.6823413278908,
+    "blocking_score": 100745.47047731653,
+    "source_is_s2": 93.53830054402351,
+    "source_is_s3": 21.846970971673727,
+    "canonical_name_sort": 1904.337311271578,
+    "canonical_name_set": 4255.26642151922,
+    "canonical_core_exact": 2.9637889564037323,
+    "canonical_name_cosine": 15895.541828436777,
+    "canonical_name_length_ratio": 919.6235794592649,
+    "query_family_log_frequency": 837.7491199877113,
+    "candidate_alias_confidence": 638.8020092137158,
+    "candidate_alias_log_support": 412.4771834053099,
+    "address_ascii_containment": 3685.8252358846366,
+    "first_numeric_canonical_exact": 277.6161217391491,
+    "numeric_canonical_jaccard": 1833.6634964682162,
+    "name_weighted_jaccard": 1609.2540679685771,
+    "address_weighted_jaccard": 5123.158011034131,
+    "strongest_shared_address_idf": 2242.075356852263
+  },
+  "seconds": 1474.5115920409953
+}

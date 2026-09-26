@@ -5,7 +5,7 @@ Main metric: macro F₀.₅, averaged over every Source 1 entity.
 
 ## Current state
 
-All seven official TSVs are downloaded and audited. Sanhitha's Unicode, null-handling, and preprocessing fixes are integrated. The full-target pilot improved from 0.8462 to 0.9268 local macro F₀.₅; this is not a leaderboard score. The runnable pipeline includes disk retrieval, 36/50 pair features, train-only name-channel fitting, LightGBM, threshold tuning, inference, and strict output validation.
+All seven official TSVs are downloaded and audited. Sanhitha's Unicode, null-handling, and preprocessing fixes are integrated. The latest full-target run reached 0.9511 local macro F₀.₅ on 2,000 held-out entities; this is not a leaderboard score. The runnable pipeline includes disk retrieval, 36/50 pair features, train-only name-channel fitting, LightGBM, threshold tuning, inference, and strict output validation.
 
 ## Ownership and immediate work
 
@@ -18,7 +18,7 @@ All seven official TSVs are downloaded and audited. Sanhitha's Unicode, null-han
 
 ## Release order
 
-1. Compare larger training runs on the fixed development protocol.
+1. Implement targeted address/numeric and name-alignment features based on the remaining tuning errors.
 2. Select the smallest candidate budget that preserves matching quality and retrieval coverage.
 3. Freeze model, feature version, alias asset, retrieval settings, and threshold.
 4. Evaluate a larger fresh audit population and unseen-name/transfer scenarios.

@@ -38,6 +38,12 @@ Artifacts include `model.txt`, `report.json`, `name_aliases.json`, feature regis
 
 The measured improved pilot achieved **0.9267946 macro F₀.₅**, **0.9758643 precision**, and **0.8717949 recall** on 500 held-out S1 entities against all 10,320,219 training targets. Its threshold was 0.74. Its classifier used 2,000 training S1 entities; its name channel used all 1,544,990 eligible training-fold S1 names and their 5,348,430 matched targets. Threshold tuning used another 500 S1 entities. These are exploratory local results, not leaderboard scores.
 
+## Latest larger-data result
+
+The completed `models/larger_alias_v4` run uses 20,000 training, 2,000 tuning, and 2,000 held-out S1 entities with the same retrieval and feature settings. It achieved **0.951057 macro F₀.₅**, 0.984827 precision, and 0.904598 recall at threshold 0.71. Reproduce it with the training command above using a fresh artifact directory and `--train-entities 20000 --tune-entities 2000 --holdout-entities 2000`.
+
+On the same 2,000 held-out entities, the earlier model scores 0.933597. The paired gain is 0.017460, with bootstrap 95% interval 0.012734–0.022544. Further capacity changes gave only small tuning gains with reduced precision and are not promoted. See `docs/SCORE_IMPROVEMENT_PLAN.md` in the repository for the next experiments. Full test outputs remain pending.
+
 ## Name channel and features
 
 The name channel learns reusable name strings from only matched training-fold targets. It does not use entity IDs as model features. Confident mappings require support ≥2 and dominance ≥0.98. Ambiguous names retain up to three supported alternatives as conditional evidence without forced canonical rewriting.

@@ -6,7 +6,7 @@ import numpy as np
 from ..features.registry import FEATURE_NAMES
 
 
-def train(train_pairs, tune_pairs, *, threads: int = 4, seed: int = 42, feature_names=FEATURE_NAMES):
+def train(train_pairs, tune_pairs, *, threads: int = 4, seed: int = 42, feature_names=FEATURE_NAMES, overrides=None):
     if not len(train_pairs) or train_pairs["label"].nunique() < 2:
         raise ValueError("Training candidates must include positive and negative examples")
     if not len(tune_pairs) or tune_pairs["label"].nunique() < 2:
@@ -18,6 +18,11 @@ def train(train_pairs, tune_pairs, *, threads: int = 4, seed: int = 42, feature_
         random_state=seed, n_jobs=threads, verbosity=-1,
         deterministic=True, force_col_wise=True,
     )
+    if overrides:
+        allowed={"n_estimators","learning_rate","num_leaves","min_child_samples","reg_lambda"}
+        if set(overrides)-allowed:
+            raise ValueError(f"Unsupported model experiment parameters: {sorted(set(overrides)-allowed)}")
+        model.set_params(**overrides)
     train_x = train_pairs.loc[:, list(feature_names)].astype(np.float32)
     tune_x = tune_pairs.loc[:, list(feature_names)].astype(np.float32)
     # Each anchor contributes total weight one, regardless of candidate count.

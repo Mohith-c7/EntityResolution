@@ -1,0 +1,201 @@
+{
+  "baseline_artifact": "larger_alias_v4",
+  "baseline_tune": {
+    "macro_f05": 0.9549115499833084,
+    "entities": 2000,
+    "true_positive_links": 6261,
+    "predicted_links": 6361,
+    "true_links": 6908,
+    "micro_precision": 0.9842792013834303,
+    "micro_recall": 0.9063404748118123,
+    "singleton_entities": 122,
+    "singleton_false_positives": 8,
+    "singleton_false_positive_rate": 0.06557377049180328,
+    "non_singleton_empty_rate": 0.006922257720979766,
+    "country_macro_f05": {
+      "india": {
+        "entities": 815,
+        "macro_f05": 0.9437663561315535
+      },
+      "us": {
+        "entities": 1185,
+        "macro_f05": 0.9625768098897897
+      }
+    }
+  },
+  "mode": "capacity",
+  "rows": [
+    {
+      "name": "longer_lower_regularization",
+      "features": [
+        "name_jaro_winkler",
+        "name_levenshtein",
+        "name_token_sort",
+        "name_token_set",
+        "name_partial",
+        "name_jaccard",
+        "name_length_ratio",
+        "name_character_cosine",
+        "address_jaro_winkler",
+        "address_levenshtein",
+        "address_token_sort",
+        "address_token_set",
+        "address_partial",
+        "address_jaccard",
+        "address_length_ratio",
+        "address_numeric_overlap",
+        "digit_token_jaccard",
+        "exact_numeric_match",
+        "postcode_agreement",
+        "street_number_match",
+        "exact_name",
+        "exact_name_core",
+        "any_name_token_match",
+        "name_token_in_address",
+        "address_token_in_name",
+        "country_exact_match",
+        "candidate_address_missing",
+        "postcode_missing",
+        "country_missing",
+        "source1_name_length",
+        "candidate_name_length",
+        "source1_address_length",
+        "candidate_address_length",
+        "blocking_score",
+        "source_is_s2",
+        "source_is_s3",
+        "canonical_name_sort",
+        "canonical_name_set",
+        "canonical_core_exact",
+        "canonical_name_cosine",
+        "canonical_name_length_ratio",
+        "query_family_log_frequency",
+        "candidate_alias_confidence",
+        "candidate_alias_log_support",
+        "address_ascii_containment",
+        "first_numeric_canonical_exact",
+        "numeric_canonical_jaccard",
+        "name_weighted_jaccard",
+        "address_weighted_jaccard",
+        "strongest_shared_address_idf"
+      ],
+      "parameter_overrides": {
+        "n_estimators": 3000,
+        "reg_lambda": 0.2
+      },
+      "threshold": 0.72,
+      "tune": {
+        "macro_f05": 0.9554507388404079,
+        "entities": 2000,
+        "true_positive_links": 6291,
+        "predicted_links": 6401,
+        "true_links": 6908,
+        "micro_precision": 0.9828151851273239,
+        "micro_recall": 0.9106832657788072,
+        "singleton_entities": 122,
+        "singleton_false_positives": 8,
+        "singleton_false_positive_rate": 0.06557377049180328,
+        "non_singleton_empty_rate": 0.006389776357827476,
+        "country_macro_f05": {
+          "india": {
+            "entities": 815,
+            "macro_f05": 0.9448083311543028
+          },
+          "us": {
+            "entities": 1185,
+            "macro_f05": 0.9627702006667163
+          }
+        }
+      },
+      "best_iteration": 2488,
+      "seconds": 52.765908208006294
+    },
+    {
+      "name": "more_leaves",
+      "features": [
+        "name_jaro_winkler",
+        "name_levenshtein",
+        "name_token_sort",
+        "name_token_set",
+        "name_partial",
+        "name_jaccard",
+        "name_length_ratio",
+        "name_character_cosine",
+        "address_jaro_winkler",
+        "address_levenshtein",
+        "address_token_sort",
+        "address_token_set",
+        "address_partial",
+        "address_jaccard",
+        "address_length_ratio",
+        "address_numeric_overlap",
+        "digit_token_jaccard",
+        "exact_numeric_match",
+        "postcode_agreement",
+        "street_number_match",
+        "exact_name",
+        "exact_name_core",
+        "any_name_token_match",
+        "name_token_in_address",
+        "address_token_in_name",
+        "country_exact_match",
+        "candidate_address_missing",
+        "postcode_missing",
+        "country_missing",
+        "source1_name_length",
+        "candidate_name_length",
+        "source1_address_length",
+        "candidate_address_length",
+        "blocking_score",
+        "source_is_s2",
+        "source_is_s3",
+        "canonical_name_sort",
+        "canonical_name_set",
+        "canonical_core_exact",
+        "canonical_name_cosine",
+        "canonical_name_length_ratio",
+        "query_family_log_frequency",
+        "candidate_alias_confidence",
+        "candidate_alias_log_support",
+        "address_ascii_containment",
+        "first_numeric_canonical_exact",
+        "numeric_canonical_jaccard",
+        "name_weighted_jaccard",
+        "address_weighted_jaccard",
+        "strongest_shared_address_idf"
+      ],
+      "parameter_overrides": {
+        "n_estimators": 2400,
+        "num_leaves": 63,
+        "reg_lambda": 1.0
+      },
+      "threshold": 0.65,
+      "tune": {
+        "macro_f05": 0.9554898036024886,
+        "entities": 2000,
+        "true_positive_links": 6348,
+        "predicted_links": 6475,
+        "true_links": 6908,
+        "micro_precision": 0.9803861003861004,
+        "micro_recall": 0.9189345686160972,
+        "singleton_entities": 122,
+        "singleton_false_positives": 8,
+        "singleton_false_positive_rate": 0.06557377049180328,
+        "non_singleton_empty_rate": 0.006922257720979766,
+        "country_macro_f05": {
+          "india": {
+            "entities": 815,
+            "macro_f05": 0.9460426259873841
+          },
+          "us": {
+            "entities": 1185,
+            "macro_f05": 0.9619872295571805
+          }
+        }
+      },
+      "best_iteration": 1594,
+      "seconds": 53.44492187499418
+    }
+  ],
+  "policy": "Development comparison only; holdout entities do not contribute to fitting or selection. These experiment model files require explicit integration and independent evaluation before production inference."
+}

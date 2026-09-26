@@ -2,7 +2,13 @@
 
 Offline business matching using the seven organizer TSVs, bounded disk indexes, a training-only name channel, pair features, and LightGBM.
 
-## Measured development results
+## Latest completed result
+
+The 20,000-training-entity run achieved **0.951057 macro F₀.₅** on 2,000 held-out entities, with 0.984827 precision and 0.904598 recall. The earlier model scores 0.933597 on these same entities. Paired gain: 0.017460 (bootstrap 95% interval 0.012734–0.022544). These are exploratory local results, not leaderboard scores.
+
+See [the score improvement plan](docs/SCORE_IMPROVEMENT_PLAN.md) for the next experiments.
+
+## Earlier development results
 
 The complete training target pool contains 5,034,616 S2 records and 5,285,603 S3 records. These pilots used 2,000 classifier-training S1 entities, 500 threshold-tuning entities, and 500 held-out entities.
 

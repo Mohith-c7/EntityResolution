@@ -66,3 +66,11 @@ Detailed machine-readable pilot reports are stored beside this document. Local m
 | 20 | 40 | 0.9379 | 0.9268 | 0.9872 |
 
 K=5 is a smaller candidate-budget challenger, with comparable pilot matching quality. K=20 remains preferred by the tuning score. Selecting K=5 solely because its holdout score is highest would use the holdout for tuning; confirm budget choice on the larger development population. Pair features in wide retrieval are independent of final K, so existing predictions permit this exploratory comparison. Final inference must score and export only the configured retained set.
+
+## Larger training run
+
+`larger_alias_v4` uses 20,000 training, 2,000 tuning, and 2,000 held-out S1 entities. It achieved 0.9510572 holdout macro F₀.₅, 0.9848272 precision, and 0.9045977 recall at threshold 0.71. Retrieval recall is 0.9701149; the retained-candidate ceiling is 0.9893790.
+
+On the identical 2,000-entity cohort, the earlier model scores 0.9335971. The paired gain is 0.0174601, with bootstrap 95% interval 0.0127344–0.0225441. Singleton false positives fell from 8 to 4 among 81 singleton entities. See `larger_model_comparison.json` for the complete comparison.
+
+The larger tuning set still has 419 retrieved true links rejected by the matcher, 100 false predictions, and 228 links lost in blocking. Capacity/regularization comparisons used cached pairs and tuning data for selection. Longer boosting/lower regularization reached 0.955451 tuning macro F₀.₅; more leaves reached 0.955490, versus baseline 0.954912. Both reduced precision; neither is promoted.
