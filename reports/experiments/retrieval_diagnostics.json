@@ -1,0 +1,299 @@
+{
+  "retrieval_probe.json": [
+    {
+      "config": {
+        "top_k": 20,
+        "path_top_k": 80,
+        "query_tokens": 6,
+        "max_word_df": 100000,
+        "max_address_df": 10000,
+        "character_terms": 8,
+        "max_character_df": 20000,
+        "character_mode": "always"
+      },
+      "entities": 100,
+      "seconds": 25.6708203340022,
+      "recall": 0.7679083094555874,
+      "oracle_macro_f05": 0.8451790570540569
+    },
+    {
+      "config": {
+        "top_k": 20,
+        "path_top_k": 80,
+        "query_tokens": 6,
+        "max_word_df": 100000,
+        "max_address_df": 10000,
+        "character_terms": 8,
+        "max_character_df": 20000,
+        "character_mode": "off"
+      },
+      "entities": 100,
+      "seconds": 11.375179542003025,
+      "recall": 0.7736389684813754,
+      "oracle_macro_f05": 0.8464727633477633
+    },
+    {
+      "config": {
+        "top_k": 20,
+        "path_top_k": 80,
+        "query_tokens": 6,
+        "max_word_df": 100000,
+        "max_address_df": 10000,
+        "character_terms": 4,
+        "max_character_df": 2000,
+        "character_mode": "always"
+      },
+      "entities": 100,
+      "seconds": 13.231201875001716,
+      "recall": 0.7707736389684814,
+      "oracle_macro_f05": 0.8460881479631479
+    }
+  ],
+  "retrieval_probe_anchored.json": {
+    "policy": "Tuning-only retrieval diagnostic. Oracle assumes perfect matching of retrieved positives; it is not a model score.",
+    "config": {
+      "top_k": 20,
+      "path_top_k": 40,
+      "query_tokens": 6,
+      "max_word_df": 100000,
+      "max_address_df": 100000,
+      "character_terms": 8,
+      "max_character_df": 20000,
+      "character_mode": "off",
+      "reranker_version": "v4",
+      "numeric_conjunctions": true,
+      "numeric_location_queries": true,
+      "use_name_aliases": true,
+      "retrieval_mode": "anchored"
+    },
+    "target_pool": {
+      "S2": 5034616,
+      "S3": 5285603
+    },
+    "oracle": {
+      "macro_f05": 0.9671830253080251,
+      "entities": 100,
+      "true_positive_links": 319,
+      "predicted_links": 319,
+      "true_links": 349,
+      "micro_precision": 1.0,
+      "micro_recall": 0.9140401146131805,
+      "singleton_entities": 5,
+      "singleton_false_positives": 0,
+      "singleton_false_positive_rate": 0.0,
+      "non_singleton_empty_rate": 0.010526315789473684,
+      "country_macro_f05": {
+        "india": {
+          "entities": 36,
+          "macro_f05": 0.9398512367262367
+        },
+        "us": {
+          "entities": 64,
+          "macro_f05": 0.9825571563852814
+        }
+      }
+    },
+    "mean_candidates": 34.66,
+    "seconds": 38.53858591700555
+  },
+  "retrieval_probe_anchored_v2.json": {
+    "policy": "Tuning-only retrieval diagnostic. Oracle assumes perfect matching of retrieved positives; it is not a model score.",
+    "config": {
+      "top_k": 20,
+      "path_top_k": 40,
+      "query_tokens": 6,
+      "max_word_df": 100000,
+      "max_address_df": 100000,
+      "character_terms": 8,
+      "max_character_df": 20000,
+      "character_mode": "off",
+      "reranker_version": "v4",
+      "numeric_conjunctions": true,
+      "numeric_location_queries": true,
+      "use_name_aliases": true,
+      "retrieval_mode": "anchored"
+    },
+    "target_pool": {
+      "S2": 5034616,
+      "S3": 5285603
+    },
+    "oracle": {
+      "macro_f05": 0.9629410785293138,
+      "entities": 100,
+      "true_positive_links": 313,
+      "predicted_links": 313,
+      "true_links": 349,
+      "micro_precision": 1.0,
+      "micro_recall": 0.8968481375358166,
+      "singleton_entities": 5,
+      "singleton_false_positives": 0,
+      "singleton_false_positive_rate": 0.0,
+      "non_singleton_empty_rate": 0.010526315789473684,
+      "country_macro_f05": {
+        "india": {
+          "entities": 36,
+          "macro_f05": 0.9332763845631492
+        },
+        "us": {
+          "entities": 64,
+          "macro_f05": 0.9796274688852814
+        }
+      }
+    },
+    "mean_candidates": 31.29,
+    "seconds": 31.19147950000479
+  },
+  "retrieval_probe_v2.json": {
+    "config": {
+      "top_k": 20,
+      "path_top_k": 80,
+      "query_tokens": 6,
+      "max_word_df": 100000,
+      "max_address_df": 100000,
+      "character_terms": 8,
+      "max_character_df": 20000,
+      "character_mode": "off",
+      "reranker_version": "v2",
+      "numeric_conjunctions": true
+    },
+    "entities": 100,
+    "seconds": 17.53094483300083,
+    "recall": 0.9255014326647565,
+    "oracle_macro_f05": 0.9687123293373293
+  },
+  "retrieval_probe_v3.json": {
+    "config": {
+      "top_k": 20,
+      "path_top_k": 80,
+      "query_tokens": 6,
+      "max_word_df": 100000,
+      "max_address_df": 100000,
+      "character_terms": 8,
+      "max_character_df": 20000,
+      "character_mode": "off",
+      "reranker_version": "v3",
+      "numeric_conjunctions": true
+    },
+    "entities": 100,
+    "seconds": 24.07112691600196,
+    "recall": 0.9340974212034384,
+    "oracle_macro_f05": 0.9739801864801865,
+    "pre_cap_recall": 0.9656160458452722
+  },
+  "retrieval_probe_v4.json": {
+    "config": {
+      "top_k": 20,
+      "path_top_k": 80,
+      "query_tokens": 6,
+      "max_word_df": 100000,
+      "max_address_df": 100000,
+      "character_terms": 8,
+      "max_character_df": 20000,
+      "character_mode": "off",
+      "reranker_version": "v4",
+      "numeric_conjunctions": true,
+      "numeric_location_queries": true,
+      "use_name_aliases": true
+    },
+    "entities": 100,
+    "seconds": 39.834394416997384,
+    "recall": 0.9598853868194842,
+    "oracle_macro_f05": 0.9890124458874459,
+    "pre_cap_recall": 0.9856733524355301,
+    "pre_cap_oracle": 0.9965151515151515
+  },
+  "retrieval_probe_wide_cached.json": {
+    "policy": "Tuning-only retrieval diagnostic. Oracle assumes perfect matching of retrieved positives; it is not a model score.",
+    "config": {
+      "top_k": 20,
+      "path_top_k": 80,
+      "query_tokens": 6,
+      "max_word_df": 100000,
+      "max_address_df": 100000,
+      "character_terms": 8,
+      "max_character_df": 20000,
+      "character_mode": "off",
+      "reranker_version": "v4",
+      "numeric_conjunctions": true,
+      "numeric_location_queries": true,
+      "use_name_aliases": true,
+      "retrieval_mode": "wide"
+    },
+    "target_pool": {
+      "S2": 5034616,
+      "S3": 5285603
+    },
+    "oracle": {
+      "macro_f05": 0.9899215367965368,
+      "entities": 100,
+      "true_positive_links": 336,
+      "predicted_links": 336,
+      "true_links": 349,
+      "micro_precision": 1.0,
+      "micro_recall": 0.9627507163323782,
+      "singleton_entities": 5,
+      "singleton_false_positives": 0,
+      "singleton_false_positive_rate": 0.0,
+      "non_singleton_empty_rate": 0.0,
+      "country_macro_f05": {
+        "india": {
+          "entities": 36,
+          "macro_f05": 0.9775883838383839
+        },
+        "us": {
+          "entities": 64,
+          "macro_f05": 0.9968589353354979
+        }
+      }
+    },
+    "mean_candidates": 40.0,
+    "seconds": 36.47679504099506
+  },
+  "retrieval_probe_wide_optimized.json": {
+    "policy": "Tuning-only retrieval diagnostic. Oracle assumes perfect matching of retrieved positives; it is not a model score.",
+    "config": {
+      "top_k": 20,
+      "path_top_k": 80,
+      "query_tokens": 6,
+      "max_word_df": 100000,
+      "max_address_df": 100000,
+      "character_terms": 8,
+      "max_character_df": 20000,
+      "character_mode": "off",
+      "reranker_version": "v4",
+      "numeric_conjunctions": true,
+      "numeric_location_queries": true,
+      "use_name_aliases": true,
+      "retrieval_mode": "wide"
+    },
+    "target_pool": {
+      "S2": 5034616,
+      "S3": 5285603
+    },
+    "oracle": {
+      "macro_f05": 0.9899215367965368,
+      "entities": 100,
+      "true_positive_links": 336,
+      "predicted_links": 336,
+      "true_links": 349,
+      "micro_precision": 1.0,
+      "micro_recall": 0.9627507163323782,
+      "singleton_entities": 5,
+      "singleton_false_positives": 0,
+      "singleton_false_positive_rate": 0.0,
+      "non_singleton_empty_rate": 0.0,
+      "country_macro_f05": {
+        "india": {
+          "entities": 36,
+          "macro_f05": 0.9775883838383839
+        },
+        "us": {
+          "entities": 64,
+          "macro_f05": 0.9968589353354979
+        }
+      }
+    },
+    "mean_candidates": 40.0,
+    "seconds": 39.763322334001714
+  }
+}

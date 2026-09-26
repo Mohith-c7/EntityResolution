@@ -130,8 +130,8 @@ class BlockingRecord:
         address = field("norm_address", "address_norm")
         country = field("norm_country", "country_norm")
         core = scalar_text(row.get("name_core", name))
-        name_digits = token_values(row.get("name_digits", ()))
-        address_digits = token_values(row.get("address_digits", row.get("digit_tokens", ())))
+        name_digits = token_values(row.get("name_digits", row.get("name_numeric_tokens", ())))
+        address_digits = token_values(row.get("address_digits", row.get("address_numeric_tokens", row.get("digit_tokens", ()))))
         # Format-based numeric candidates only. These are not verified postcodes.
         # Explicit upstream candidates take precedence, including an empty set.
         postcodes = token_values(row["postcode_candidates"]) if "postcode_candidates" in row else (
@@ -142,7 +142,7 @@ class BlockingRecord:
             token_values(row.get("name_tokens", name)),
             token_values(row.get("address_tokens", address)),
             name_digits, address_digits, postcodes,
-            scalar_text(row.get("name_folded", row.get("norm_name_folded", core or name))),
+            scalar_text(row.get("name_folded", row.get("norm_name_folded", row.get("accent_folded_name", core or name)))),
         )
 
     def keys(self, kind: str, config: BlockingConfig) -> frozenset[str]:

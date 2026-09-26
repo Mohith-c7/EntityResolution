@@ -12,6 +12,7 @@ env/
 # Datasets and models
 dataset/
 models/
+reports/retrieval_probe*.json
 
 # Outputs and logs
 output/*.tsv

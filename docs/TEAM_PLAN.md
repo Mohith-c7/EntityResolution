@@ -6,6 +6,8 @@
 **Goal:** Produce a strong, reproducible first submission, then improve toward the leading leaderboard scores.  
 **Primary metric:** Macro F₀.₅ across Source 1 entities, including singletons.
 
+**Development checkpoint, 26 September 2026:** all seven datasets are audited; Sanhitha's preprocessing fixes are integrated. The full-target 2,000/500/500 pilot achieved 0.9268 local macro F₀.₅ with the versioned 50-feature extension. This is an exploratory validation result, not a leaderboard score. Larger training, candidate-budget selection, fresh audit evaluation, and complete test outputs remain pending. See `reports/experiments/PILOT_RESULTS.md` and `docs/NEXT_STEPS.md`.
+
 ## 1. Submission and Ranking Requirements
 
 The leaderboard scores `matching_results.tsv`. The organizer's candidate-generation update also states that `candidate_pairs.tsv` and its producing code are considered in the final ranking review, with smaller candidate sets favored. The update does not specify a numerical formula for combining those factors.
@@ -270,6 +272,11 @@ python3 utils/validate_submission.py \
   --matching output/matching_results.tsv \
   --candidate output/candidate_pairs.tsv \
   --test-dir dataset/test
+
+python3 utils/organizer_validate_submission.py \
+  --matching output/matching_results.tsv \
+  --candidate output/candidate_pairs.tsv \
+  --test-dir dataset/test --check-ids
 ```
 
 The methodology template must cover preprocessing, blocking, features, model architecture, training, validation, decisions, scalability, licenses, measured results, and reproduction steps. It should describe only the pipeline actually submitted.

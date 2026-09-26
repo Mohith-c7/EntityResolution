@@ -1,0 +1,2 @@
+# Preserve literal trailing tabs in the organizer's empty-list TSV examples.
+docs/ORGANIZER_README.md whitespace=-blank-at-eol

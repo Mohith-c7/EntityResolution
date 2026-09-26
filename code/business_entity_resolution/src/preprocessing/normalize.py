@@ -35,6 +35,8 @@ def _clean_text(value: Any) -> str:
     if _is_missing(value):
         return ""
     text = unicodedata.normalize("NFKC", str(value)).casefold().strip()
+    if text.isascii():
+        return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9\s]", " ", text)).strip()
     # ``\w`` excludes Unicode combining marks.  Retaining the L, N, and M
     # categories preserves scripts such as Devanagari and Odia intact.
     text = "".join(
@@ -77,6 +79,8 @@ def extract_digits(text: Any) -> list[str]:
 def accent_fold(text: Any) -> str:
     """Return a Latin-accent-folded alternate view without damaging Indic marks."""
     primary = _clean_text(text)
+    if primary.isascii():
+        return primary
     folded: list[str] = []
     previous_base = ""
     for char in unicodedata.normalize("NFKD", primary):

@@ -6,6 +6,8 @@
 > **Target Metric:** Macro F₀.₅ (precision-weighted, per Source 1 entity, macro-averaged)
 > **Team:** Mohit · Sanhita · Harsha · Sahasra
 
+> **Implementation checkpoint (26 September 2026):** the 36-feature baseline and versioned 50-feature extension are runnable. The improved full-target pilot achieved 0.9268 local macro F₀.₅ on 500 held-out S1 entities. Complete official-test inference and release are pending. See the package README and `reports/experiments/PILOT_RESULTS.md` for the measured configuration; the original baseline diagram below is not a claim that every optional stage is selected.
+
 ---
 
 ## What Changed in v2.0
@@ -72,7 +74,7 @@ $$\text{Macro } F_{0.5} = \frac{1}{|S_1|} \sum_{s \in S_1} F_{0.5}(s)$$
 Where for each entity $s$:
 $$F_{0.5} = \frac{1.25 \times \text{Precision} \times \text{Recall}}{0.25 \times \text{Precision} + \text{Recall}}$$
 
-- Precision is weighted **2× over recall**.
+- The score penalizes false positives more heavily: in the count formula, an FP contributes 1 and an FN contributes 0.25 to the denominator.
 - Singletons score **1.0** when predicted empty, and **0.0** when any false match is predicted.
 - **Strategic rule: Default to NOT matching when uncertain.**
 

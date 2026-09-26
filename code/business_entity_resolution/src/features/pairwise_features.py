@@ -1,5 +1,88 @@
-"""
-Pairwise similarity feature extraction.
-Eventually implements the locked set of 36 pairwise features comparing entity attributes
-(token overlap, string edit distances, phonetic matches, digit similarities, and null indicators).
-"""
+"""The baseline 36-feature representation, with explicit empty-field behavior."""
+
+import math
+from functools import lru_cache
+
+import numpy as np
+from rapidfuzz import fuzz
+from rapidfuzz.distance import JaroWinkler, Levenshtein
+
+from ..blocking.contracts import BlockingRecord, Candidate
+from ..preprocessing.normalize import extract_digits
+from .registry import FEATURE_NAMES, FEATURE_NAMES_V2
+
+
+def jaccard(left, right) -> float:
+    return len(left & right) / len(left | right) if left and right else 0.0
+
+
+def similarity_features(left: str, right: str, left_tokens, right_tokens) -> list[float]:
+    if not left or not right:
+        return [0.0] * 7
+    return [
+        JaroWinkler.similarity(left, right), Levenshtein.normalized_similarity(left, right),
+        fuzz.token_sort_ratio(left, right) / 100, fuzz.token_set_ratio(left, right) / 100,
+        fuzz.partial_ratio(left, right) / 100, jaccard(left_tokens, right_tokens),
+        min(len(left), len(right)) / max(len(left), len(right)),
+    ]
+
+
+@lru_cache(maxsize=10_000)
+def name_grams(name: str) -> frozenset[str]:
+    return frozenset(name[i:i+n] for n in (3, 4) for i in range(max(0, len(name) - n + 1)))
+
+
+def build_pair_features(left: BlockingRecord, right: BlockingRecord, candidate: Candidate) -> dict[str, float]:
+    a, b = name_grams(left.retrieval_name), name_grams(right.retrieval_name)
+    char_cosine = len(a & b) / math.sqrt(len(a) * len(b)) if a and b else 0.0
+    nl = {"n:" + t for t in left.name_digits} | {"a:" + t for t in left.address_digits}
+    nr = {"n:" + t for t in right.name_digits} | {"a:" + t for t in right.address_digits}
+    first_left, first_right = extract_digits(left.address), extract_digits(right.address)
+    values = [
+        *similarity_features(left.name, right.name, left.name_tokens, right.name_tokens), char_cosine,
+        *similarity_features(left.address, right.address, left.address_tokens, right.address_tokens),
+        jaccard(left.address_digits, right.address_digits),
+        jaccard(nl, nr), bool(nl and nl == nr), bool(left.postcode_candidates & right.postcode_candidates),
+        bool(first_left and first_right and first_left[0] == first_right[0]),
+        bool(left.name and left.name == right.name), bool(left.core and left.core == right.core),
+        bool(left.name_tokens & right.name_tokens), bool(left.name_tokens & right.address_tokens),
+        bool(left.address_tokens & right.name_tokens), bool(left.country and left.country == right.country),
+        not bool(right.address), not bool(left.postcode_candidates and right.postcode_candidates),
+        not bool(left.country and right.country),
+        len(left.name), len(right.name), len(left.address), len(right.address),
+        candidate.blocking_score, candidate.candidate_source == "S2", candidate.candidate_source == "S3",
+    ]
+    if len(values) != len(FEATURE_NAMES):
+        raise RuntimeError("Feature registry mismatch")
+    return dict(zip(FEATURE_NAMES, map(float, values)))
+
+
+def feature_vector(left: BlockingRecord, right: BlockingRecord, candidate: Candidate) -> np.ndarray:
+    return np.fromiter(build_pair_features(left, right, candidate).values(), dtype=np.float32, count=36)
+
+
+def build_extended_pair_features(left, right, candidate, index):
+    base = build_pair_features(left, right, candidate)
+    lc, _, _ = index.resolved_name(left)
+    rc, confidence, support = index.resolved_name(right)
+    if index.aliases:
+        evidence, evidence_support = index.aliases.evidence(right.core, left.core)
+        confidence, support = evidence, evidence_support
+    a, b = name_grams(lc), name_grams(rc)
+    ld = {t.lstrip("0") or "0" for t in left.address_digits}
+    rd = {t.lstrip("0") or "0" for t in right.address_digits}
+    lf, rf = extract_digits(left.address), extract_digits(right.address)
+    extras = [
+        fuzz.token_sort_ratio(lc, rc) / 100 if lc and rc else 0,
+        fuzz.token_set_ratio(lc, rc) / 100 if lc and rc else 0,
+        bool(lc and lc == rc), len(a & b) / math.sqrt(len(a)*len(b)) if a and b else 0,
+        min(len(lc),len(rc))/max(len(lc),len(rc)) if lc and rc else 0,
+        math.log1p(index.family_count(lc)), confidence, math.log1p(support),
+        index.address_containment(left.address,right.address),
+        bool(lf and rf and (lf[0].lstrip("0") or "0") == (rf[0].lstrip("0") or "0")),
+        jaccard(ld,rd), index.weighted_overlap(left.name_tokens,right.name_tokens,"name"),
+        index.weighted_overlap(left.address_tokens,right.address_tokens,"address"),
+        max((index.idf("address",t) for t in left.address_tokens & right.address_tokens), default=0),
+    ]
+    base.update(zip(FEATURE_NAMES_V2[len(FEATURE_NAMES):],map(float,extras)))
+    return base
