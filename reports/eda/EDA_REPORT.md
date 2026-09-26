@@ -133,7 +133,7 @@ Detailed analysis of all 2,206,821 training labels:
 > [!TIP]
 > **Implications for Sahasra (Model & Decision):**
 > 1. Over **89%** of S1 entities have multiple matches across S2 and S3, with the modal count being 3 to 4 matches.
-> 2. **5.58%** are pure singletons (no matches in S2 or S3). Under the competition Macro $F_{0.5}$ metric, predicting empty for singletons earns an automatic score of **1.0**. Predicting any false positive on a singleton yields **0.0**. The threshold must be tuned high to protect singletons.
+> 2. **5.58%** are pure singletons (no matches in S2 or S3). Under the competition Macro $F_{0.5}$ metric, predicting empty for singletons earns an automatic score of **1.0**. Predicting any false positive on a singleton yields **0.0**. Empirical threshold calibration across 0.30–0.95 (step 0.01) is critical to balance singleton precision and match recall.
 
 ---
 
@@ -266,7 +266,7 @@ Label distributions:
 Important class/distribution observations:
 1. Target metric is Macro F0.5 (precision weighted 2x over recall).
 2. Singletons score 1.0 when predicted empty, 0.0 if any false match is predicted.
-3. Decision threshold must be swept higher than 0.5 (expected 0.60 - 0.75) to penalize false positives.
+3. Decision threshold should be swept empirically across 0.30 → 0.95 (step 0.01) on the validation holdout to maximize Macro F0.5 (where 0.60–0.75 is an expected hypothesis, not a predetermined requirement).
 4. Country is an open-set string: test includes 14.5% France which is completely unseen in train.
    Feature must be boolean string equality (country_exact_match), never categorical/one-hot.
 5. Address features must gracefully handle NaN (~3.3% in S2/S3) using null-safe defaults.

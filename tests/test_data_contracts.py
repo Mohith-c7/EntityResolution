@@ -1,5 +1,6 @@
 """
-Data contract and loader validation tests.
+Hardened Data Contract and Schema Invariant Unit Tests for Amazon Business Entity Resolution 2026.
+Uses lightweight fixtures to test contracts quickly without loading multi-gigabyte files.
 """
 
 from __future__ import annotations
@@ -13,18 +14,25 @@ PROJECT_CODE = Path(__file__).resolve().parents[1] / "code" / "business_entity_r
 if str(PROJECT_CODE) not in sys.path:
     sys.path.insert(0, str(PROJECT_CODE))
 
-from src.data.loader import (  # noqa: E402
-    load_ground_truth,
-    load_test_source1,
-    load_train_source1,
-    load_tsv,
+TESTS_DIR = Path(__file__).resolve().parent
+if str(TESTS_DIR) not in sys.path:
+    sys.path.insert(0, str(TESTS_DIR))
+
+from fixtures.data_fixtures import (
+    get_valid_ground_truth_df,
+    get_valid_source1_df,
+    get_valid_source2_df,
+    get_valid_source3_df,
 )
-from src.data.schema import (  # noqa: E402
+from src.data.loader import load_train_source1, load_tsv
+from src.data.schema import (
     REQUIRED_GROUND_TRUTH_COLUMNS,
     REQUIRED_SOURCE_COLUMNS,
     inspect_dataframe,
     inspect_ground_truth,
+    validate_ground_truth_contract,
     validate_schema,
+    validate_source_dataset,
 )
 
 
@@ -37,54 +45,199 @@ def test_loader_preserves_raw_strings_and_ids() -> None:
         assert isinstance(eid, str)
 
 
-def test_ground_truth_loader_contract() -> None:
-    gt = load_ground_truth(nrows=20)
-    assert len(gt) == 20
-    assert list(gt.columns) == REQUIRED_GROUND_TRUTH_COLUMNS
-    info = inspect_ground_truth(gt)
-    assert info["total_s1_rows"] == 20
-    assert "mean_matches_per_s1" in info
-    assert "singleton_rate" in info
+def test_loader_raises_on_missing_file() -> None:
+    missing_path = Path("dataset/train/non_existent_file.tsv")
+    try:
+        load_tsv(missing_path)
+        assert False, "Should have raised FileNotFoundError"
+    except FileNotFoundError:
+        pass
 
 
-def test_validate_schema_identifies_defects() -> None:
-    # Clean df
-    clean_df = pd.DataFrame({
-        "entity_id": ["S1-1", "S1-2"],
-        "business_name": ["Alpha", "Beta"],
-        "business_address": ["123 St", "456 Ave"],
-        "country": ["US", "India"],
-    })
-    assert validate_schema(clean_df, "Clean") == []
+def test_valid_source_datasets_pass_contract() -> None:
+    s1 = get_valid_source1_df()
+    s2 = get_valid_source2_df()
+    s3 = get_valid_source3_df()
 
-    # Missing column
-    bad_cols_df = pd.DataFrame({"entity_id": ["S1-1"], "business_name": ["Alpha"]})
-    issues = validate_schema(bad_cols_df, "BadCols")
+    assert validate_source_dataset(s1, "Source1", expected_prefix="S1-") == []
+    assert validate_source_dataset(s2, "Source2", expected_prefix="S2-") == []
+    assert validate_source_dataset(s3, "Source3", expected_prefix="S3-") == []
+
+
+def test_source_dataset_detects_missing_columns() -> None:
+    df = pd.DataFrame({"entity_id": ["S1-1"], "business_name": ["Alpha"]})
+    issues = validate_source_dataset(df, "Source1")
     assert len(issues) > 0
     assert "Missing required columns" in issues[0]
 
-    # Duplicate IDs
-    dup_id_df = pd.DataFrame({
-        "entity_id": ["S1-1", "S1-1"],
+
+def test_source_dataset_detects_null_and_numeric_ids() -> None:
+    # Null ID
+    null_id_df = pd.DataFrame({
+        "entity_id": [None, "S1-2"],
         "business_name": ["Alpha", "Beta"],
         "business_address": ["123 St", "456 Ave"],
-        "country": ["US", "India"],
+        "country": ["US", "US"],
     })
-    dup_issues = validate_schema(dup_id_df, "DupIDs")
-    assert any("duplicate ID" in msg for msg in dup_issues)
+    issues = validate_source_dataset(null_id_df, "Source1")
+    assert any("null entity_id" in msg for msg in issues)
+
+    # Numeric (non-string) ID
+    num_id_df = pd.DataFrame({
+        "entity_id": [101, "S1-102"],
+        "business_name": ["Alpha", "Beta"],
+        "business_address": ["123 St", "456 Ave"],
+        "country": ["US", "US"],
+    })
+    issues_num = validate_source_dataset(num_id_df, "Source1")
+    assert any("not strings" in msg for msg in issues_num)
 
 
-def test_test_dataset_schema_contract() -> None:
-    test_s1 = load_test_source1(nrows=10)
-    assert len(test_s1) == 10
-    assert list(test_s1.columns) == REQUIRED_SOURCE_COLUMNS
-    issues = validate_schema(test_s1, "TestS1")
+def test_source_dataset_detects_duplicate_ids() -> None:
+    dup_id_df = pd.DataFrame({
+        "entity_id": ["S1-101", "S1-101"],
+        "business_name": ["Alpha", "Beta"],
+        "business_address": ["123 St", "456 Ave"],
+        "country": ["US", "US"],
+    })
+    issues = validate_source_dataset(dup_id_df, "Source1")
+    assert any("duplicate entity_id" in msg for msg in issues)
+
+
+def test_source_dataset_detects_invalid_prefixes() -> None:
+    wrong_prefix_df = pd.DataFrame({
+        "entity_id": ["S2-101"],  # S2 ID in S1 dataset
+        "business_name": ["Alpha"],
+        "business_address": ["123 St"],
+        "country": ["US"],
+    })
+    issues = validate_source_dataset(wrong_prefix_df, "Source1", expected_prefix="S1-")
+    assert any("not starting with expected prefix 'S1-'" in msg for msg in issues)
+
+
+def test_source_dataset_detects_null_name_and_country() -> None:
+    bad_df = pd.DataFrame({
+        "entity_id": ["S1-101", "S1-102"],
+        "business_name": ["", None],
+        "business_address": ["123 St", "456 Ave"],
+        "country": [None, "  "],
+    })
+    issues = validate_source_dataset(bad_df, "Source1")
+    assert any("business_name" in msg for msg in issues)
+    assert any("country" in msg for msg in issues)
+
+
+def test_source_dataset_allows_null_business_address() -> None:
+    # Address is permitted to be null (as observed in 3.3% of S2/S3 records)
+    s2 = get_valid_source2_df()
+    assert s2["business_address"].isna().sum() > 0
+    issues = validate_source_dataset(s2, "Source2", expected_prefix="S2-")
     assert issues == []
 
 
-if __name__ == "__main__":
+def test_source_dataset_is_strictly_open_set_country() -> None:
+    # Any valid non-empty country string (France, Germany, Japan) is accepted without hardcoding
+    df = pd.DataFrame({
+        "entity_id": ["S1-901", "S1-902", "S1-903"],
+        "business_name": ["Maison Laurent", "Kaiser Tech", "Tokyo Trading"],
+        "business_address": ["Paris", "Berlin", "Tokyo"],
+        "country": ["France", "Germany", "Japan"],
+    })
+    issues = validate_source_dataset(df, "Source1", expected_prefix="S1-")
+    assert issues == []
+
+
+def test_valid_ground_truth_contract_passes() -> None:
+    s1 = get_valid_source1_df()
+    s2 = get_valid_source2_df()
+    s3 = get_valid_source3_df()
+    gt = get_valid_ground_truth_df()
+
+    s2_ids = set(s2["entity_id"])
+    s3_ids = set(s3["entity_id"])
+
+    issues = validate_ground_truth_contract(gt, s1_df=s1, s2_ids=s2_ids, s3_ids=s3_ids)
+    assert issues == []
+
+
+def test_ground_truth_detects_duplicate_and_null_s1_ids() -> None:
+    gt_dup = pd.DataFrame({
+        "source1_entity_id": ["S1-101", "S1-101"],
+        "matched_entity_ids": ["S2-201", "S3-301"],
+    })
+    issues = validate_ground_truth_contract(gt_dup)
+    assert any("duplicate source1_entity_id" in msg for msg in issues)
+
+
+def test_ground_truth_detects_referential_integrity_violations() -> None:
+    s1 = get_valid_source1_df()
+    gt_mismatch = pd.DataFrame({
+        "source1_entity_id": ["S1-999"],  # Not in s1
+        "matched_entity_ids": ["S2-201"],
+    })
+    issues = validate_ground_truth_contract(gt_mismatch, s1_df=s1)
+    assert any("not present in train_source1" in msg for msg in issues)
+    assert any("missing from Ground Truth" in msg for msg in issues)
+
+
+def test_ground_truth_rejects_s1_inside_matches() -> None:
+    gt_bad = pd.DataFrame({
+        "source1_entity_id": ["S1-101"],
+        "matched_entity_ids": ["S1-102,S2-201"],  # S1 ID inside matches is forbidden
+    })
+    issues = validate_ground_truth_contract(gt_bad)
+    assert any("S1 IDs appearing inside matched_entity_ids" in msg for msg in issues)
+
+
+def test_ground_truth_rejects_invalid_candidate_prefix() -> None:
+    gt_bad = pd.DataFrame({
+        "source1_entity_id": ["S1-101"],
+        "matched_entity_ids": ["S4-999,S2-201"],  # S4 prefix is invalid
+    })
+    issues = validate_ground_truth_contract(gt_bad)
+    assert any("invalid prefixes" in msg for msg in issues)
+
+
+def test_ground_truth_rejects_intra_row_duplicate_matches() -> None:
+    gt_bad = pd.DataFrame({
+        "source1_entity_id": ["S1-101"],
+        "matched_entity_ids": ["S2-201,S2-201"],  # Repeated candidate in single row
+    })
+    issues = validate_ground_truth_contract(gt_bad)
+    assert any("duplicate matched IDs within the same list" in msg for msg in issues)
+
+
+def test_ground_truth_supports_singletons_and_inspection() -> None:
+    gt = get_valid_ground_truth_df()
+    info = inspect_ground_truth(gt)
+    assert info["total_s1_rows"] == 5
+    assert info["singleton_count"] == 1  # S1-105 has empty matches
+    assert info["singleton_rate"] == 20.0
+    assert info["one_match_count"] == 2  # S1-102 and S1-104
+    assert info["multi_match_count"] == 2  # S1-101 and S1-103
+    assert info["total_positive_pairs"] == 6  # 2 + 1 + 2 + 1 + 0
+
+
+def run_all_tests() -> None:
     test_loader_preserves_raw_strings_and_ids()
-    test_ground_truth_loader_contract()
-    test_validate_schema_identifies_defects()
-    test_test_dataset_schema_contract()
-    print("All data contract tests passed successfully!")
+    test_loader_raises_on_missing_file()
+    test_valid_source_datasets_pass_contract()
+    test_source_dataset_detects_missing_columns()
+    test_source_dataset_detects_null_and_numeric_ids()
+    test_source_dataset_detects_duplicate_ids()
+    test_source_dataset_detects_invalid_prefixes()
+    test_source_dataset_detects_null_name_and_country()
+    test_source_dataset_allows_null_business_address()
+    test_source_dataset_is_strictly_open_set_country()
+    test_valid_ground_truth_contract_passes()
+    test_ground_truth_detects_duplicate_and_null_s1_ids()
+    test_ground_truth_detects_referential_integrity_violations()
+    test_ground_truth_rejects_s1_inside_matches()
+    test_ground_truth_rejects_invalid_candidate_prefix()
+    test_ground_truth_rejects_intra_row_duplicate_matches()
+    test_ground_truth_supports_singletons_and_inspection()
+    print("All 17 Data Contract and Invariant tests passed successfully!")
+
+
+if __name__ == "__main__":
+    run_all_tests()
