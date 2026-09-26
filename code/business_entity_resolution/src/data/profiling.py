@@ -21,6 +21,58 @@ DEFAULT_CHUNK_SIZE = 250_000
 DEFAULT_RANDOM_SEED = 42
 
 
+def compute_exact_median_from_histogram(histogram: dict[int | str, int]) -> float:
+    """
+    Compute the exact median from a frequency distribution histogram.
+
+    Derives the exact median using cumulative observation counts without
+    approximations or row-level subsampling. Handles both odd and even
+    numbers of total observations.
+
+    Args:
+        histogram: Mapping from integer match count to occurrence frequency.
+
+    Returns:
+        Exact median as a float.
+    """
+    clean_hist = {int(k): int(v) for k, v in histogram.items() if int(v) > 0}
+    if not clean_hist:
+        return 0.0
+
+    sorted_items = sorted(clean_hist.items())
+    total_n = sum(cnt for _, cnt in sorted_items)
+    if total_n == 0:
+        return 0.0
+
+    if total_n % 2 == 1:
+        # Odd number of observations: single middle element at 1-indexed (total_n + 1) // 2
+        target_pos = (total_n + 1) // 2
+        running = 0
+        for val, cnt in sorted_items:
+            running += cnt
+            if running >= target_pos:
+                return float(val)
+    else:
+        # Even number of observations: average of elements at total_n // 2 and (total_n // 2) + 1
+        pos1 = total_n // 2
+        pos2 = pos1 + 1
+        val1 = None
+        val2 = None
+        running = 0
+        for val, cnt in sorted_items:
+            running += cnt
+            if val1 is None and running >= pos1:
+                val1 = val
+            if val2 is None and running >= pos2:
+                val2 = val
+                break
+        if val1 is not None and val2 is not None:
+            return float(val1 + val2) / 2.0
+        return float(val1 if val1 is not None else 0.0)
+
+    return 0.0
+
+
 def profile_source_dataset(
     file_path: Path | str,
     dataset_name: str,
@@ -32,7 +84,9 @@ def profile_source_dataset(
     Profile a single entity source TSV file using chunked streaming.
 
     Calculates row counts, missing value rates, ID uniqueness, country frequencies,
-    and text length statistics without loading the full file into memory at once.
+    and text length statistics across the entire file without loading the full file into memory.
+    Uses streaming reservoir sampling (Algorithm R) with a fixed seed to ensure representative
+    sampling across all chunks.
     """
     path = Path(file_path).resolve()
     logger.info("Profiling %s (%s)...", dataset_name, path.name)
@@ -43,6 +97,7 @@ def profile_source_dataset(
     id_seen: set[str] = set()
     dup_id_count = 0
 
+    rng = np.random.default_rng(random_seed)
     sample_names: list[str] = []
     sample_addrs: list[str] = []
 
@@ -65,13 +120,11 @@ def profile_source_dataset(
         chunk_len = len(chunk)
         total_rows += chunk_len
 
-        # Missing values check
+        # Missing values check using boolean union-mask (avoids arithmetic double counting)
         for col in columns:
             series = chunk[col]
-            null_count = int(series.isna().sum()) + int(
-                (series.fillna("").str.strip() == "").sum() - series.isna().sum()
-            )
-            missing_counts[col] += null_count
+            is_missing = series.isna() | (series.astype(str).str.strip() == "")
+            missing_counts[col] += int(is_missing.sum())
 
         # Entity ID uniqueness
         if "entity_id" in chunk.columns:
@@ -90,12 +143,28 @@ def profile_source_dataset(
                 else:
                     country_counts["<MISSING>"] += int(cnt)
 
-        # Reservoir sampling for lengths
+        # Streaming reservoir sampling (Algorithm R) across the entire file
+        chunk_names = chunk["business_name"].fillna("").tolist() if "business_name" in chunk.columns else [""] * chunk_len
+        chunk_addrs = chunk["business_address"].fillna("").tolist() if "business_address" in chunk.columns else [""] * chunk_len
+
+        prev_total = total_rows - chunk_len
         if len(sample_names) < max_sample_size:
-            n_to_take = min(chunk_len, max_sample_size - len(sample_names))
-            sampled_chunk = chunk.sample(n=n_to_take, random_state=random_seed)
-            sample_names.extend(sampled_chunk["business_name"].fillna("").tolist())
-            sample_addrs.extend(sampled_chunk["business_address"].fillna("").tolist())
+            n_take = min(chunk_len, max_sample_size - len(sample_names))
+            sample_names.extend(chunk_names[:n_take])
+            sample_addrs.extend(chunk_addrs[:n_take])
+            rem_start = n_take
+        else:
+            rem_start = 0
+
+        if rem_start < chunk_len:
+            global_indices = np.arange(prev_total + rem_start, total_rows) + 1
+            j_arr = rng.integers(0, global_indices)
+            selected = np.where(j_arr < max_sample_size)[0]
+            for idx in selected:
+                target_slot = j_arr[idx]
+                item_idx = rem_start + idx
+                sample_names[target_slot] = chunk_names[item_idx]
+                sample_addrs[target_slot] = chunk_addrs[item_idx]
 
     unique_ids = len(id_seen)
     del id_seen
@@ -124,6 +193,12 @@ def profile_source_dataset(
         "duplicate_ids": dup_id_count,
         "country_counts": dict(country_counts.most_common(20)),
         "total_distinct_countries": len([c for c in country_counts if c != "<MISSING>"]),
+        "sampling_metadata": {
+            "method": "streaming_reservoir_algorithm_r",
+            "sample_size": len(sample_names),
+            "random_seed": random_seed,
+            "purpose": "text_length_and_word_distribution_statistics",
+        },
         "name_char_len_stats": {
             "mean": float(np.mean(name_char_lens)) if name_char_lens else 0.0,
             "median": float(np.median(name_char_lens)) if name_char_lens else 0.0,
@@ -158,11 +233,11 @@ def profile_source_dataset(
 def profile_ground_truth(
     file_path: Path | str,
     chunk_size: int = DEFAULT_CHUNK_SIZE,
-    max_counts_sample: int = 200_000,
 ) -> dict[str, Any]:
     """
     Analyze ground truth relationships in streaming chunks.
     Computes singleton rate, multi-match distribution, positive pair counts, and checks intra-row duplicates.
+    Derives the exact median match count from the complete histogram.
     """
     path = Path(file_path).resolve()
     logger.info("Profiling Ground Truth (%s)...", path.name)
@@ -174,7 +249,6 @@ def profile_ground_truth(
     s2_positives = 0
     s3_positives = 0
     intra_row_dups = 0
-    all_match_counts: list[int] = []
 
     for chunk in pd.read_csv(
         path,
@@ -204,8 +278,6 @@ def profile_ground_truth(
 
             cnt = len(m_list)
             match_count_dist[cnt] += 1
-            if len(all_match_counts) < max_counts_sample:
-                all_match_counts.append(cnt)
 
             for mid in m_list:
                 if mid.startswith("S2-"):
@@ -224,6 +296,7 @@ def profile_ground_truth(
 
     total_matches_exact = sum(m_len * cnt for m_len, cnt in match_count_dist.items())
     mean_matches = total_matches_exact / total_rows if total_rows > 0 else 0.0
+    exact_median = compute_exact_median_from_histogram(match_count_dist)
 
     return {
         "file_size_bytes": path.stat().st_size,
@@ -241,7 +314,8 @@ def profile_ground_truth(
         "s2_positives": s2_positives,
         "s3_positives": s3_positives,
         "mean_matches_per_s1": mean_matches,
-        "median_matches_per_s1": float(np.median(all_match_counts)) if all_match_counts else 0.0,
+        "median_matches_per_s1": exact_median,
+        "median_calculation_method": "exact_from_full_histogram",
         "max_matches_per_s1": max(match_count_dist.keys()) if match_count_dist else 0,
         "match_count_distribution": {int(k): int(v) for k, v in sorted(match_count_dist.items())},
     }

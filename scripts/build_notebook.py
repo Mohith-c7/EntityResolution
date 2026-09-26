@@ -1,6 +1,9 @@
 """
-Script to generate notebooks/01_eda.ipynb with all required exploratory sections.
+Script to generate notebooks/01_eda.ipynb with dynamic data loading from eda_profile_results.json.
+Eliminates hardcoded measured values and enforces the canonical Data -> Profiling -> JSON -> Notebook flow.
 """
+
+from __future__ import annotations
 
 import json
 from pathlib import Path
@@ -33,6 +36,7 @@ cells = [
         "source": [
             "import sys\n",
             "from pathlib import Path\n",
+            "import json\n",
             "import pandas as pd\n",
             "import numpy as np\n",
             "\n",
@@ -40,16 +44,17 @@ cells = [
             "PROJECT_ROOT = Path.cwd().parent if Path.cwd().name == 'notebooks' else Path.cwd()\n",
             "sys.path.insert(0, str(PROJECT_ROOT / 'code' / 'business_entity_resolution'))\n",
             "\n",
-            "from src.config import TRAIN_PATH, TEST_PATH, RANDOM_SEED\n",
-            "from src.data.loader import (\n",
-            "    load_train_source1, load_train_source2, load_train_source3, load_ground_truth,\n",
-            "    load_test_source1, load_test_source2, load_test_source3\n",
-            ")\n",
-            "from src.data.schema import inspect_dataframe, inspect_ground_truth, validate_schema\n",
-            "\n",
+            "PROFILE_JSON_PATH = PROJECT_ROOT / 'reports' / 'eda' / 'eda_profile_results.json'\n",
             "print(f\"Project Root: {PROJECT_ROOT}\")\n",
-            "print(f\"Train path: {TRAIN_PATH}\")\n",
-            "print(f\"Test path: {TEST_PATH}\")"
+            "print(f\"Loading Profile Results from: {PROFILE_JSON_PATH}\")\n",
+            "\n",
+            "with open(PROFILE_JSON_PATH, 'r', encoding='utf-8') as f:\n",
+            "    profile_results = json.load(f)\n",
+            "\n",
+            "datasets_meta = profile_results.get('datasets', {})\n",
+            "gt_meta = profile_results.get('ground_truth', {})\n",
+            "examples_meta = profile_results.get('examples', [])\n",
+            "print(f\"Loaded {len(datasets_meta)} datasets, Ground Truth profile, and {len(examples_meta)} examples.\")"
         ]
     },
     {
@@ -57,7 +62,7 @@ cells = [
         "metadata": {},
         "source": [
             "## 1. Dataset Inventory and File Verification\n",
-            "We inspect raw file sizes and verified line counts across all 7 TSV datasets."
+            "Raw file sizes and verified line counts generated from streaming profiling results across all 7 TSV datasets."
         ]
     },
     {
@@ -66,27 +71,26 @@ cells = [
         "metadata": {},
         "outputs": [],
         "source": [
-            "files_meta = [\n",
-            "    ('Train Source 1', TRAIN_PATH / 'train_source1.tsv', 2_206_821),\n",
-            "    ('Train Source 2', TRAIN_PATH / 'train_source2.tsv', 5_034_616),\n",
-            "    ('Train Source 3', TRAIN_PATH / 'train_source3.tsv', 5_285_603),\n",
-            "    ('Train Ground Truth', TRAIN_PATH / 'train_ground_truth.tsv', 2_206_821),\n",
-            "    ('Test Source 1', TEST_PATH / 'test_source1.tsv', 1_732_544),\n",
-            "    ('Test Source 2', TEST_PATH / 'test_source2.tsv', 4_887_273),\n",
-            "    ('Test Source 3', TEST_PATH / 'test_source3.tsv', 5_082_316),\n",
-            "]\n",
-            "\n",
-            "inventory_df = pd.DataFrame([\n",
-            "    {\n",
+            "inventory_rows = []\n",
+            "for name, data in datasets_meta.items():\n",
+            "    inventory_rows.append({\n",
             "        'Dataset': name,\n",
-            "        'Filename': p.name,\n",
-            "        'Size (MB)': round(p.stat().st_size / (1024 * 1024), 2),\n",
-            "        'Exact Rows': rows,\n",
-            "        'Delimiter': 'Tab (\\\\t)'\n",
-            "    }\n",
-            "    for name, p, rows in files_meta\n",
-            "])\n",
-            "inventory_df"
+            "        'Filename': data['filename'],\n",
+            "        'Size (MB)': round(data['file_size_bytes'] / (1024 * 1024), 2),\n",
+            "        'Exact Rows': data['total_rows'],\n",
+            "        'Delimiter': 'Tab (\\\\t)',\n",
+            "    })\n",
+            "if gt_meta:\n",
+            "    inventory_rows.append({\n",
+            "        'Dataset': 'Train Ground Truth',\n",
+            "        'Filename': 'train_ground_truth.tsv',\n",
+            "        'Size (MB)': round(gt_meta['file_size_bytes'] / (1024 * 1024), 2),\n",
+            "        'Exact Rows': gt_meta['total_rows'],\n",
+            "        'Delimiter': 'Tab (\\\\t)',\n",
+            "    })\n",
+            "\n",
+            "inventory_df = pd.DataFrame(inventory_rows)\n",
+            "display(inventory_df)"
         ]
     },
     {
@@ -95,7 +99,7 @@ cells = [
         "source": [
             "## 2. Schema and Missing Value Inspection\n",
             "Every source dataset shares the identical 4-column schema: `entity_id`, `business_name`, `business_address`, `country`.\n",
-            "Below we inspect sample schemas using our data contract utilities."
+            "Missing value rates are computed using strict boolean union-masks across the full streaming datasets."
         ]
     },
     {
@@ -104,26 +108,29 @@ cells = [
         "metadata": {},
         "outputs": [],
         "source": [
-            "s1_sample = load_train_source1(nrows=1000)\n",
-            "summary = inspect_dataframe(s1_sample, 'Train Source 1')\n",
-            "print(summary.format_text())"
+            "missing_rows = []\n",
+            "for name, data in datasets_meta.items():\n",
+            "    missing_rows.append({\n",
+            "        'Dataset': name,\n",
+            "        'Total Rows': data['total_rows'],\n",
+            "        'Missing entity_id': f\"{data['missing_counts'].get('entity_id', 0):,} ({data['missing_pcts'].get('entity_id', 0.0):.2f}%)\",\n",
+            "        'Missing business_name': f\"{data['missing_counts'].get('business_name', 0):,} ({data['missing_pcts'].get('business_name', 0.0):.2f}%)\",\n",
+            "        'Missing business_address': f\"{data['missing_counts'].get('business_address', 0):,} ({data['missing_pcts'].get('business_address', 0.0):.2f}%)\",\n",
+            "        'Missing country': f\"{data['missing_counts'].get('country', 0):,} ({data['missing_pcts'].get('country', 0.0):.2f}%)\",\n",
+            "    })\n",
+            "missing_df = pd.DataFrame(missing_rows)\n",
+            "display(missing_df)"
         ]
     },
     {
         "cell_type": "markdown",
         "metadata": {},
         "source": [
-            "### Missing Value Rates Across the Entire Dataset (~26.4M records)\n",
-            "- **`entity_id`**: **0.00%** missing across all files. IDs are 100% complete and unique.\n",
-            "- **`business_name`**: **0.00%** missing across all files. Every entity has a name string.\n",
-            "- **`country`**: **0.00%** missing across all files. Country is always populated.\n",
-            "- **`business_address`**:\n",
-            "  - Train S1: **0.00%** missing\n",
-            "  - Train S2: **3.36%** missing (168,967 rows)\n",
-            "  - Train S3: **3.33%** missing (175,916 rows)\n",
-            "  - Test S1: **0.00%** missing\n",
-            "  - Test S2: **2.65%** missing (129,408 rows)\n",
-            "  - Test S3: **2.68%** missing (136,098 rows)\n",
+            "### Missing Value Rates Analysis\n",
+            "- **`entity_id`**: 0.00% missing across all files. IDs are 100% complete and unique.\n",
+            "- **`business_name`**: 0.00% missing across all files. Every entity has a name string.\n",
+            "- **`country`**: 0.00% missing across all files in the challenge dataset.\n",
+            "- **`business_address`**: Missing in ~2.6% to ~3.4% of S2 and S3 records.\n",
             "\n",
             "> **Key Contract Note**: Address features and blocking must be null-safe because ~3% of S2 and S3 records lack an address."
         ]
@@ -133,7 +140,7 @@ cells = [
         "metadata": {},
         "source": [
             "## 3. Country Distribution Analysis & Open-Set Validation\n",
-            "Analyzing geographical distributions reveals a critical open-set property of the competition."
+            "Country counts and proportions derived dynamically from the generated profile results."
         ]
     },
     {
@@ -142,15 +149,11 @@ cells = [
         "metadata": {},
         "outputs": [],
         "source": [
-            "country_data = {\n",
-            "    'Train S1': {'US': 1_323_633, 'India': 883_188, 'France': 0},\n",
-            "    'Train S2': {'US': 3_016_817, 'India': 2_017_799, 'France': 0},\n",
-            "    'Train S3': {'US': 3_170_056, 'India': 2_115_547, 'France': 0},\n",
-            "    'Test S1': {'India': 809_986, 'US': 663_106, 'France': 259_452},\n",
-            "    'Test S2': {'India': 2_312_565, 'US': 1_871_330, 'France': 703_378},\n",
-            "    'Test S3': {'India': 2_405_000, 'US': 1_945_701, 'France': 731_615},\n",
-            "}\n",
-            "country_df = pd.DataFrame(country_data).fillna(0).astype(int)\n",
+            "country_dict = {}\n",
+            "for name, data in datasets_meta.items():\n",
+            "    country_dict[name] = data.get('country_counts', {})\n",
+            "\n",
+            "country_df = pd.DataFrame(country_dict).fillna(0).astype(int)\n",
             "country_pct = (country_df.div(country_df.sum(axis=0), axis=1) * 100).round(2)\n",
             "\n",
             "print('=== Country Counts ===')\n",
@@ -175,7 +178,7 @@ cells = [
         "metadata": {},
         "source": [
             "## 4. Ground Truth Structure and Matching Problem\n",
-            "The ground truth defines the match relationships between S1 entities and S2/S3 candidates."
+            "Ground truth metrics and full match-count distribution loaded dynamically from the generated profile results."
         ]
     },
     {
@@ -184,22 +187,22 @@ cells = [
         "metadata": {},
         "outputs": [],
         "source": [
-            "gt_metrics = {\n",
-            "    'Total S1 Entities': 2_206_821,\n",
-            "    'Unique S1 IDs': 2_206_821,\n",
-            "    'Duplicate S1 IDs': 0,\n",
-            "    'Intra-row Duplicate Matches': 0,\n",
-            "    'Singletons (0 matches)': '123,247 (5.58%)',\n",
-            "    'Single Matches (1 match)': '119,157 (5.40%)',\n",
-            "    'Multi Matches (>1 match)': '1,964,417 (89.02%)',\n",
-            "    'Total Positive Pairs': '7,638,365',\n",
-            "    'S2 Positives': '3,693,619 (48.36%)',\n",
-            "    'S3 Positives': '3,944,746 (51.64%)',\n",
-            "    'Mean Matches per S1': 3.461,\n",
-            "    'Median Matches per S1': 3.0,\n",
-            "    'Max Matches per S1': 11,\n",
+            "gt_summary = {\n",
+            "    'Total S1 Entities': f\"{gt_meta.get('total_rows', 0):,}\",\n",
+            "    'Unique S1 IDs': f\"{gt_meta.get('unique_s1_ids', 0):,}\",\n",
+            "    'Duplicate S1 IDs': f\"{gt_meta.get('duplicate_s1_ids', 0):,}\",\n",
+            "    'Intra-row Duplicate Matches': f\"{gt_meta.get('intra_row_duplicates', 0):,}\",\n",
+            "    'Singletons (0 matches)': f\"{gt_meta.get('singleton_count', 0):,} ({gt_meta.get('singleton_rate', 0.0):.2f}%)\",\n",
+            "    'Single Matches (1 match)': f\"{gt_meta.get('one_match_count', 0):,} ({gt_meta.get('one_match_rate', 0.0):.2f}%)\",\n",
+            "    'Multi Matches (>1 match)': f\"{gt_meta.get('multi_match_count', 0):,} ({gt_meta.get('multi_match_rate', 0.0):.2f}%)\",\n",
+            "    'Total Positive Pairs': f\"{gt_meta.get('total_positive_pairs', 0):,}\",\n",
+            "    'S2 Positives': f\"{gt_meta.get('s2_positives', 0):,}\",\n",
+            "    'S3 Positives': f\"{gt_meta.get('s3_positives', 0):,}\",\n",
+            "    'Mean Matches per S1': round(gt_meta.get('mean_matches_per_s1', 0.0), 3),\n",
+            "    'Median Matches per S1 (Exact from Histogram)': gt_meta.get('median_matches_per_s1', 0.0),\n",
+            "    'Max Matches per S1': gt_meta.get('max_matches_per_s1', 0),\n",
             "}\n",
-            "pd.Series(gt_metrics, name='Value').to_frame()"
+            "display(pd.Series(gt_summary, name='Value').to_frame())"
         ]
     },
     {
@@ -215,44 +218,25 @@ cells = [
         "metadata": {},
         "outputs": [],
         "source": [
-            "match_dist = {\n",
-            "    0: 123_247,\n",
-            "    1: 119_157,\n",
-            "    2: 375_212,\n",
-            "    3: 530_841,\n",
-            "    4: 484_115,\n",
-            "    5: 321_957,\n",
-            "    6: 164_868,\n",
-            "    7: 63_968,\n",
-            "    8: 18_680,\n",
-            "    9: 4_205,\n",
-            "    10: 534,\n",
-            "    11: 37,\n",
-            "}\n",
-            "dist_df = pd.DataFrame(list(match_dist.items()), columns=['Matches per S1', 'Count'])\n",
-            "dist_df['Percentage (%)'] = (dist_df['Count'] / 2_206_821 * 100).round(2)\n",
-            "dist_df"
+            "match_dist = gt_meta.get('match_count_distribution', {})\n",
+            "dist_rows = [\n",
+            "    {\n",
+            "        'Matches per S1': int(k),\n",
+            "        'Count': v,\n",
+            "        'Percentage (%)': round(v / gt_meta['total_rows'] * 100.0, 2) if gt_meta.get('total_rows', 0) > 0 else 0.0,\n",
+            "    }\n",
+            "    for k, v in sorted(match_dist.items(), key=lambda x: int(x[0]))\n",
+            "]\n",
+            "dist_df = pd.DataFrame(dist_rows)\n",
+            "display(dist_df)"
         ]
     },
     {
         "cell_type": "markdown",
         "metadata": {},
         "source": [
-            "## 5. Duplicate and Length Analysis\n",
-            "- In S1, **19.42%** of names recur across different locations (franchises, branch offices), but (name, address) is **100% distinct**.\n",
-            "- In S2 and S3, raw name duplicates are ~4%, address duplicates ~4.5%, and (name, address) duplicate rate is ~0.04%.\n",
-            "\n",
-            "### Length Covariates\n",
-            "- **Business Name**: Mean length is 24-25 characters (~3.5 words), with 95th percentile at 40-42 characters.\n",
-            "- **Business Address**: Mean length is 46-52 characters (~7.2-8.0 words), with 95th percentile at 90-102 characters."
-        ]
-    },
-    {
-        "cell_type": "markdown",
-        "metadata": {},
-        "source": [
-            "## 6. Real Ground Truth Match Noise Patterns\n",
-            "We programmatically examined ground-truth pairs to discover real transformations between S1 and S2/S3:"
+            "## 5. Text & Length Distributions\n",
+            "Length statistics computed across streaming reservoir samples (Algorithm R, 50,000 records per source, seed 42) across the complete files."
         ]
     },
     {
@@ -261,45 +245,41 @@ cells = [
         "metadata": {},
         "outputs": [],
         "source": [
-            "examples_table = pd.DataFrame([\n",
-            "    {\n",
-            "        'Pattern': 'Legal suffix reordering',\n",
-            "        'S1 Entity': 'Unique Constro Pvt Ltd',\n",
-            "        'Matched Candidate': 'PVT UNIQUE CONSTRO LTD (S2)',\n",
-            "        'Impact / Solution': 'Legal suffixes moved to the front. Requires name_core() suffix stripping.'\n",
-            "    },\n",
-            "    {\n",
-            "        'Pattern': 'Hashtag / space removal',\n",
-            "        'S1 Entity': 'Department of Aging',\n",
-            "        'Matched Candidate': '#departmentaging (S2)',\n",
-            "        'Impact / Solution': 'Punctuation stripping and tokenization essential for matching.'\n",
-            "    },\n",
-            "    {\n",
-            "        'Pattern': 'Leetspeak substitution',\n",
-            "        'S1 Entity': 'Unique Constro Pvt Ltd',\n",
-            "        'Matched Candidate': 'Unique C0nstro [Pvt] (S2)',\n",
-            "        'Impact / Solution': 'Digit zero replaced O. Character n-gram and edit distance catches this.'\n",
-            "    },\n",
-            "    {\n",
-            "        'Pattern': 'Typographical errors',\n",
-            "        'S1 Entity': 'Precision Semiconductor Partners',\n",
-            "        'Matched Candidate': 'Precision Semicosdutor Partners (S2)',\n",
-            "        'Impact / Solution': 'Fuzzy string edit metrics (Jaro-Winkler, Levenshtein ratio) easily bridge this.'\n",
-            "    },\n",
-            "    {\n",
-            "        'Pattern': 'Non-Latin Indic script in address',\n",
-            "        'S1 Entity': '...Badagada Main Road, Bhubaneswar, Khordha, Orissa',\n",
-            "        'Matched Candidate': '...BADAGADA MAIN ROAD, BHUBANESWAR, KHORDHA, ଓଡ଼ିଶା (S2)',\n",
-            "        'Impact / Solution': 'State name in Odia script. Shared postal codes & token overlaps remain robust.'\n",
-            "    },\n",
-            "    {\n",
-            "        'Pattern': 'Address token reordering',\n",
-            "        'S1 Entity': '4089 Ethel Road, Bartlett, TN',\n",
-            "        'Matched Candidate': '4089-A ETHEL ROAD, TN, BARTLETT (S2)',\n",
-            "        'Impact / Solution': 'City and state order swapped. Token set ratio and token Jaccard are invariant.'\n",
-            "    },\n",
-            "])\n",
-            "examples_table"
+            "length_rows = []\n",
+            "for name, data in datasets_meta.items():\n",
+            "    name_chars = data.get('name_char_len_stats', {})\n",
+            "    name_words = data.get('name_word_len_stats', {})\n",
+            "    addr_chars = data.get('addr_char_len_stats', {})\n",
+            "    addr_words = data.get('addr_word_len_stats', {})\n",
+            "    length_rows.append({\n",
+            "        'Dataset': name,\n",
+            "        'Name Char Mean (p95)': f\"{name_chars.get('mean', 0.0):.1f} ({name_chars.get('p95', 0.0):.1f})\",\n",
+            "        'Name Word Mean (p95)': f\"{name_words.get('mean', 0.0):.1f} ({name_words.get('p95', 0.0):.1f})\",\n",
+            "        'Address Char Mean (p95)': f\"{addr_chars.get('mean', 0.0):.1f} ({addr_chars.get('p95', 0.0):.1f})\",\n",
+            "        'Address Word Mean (p95)': f\"{addr_words.get('mean', 0.0):.1f} ({addr_words.get('p95', 0.0):.1f})\",\n",
+            "    })\n",
+            "display(pd.DataFrame(length_rows))"
+        ]
+    },
+    {
+        "cell_type": "markdown",
+        "metadata": {},
+        "source": [
+            "## 6. Real Ground Truth Match Noise Patterns\n",
+            "Extracted real ground-truth pairs comparing S1 reference entities with matched S2/S3 candidates."
+        ]
+    },
+    {
+        "cell_type": "code",
+        "execution_count": None,
+        "metadata": {},
+        "outputs": [],
+        "source": [
+            "if examples_meta:\n",
+            "    ex_df = pd.DataFrame(examples_meta)\n",
+            "    display(ex_df.head(10))\n",
+            "else:\n",
+            "    print('No matching examples recorded in profile JSON.')"
         ]
     },
     {

@@ -19,12 +19,28 @@ if str(TESTS_DIR) not in sys.path:
     sys.path.insert(0, str(TESTS_DIR))
 
 from fixtures.data_fixtures import (
+    get_ground_truth_with_duplicate_candidate_df,
+    get_ground_truth_with_empty_matches_df,
+    get_ground_truth_with_invalid_prefix_df,
+    get_ground_truth_with_mismatched_s1_df,
+    get_ground_truth_with_multiple_matches_df,
+    get_ground_truth_with_nonexistent_s2_df,
+    get_ground_truth_with_nonexistent_s3_df,
+    get_ground_truth_with_s1_in_candidates_df,
+    get_ground_truth_with_singleton_matches_df,
+    get_missing_value_regression_df,
+    get_source_with_duplicate_id_df,
+    get_source_with_missing_fields_df,
+    get_source_with_null_address_df,
+    get_source_with_whitespace_id_df,
+    get_source_with_wrong_prefix_df,
     get_valid_ground_truth_df,
     get_valid_source1_df,
     get_valid_source2_df,
     get_valid_source3_df,
 )
-from src.data.loader import load_train_source1, load_tsv
+from src.data.loader import load_tsv
+from src.data.profiling import compute_exact_median_from_histogram
 from src.data.schema import (
     REQUIRED_GROUND_TRUTH_COLUMNS,
     REQUIRED_SOURCE_COLUMNS,
@@ -36,17 +52,21 @@ from src.data.schema import (
 )
 
 
-def test_loader_preserves_raw_strings_and_ids() -> None:
-    df = load_train_source1(nrows=10)
-    assert len(df) == 10
+def test_loader_preserves_raw_strings_and_ids(tmp_path: Path) -> None:
+    tsv_path = tmp_path / "synthetic_source1.tsv"
+    sample_df = get_valid_source1_df()
+    sample_df.to_csv(tsv_path, sep="\t", index=False)
+
+    df = load_tsv(tsv_path)
+    assert len(df) == len(sample_df)
     assert list(df.columns) == REQUIRED_SOURCE_COLUMNS
     for eid in df["entity_id"]:
         assert eid.startswith("S1-")
         assert isinstance(eid, str)
 
 
-def test_loader_raises_on_missing_file() -> None:
-    missing_path = Path("dataset/train/non_existent_file.tsv")
+def test_loader_raises_on_missing_file(tmp_path: Path) -> None:
+    missing_path = tmp_path / "non_existent_file.tsv"
     try:
         load_tsv(missing_path)
         assert False, "Should have raised FileNotFoundError"
@@ -218,12 +238,89 @@ def test_ground_truth_supports_singletons_and_inspection() -> None:
     assert info["total_positive_pairs"] == 6  # 2 + 1 + 2 + 1 + 0
 
 
+def test_missing_value_regression_counts_correctly() -> None:
+    """Requirement 1 Regression Test: [None, '', '   ', 'valid text'] must count exactly 3 missing values."""
+    df = get_missing_value_regression_df()
+    summary = inspect_dataframe(df, "RegressionTest", id_column="entity_id")
+    assert summary.missing_counts["test_col"] == 3
+
+
+def test_source_dataset_detects_whitespace_ids() -> None:
+    df = get_source_with_whitespace_id_df()
+    issues = validate_source_dataset(df, "Source1")
+    assert any("whitespace-only entity_id" in msg for msg in issues)
+
+
+def test_ground_truth_detects_whitespace_s1_ids() -> None:
+    gt_bad = pd.DataFrame({
+        "source1_entity_id": ["   "],
+        "matched_entity_ids": ["S2-201"],
+    })
+    issues = validate_ground_truth_contract(gt_bad)
+    assert any("whitespace-only source1_entity_id" in msg for msg in issues)
+
+
+def test_ground_truth_detects_nonexistent_s2_and_s3_candidates() -> None:
+    s2 = get_valid_source2_df()
+    s3 = get_valid_source3_df()
+    s2_ids = set(s2["entity_id"])
+    s3_ids = set(s3["entity_id"])
+
+    gt_bad_s2 = get_ground_truth_with_nonexistent_s2_df()
+    issues_s2 = validate_ground_truth_contract(gt_bad_s2, s2_ids=s2_ids, s3_ids=s3_ids)
+    assert any("not found in source 2 dataset" in msg for msg in issues_s2)
+
+    gt_bad_s3 = get_ground_truth_with_nonexistent_s3_df()
+    issues_s3 = validate_ground_truth_contract(gt_bad_s3, s2_ids=s2_ids, s3_ids=s3_ids)
+    assert any("not found in source 3 dataset" in msg for msg in issues_s3)
+
+
+def test_ground_truth_empty_matches_valid() -> None:
+    gt_empty = get_ground_truth_with_empty_matches_df()
+    issues = validate_ground_truth_contract(gt_empty)
+    assert issues == []
+
+
+def test_ground_truth_singleton_matches_valid() -> None:
+    gt_single = get_ground_truth_with_singleton_matches_df()
+    issues = validate_ground_truth_contract(gt_single)
+    assert issues == []
+
+
+def test_ground_truth_multiple_matches_valid() -> None:
+    gt_multi = get_ground_truth_with_multiple_matches_df()
+    issues = validate_ground_truth_contract(gt_multi)
+    assert issues == []
+
+
+def test_exact_median_from_histogram_odd() -> None:
+    """Observations: [1, 2, 2, 3, 3] -> N=5, median = 2.0."""
+    hist = {1: 1, 2: 2, 3: 2}
+    assert compute_exact_median_from_histogram(hist) == 2.0
+
+
+def test_exact_median_from_histogram_even() -> None:
+    """Observations: [1, 2, 3, 4] -> N=4, median = (2+3)/2 = 2.5."""
+    hist = {1: 1, 2: 1, 3: 1, 4: 1}
+    assert compute_exact_median_from_histogram(hist) == 2.5
+
+
+def test_exact_median_from_histogram_known() -> None:
+    """Observations: [0, 0, 1, 1, 1, 1] -> N=6, median = (1+1)/2 = 1.0."""
+    hist = {0: 2, 1: 4}
+    assert compute_exact_median_from_histogram(hist) == 1.0
+
+
 def run_all_tests() -> None:
-    test_loader_preserves_raw_strings_and_ids()
-    test_loader_raises_on_missing_file()
+    import tempfile
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_p = Path(tmp_dir)
+        test_loader_preserves_raw_strings_and_ids(tmp_p)
+        test_loader_raises_on_missing_file(tmp_p)
     test_valid_source_datasets_pass_contract()
     test_source_dataset_detects_missing_columns()
     test_source_dataset_detects_null_and_numeric_ids()
+    test_source_dataset_detects_whitespace_ids()
     test_source_dataset_detects_duplicate_ids()
     test_source_dataset_detects_invalid_prefixes()
     test_source_dataset_detects_null_name_and_country()
@@ -231,12 +328,21 @@ def run_all_tests() -> None:
     test_source_dataset_is_strictly_open_set_country()
     test_valid_ground_truth_contract_passes()
     test_ground_truth_detects_duplicate_and_null_s1_ids()
+    test_ground_truth_detects_whitespace_s1_ids()
     test_ground_truth_detects_referential_integrity_violations()
+    test_ground_truth_detects_nonexistent_s2_and_s3_candidates()
     test_ground_truth_rejects_s1_inside_matches()
     test_ground_truth_rejects_invalid_candidate_prefix()
     test_ground_truth_rejects_intra_row_duplicate_matches()
+    test_ground_truth_empty_matches_valid()
+    test_ground_truth_singleton_matches_valid()
+    test_ground_truth_multiple_matches_valid()
     test_ground_truth_supports_singletons_and_inspection()
-    print("All 17 Data Contract and Invariant tests passed successfully!")
+    test_missing_value_regression_counts_correctly()
+    test_exact_median_from_histogram_odd()
+    test_exact_median_from_histogram_even()
+    test_exact_median_from_histogram_known()
+    print("All Data Contract and Invariant unit tests passed successfully!")
 
 
 if __name__ == "__main__":
