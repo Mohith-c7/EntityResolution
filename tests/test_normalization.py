@@ -28,12 +28,12 @@ def test_normalize_name_handles_unicode_and_full_width_text() -> None:
     assert normalize_name("Ｆｏｏ　LLC") == "foo llc"
 
 
-def test_normalize_address_expands_observed_abbreviations() -> None:
-    assert normalize_address("105 ELM ST, MORGANTON, NC") == "105 elm street morganton nc"
+def test_normalize_address_preserves_abbreviations_in_primary_view() -> None:
+    assert normalize_address("105 ELM ST, MORGANTON, NC") == "105 elm st morganton nc"
     assert normalize_address("H.NO.16-11-23/37/A, 2Nd Floor, Flat No.207") == (
-        "house number 16 11 23 37 a 2nd floor flat number 207"
+        "h no 16 11 23 37 a 2nd floor flat no 207"
     )
-    assert normalize_address("5780 Fawn Ct, Fort Worth, Texas") == "5780 fawn court fort worth texas"
+    assert normalize_address("5780 Fawn Ct, Fort Worth, Texas") == "5780 fawn ct fort worth texas"
 
 
 def test_null_and_empty_values_are_safe() -> None:
