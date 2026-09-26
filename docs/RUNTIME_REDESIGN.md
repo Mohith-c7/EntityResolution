@@ -119,10 +119,46 @@ Larger experiment splits are now reserved under `models/scale_v1_plan/`:
 
 - 300,000 training references, retaining the earlier 20,000 for controlled comparisons.
 - 50,000 tuning references, retaining the current 10,000.
-- 10,000 previously uninspected audit references. Their labels have not been read.
+- 10,000 previously uninspected audit references. Their labels have not been used for model selection or error analysis.
 
-This is data preparation, not a completed larger training run. Alias fitting and alias-dependent candidate generation must be cross-fitted before building the supervised training cache. A single cache made with one supervised alias model cannot safely serve every fold. Full-universe out-of-fold ownership experiments require consistent fold-specific supervision throughout retrieval, aliases and matching; shared label-free indexes can still be reused.
+The larger training run is now active, as described below. A single cache made with one supervised alias model cannot safely serve every fold. Full-universe out-of-fold ownership experiments require consistent fold-specific supervision throughout retrieval, aliases and matching; shared label-free indexes can still be reused.
 
 A separate complementary-matcher control is testing removal of blocking score and eight alias-derived features. It uses cached training pairs and two CPU threads. Any resulting score is exploratory tuning evidence until confirmed on an untouched audit. None of these experiments changes the running submission.
 
 The complementary-matcher experiment completed: a 25% blend of the 56-feature control with the existing matcher selected threshold 0.74 and reached 0.9595487 on tuning. The gain over 0.9594108 is only 0.0001379, with the same 33 singleton errors. This is too small to justify promotion without independent evidence; it does not establish progress toward 0.99. Larger leak-safe training and complete competing-owner evaluation remain the priority.
+
+## Larger matcher experiment
+
+The experiment under `models/scale_v1_run/` runs independently of submission 03. Its source snapshot is frozen and checked before each stage. It implements:
+
+1. Five inner entity folds within the outer training fold. Each training entity uses an alias model fitted without its entire inner fold, for both candidate retrieval and matching features.
+2. Full outer-training aliases for tuning, audit and test inference. Their 653,487 confident mappings and 46,580 ambiguous mappings exactly match the existing inference aliases.
+3. Checkpointed candidate and feature generation for 300,000 training entities and 50,000 tuning entities. Training excludes targets belonging to outer tuning/holdout identities. Unmatched targets receive deterministic fold assignments.
+4. A 65-feature LightGBM matcher with inverse-candidate-count weights per reference, up to 1,200 trees and early stopping on tuning log loss. Float32 memory maps avoid loading all string metadata into model-training memory.
+5. Threshold selection using actual macro F0.5, including every tuning reference and true links absent from retrieval. Compare with the existing matcher on exactly the same tuning candidates. Require precision within 0.002 of baseline and no increase in singleton errors.
+6. If tuning improves, freeze model and threshold before generating the reserved 10,000-entity audit. Accept only when the paired 95% gain interval is above zero, precision drops by at most 0.002, and singleton errors do not increase. An unsuccessful tuning model leaves the audit unused.
+
+The cache builder uses two workers while submission inference runs and can increase to eight once it completes. Model fitting waits for the submission to finish to avoid competing for memory. These are resource controls, not a promised completion time.
+
+Validation before launch: 112 tests passed. A real-data pilot generated 14,514 retained training pairs for 500 training entities and 20,000 tuning pairs for 500 tuning entities. A 25-tree smoke fit exercised data loading, training, baseline comparison and threshold rejection; its numbers are not reported as an improved model score.
+
+Monitor:
+
+```sh
+cat models/scale_v1_run/progress.json
+cat models/scale_v1_run/cache_train/progress.json
+tail -n 20 models/scale_v1_run/run.log
+```
+
+The full-run model report will be `models/scale_v1_run/model_300k/report.json`. A fresh audit, if reached, will be saved to `models/scale_v1_run/audit/report.json`. Neither is a leaderboard score. No automatic replacement of the running submission occurs.
+
+Compatible new matchers can rescore submission 03's saved candidate features. Changed normalization, retrieval or feature definitions require a new versioned cache. One-owner decisions, sibling expansion and improved candidate retention remain separate experiments; they are not silently included in this training run.
+
+To reproduce with the prepared split reservation and existing training indexes, run from the repository root in the pinned project environment:
+
+```sh
+python scripts/build_crossfit_aliases.py
+python scripts/freeze_scale_experiment.py --output models/scale_reproduction --launch
+```
+
+Use a fresh output directory. `build_crossfit_aliases.py` reuses completed artifacts only when input fingerprints and settings match. The frozen runner resumes completed cache chunks after validating their hashes. It refuses to overwrite a partial model fit or reuse an already started audit for a different selection.
