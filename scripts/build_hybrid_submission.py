@@ -26,6 +26,7 @@ FEATURES=four.FEATURES
 ADAPTER8='b462edc1d2a6cae9efdaa5ccb2f9463a49d53f8377049fbaa87ee23ae3da57ef'
 HEAD8='5626ab23f1dda7cab60192654cb6835c1d17fc2f87e64b31a3b8dbfef0ef549c'
 CANDIDATE='hybrid8_empty4_calibrated_exclusive_v1'
+FINE_SCORE_CODE=ROOT/'research/final_2h/neural_layers.py'
 CRITERIA={'minimum_point_macro_gain':.0003,'paired_ci_lower_bound_strictly_above':0.,'country_macro_delta_floor':-.0005,'precision_singletons_diagnostic_only':True}
 
 def pinned(path,frozen,group):
@@ -166,7 +167,7 @@ def build(a):
     if reuse.digest(a.old_head_manifest)!=four.OLD_HEAD_SHA or fm['neural_head_manifest_sha256']!=four.OLD_HEAD_SHA:raise ValueError('Old head lineage changed')
     fitted.update(oh['training_owners'])
     if fitted & set(r['entity_id'] for r in rows):raise ValueError('Fitted owner entered TEST graph')
-    score8,sm8,im8=read_scores(a.fine8_scores,a.fine8_input_manifest,HEAD8,'checkpoint_manifest_sha256',ROOT/'research/final_2h/neural_layers8.py',frozen,len(old))
+    score8,sm8,im8=read_scores(a.fine8_scores,a.fine8_input_manifest,HEAD8,'checkpoint_manifest_sha256',FINE_SCORE_CODE,frozen,len(old))
     source_hashes={f'S{i}':reuse_manifest['test_files'][f'test_source{i}.tsv']['sha256'] for i in [1,2,3]}
     if im8['source_tsv_sha256']!=source_hashes or im8['feature_manifest_sha256']!=fm['reverse_feature_manifest_sha256']:raise ValueError('Original route raw test lineage differs')
     original38=four.assemble_fine(old,score8)
@@ -184,7 +185,7 @@ def build(a):
     input_manifest=a.extra_features/'neural_inputs/manifest.json'
     if em['input_manifest_sha256']!=reuse.digest(input_manifest):raise ValueError('Extra raw input manifest changed')
     scoreold,smo,imo=read_scores(a.extra_old_scores,input_manifest,four.OLD_HEAD_SHA,'head_manifest_sha256',ROOT/'research/sprint_6h/neural_frozen_head.py',frozen,len(extra))
-    scorefine,smf,imf=read_scores(a.extra_fine4_scores,input_manifest,four.FINE_HEAD_SHA,'checkpoint_manifest_sha256',ROOT/'research/final_2h/neural_layers.py',frozen,len(extra))
+    scorefine,smf,imf=read_scores(a.extra_fine4_scores,input_manifest,four.FINE_HEAD_SHA,'checkpoint_manifest_sha256',FINE_SCORE_CODE,frozen,len(extra))
     if imo['source_tsv_sha256']!=source_hashes or imo['route_sha256']!=em['route_sha256'] or imo['pair_order_sha256']!=em['feature_pair_order_sha256']:raise ValueError('Extra raw route/test lineage differs')
     extra38=four.assemble_fine(add_old(extra,scoreold),scorefine)
     t=time.monotonic();frame=apply_hybrid(base,original38,extra38,lgb.Booster(model_file=str(a.model8/'adapter.txt')),lgb.Booster(model_file=str(a.model4/'adapter.txt')),a.threads,True);stages['native_and_scatter']=time.monotonic()-t

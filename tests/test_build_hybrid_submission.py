@@ -74,3 +74,15 @@ def test_extra_route_uses_blue_global_empty_and_top4_not_fifth(tmp_path):
     bad=base.iloc[[1,2,4]].copy()
     with pytest.raises(ValueError,match='top4'):
         m.validate_extra_route(base,old,bad,blue,protocol)
+
+
+def test_actual_eight_layer_scores_use_generic_unchanged_inference_code():
+    # Training used neural_layers8; inference intentionally used the generic
+    # verified neural_layers scorer. Keep that code binding strict.
+    source=m.ROOT/'models/sprint_6h/neural/last8_full_test06/manifest.json'
+    if not source.exists():pytest.skip('Actual ignored score cache unavailable in this checkout')
+    marker=json.loads(source.read_text())
+    assert marker['status']=='complete'
+    assert marker['checkpoint_manifest_sha256']==m.HEAD8
+    assert marker['code_sha256']==m.reuse.digest(m.FINE_SCORE_CODE)
+    assert m.FINE_SCORE_CODE.name=='neural_layers.py'
