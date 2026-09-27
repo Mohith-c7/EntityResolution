@@ -30,6 +30,7 @@ def load_role(directory,role,protocol,preparation):
         or fm['features']!=adapter.FEATURES or fm['role']!=role or im['role']!=role
         or fm['labels_read'] is not False or im['labels_read'] is not False
         or im['source_split']!='development' or im['feature_manifest_sha256']!=sha(directory/'manifest.json')
+        or im['feature_file_sha256']!=fm['features_sha256']
         or sha(directory/'manifest.json')!=preparation['roles'][role]['feature_manifest_sha256']
         or sha(directory/'neural_inputs/manifest.json')!=preparation['roles'][role]['input_manifest_sha256']
         or sha(directory/'features.parquet')!=fm['features_sha256']
@@ -114,6 +115,15 @@ def main():
     features={r:load_role(a.pilot/r,r,protocol,prep) for r in ['residual_train','early_stop','selection']}
     original=pd.read_parquet(B/'learned30k/pairs.parquet')
     baseline=pd.read_parquet(SELECTED/'pairs.parquet')
+    if (len(original)!=1200000 or original.source1_entity_id.nunique()!=30000
+        or original.groupby('source1_entity_id').size().ne(40).any()
+        or original.duplicated(KEYS).any()):
+        raise ValueError('Complete frozen30k graph with all40 candidates required')
+    for role in ['early_stop','selection']:
+        fm=json.loads((a.pilot/role/'manifest.json').read_text())
+        if (fm['baseline_claims_sha256']!=sha(B/'learned30k/pairs.parquet')
+            or fm['selected_four_claims_sha256']!=sha(SELECTED/'pairs.parquet')):
+            raise ValueError('Original/selected full graph source seals differ')
     if not np.array_equal(baseline.probability_original,original.probability):raise ValueError('Baseline frozen original p2 changed')
     existing=pd.read_parquet(B/'neural_v1_features30k/features.parquet',columns=KEYS)
     existing_keys=set(existing.itertuples(index=False,name=None))
