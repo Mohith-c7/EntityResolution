@@ -1,0 +1,325 @@
+{
+  "status": "bounded_decision_probe_complete",
+  "grid_early_results": [
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.79,
+        "t_first": 0.6
+      },
+      "macro_f05": 0.9808280786083742
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.79,
+        "t_first": 0.65
+      },
+      "macro_f05": 0.9808566500369456
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.79,
+        "t_first": 0.6999999999999998
+      },
+      "macro_f05": 0.9808566500369456
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.79,
+        "t_first": 0.75
+      },
+      "macro_f05": 0.9804566500369456
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.79,
+        "t_first": 0.8
+      },
+      "macro_f05": 0.9800566500369455
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.81,
+        "t_first": 0.6
+      },
+      "macro_f05": 0.9807689701580387
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.81,
+        "t_first": 0.65
+      },
+      "macro_f05": 0.9807975415866101
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.81,
+        "t_first": 0.6999999999999998
+      },
+      "macro_f05": 0.9807975415866101
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.81,
+        "t_first": 0.75
+      },
+      "macro_f05": 0.9803975415866102
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.81,
+        "t_first": 0.8
+      },
+      "macro_f05": 0.9799975415866101
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.8300000000000004,
+        "t_first": 0.6
+      },
+      "macro_f05": 0.9806456515908085
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.8300000000000004,
+        "t_first": 0.65
+      },
+      "macro_f05": 0.9806742230193799
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.8300000000000004,
+        "t_first": 0.6999999999999998
+      },
+      "macro_f05": 0.9806742230193799
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.8300000000000004,
+        "t_first": 0.75
+      },
+      "macro_f05": 0.9802742230193798
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.8300000000000004,
+        "t_first": 0.8
+      },
+      "macro_f05": 0.9798742230193799
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.85,
+        "t_first": 0.6
+      },
+      "macro_f05": 0.9806275147454963
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.85,
+        "t_first": 0.65
+      },
+      "macro_f05": 0.9806560861740677
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.85,
+        "t_first": 0.6999999999999998
+      },
+      "macro_f05": 0.9806560861740677
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.85,
+        "t_first": 0.75
+      },
+      "macro_f05": 0.9802560861740678
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.85,
+        "t_first": 0.8
+      },
+      "macro_f05": 0.9798560861740678
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.87,
+        "t_first": 0.6
+      },
+      "macro_f05": 0.9806538558877448
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.87,
+        "t_first": 0.65
+      },
+      "macro_f05": 0.9806824273163162
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.87,
+        "t_first": 0.6999999999999998
+      },
+      "macro_f05": 0.9806824273163162
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.87,
+        "t_first": 0.75
+      },
+      "macro_f05": 0.9802824273163162
+    },
+    {
+      "config": {
+        "threshold": 0.83,
+        "t_rest": 0.87,
+        "t_first": 0.8
+      },
+      "macro_f05": 0.9798824273163161
+    }
+  ],
+  "chosen": {
+    "config": {
+      "threshold": 0.83,
+      "t_rest": 0.79,
+      "t_first": 0.6999999999999998
+    },
+    "macro_f05": 0.9808566500369456
+  },
+  "selection": {
+    "status": "paired_evaluation_complete",
+    "role": "development",
+    "baseline": {
+      "macro_f05": 0.9807969475841423,
+      "entities": 20000,
+      "true_positive_links": 65983,
+      "predicted_links": 66218,
+      "true_links": 69137,
+      "micro_precision": 0.9964511160107523,
+      "micro_recall": 0.9543804330532132,
+      "singleton_entities": 1130,
+      "singleton_false_positives": 35,
+      "singleton_false_positive_rate": 0.030973451327433628,
+      "non_singleton_empty_rate": 0.0042395336512983575,
+      "country_macro_f05": {
+        "us": {
+          "entities": 12039,
+          "macro_f05": 0.9839553802707235
+        },
+        "india": {
+          "entities": 7961,
+          "macro_f05": 0.9760206165812839
+        }
+      }
+    },
+    "candidate": {
+      "macro_f05": 0.9809431572046812,
+      "entities": 20000,
+      "true_positive_links": 66080,
+      "predicted_links": 66335,
+      "true_links": 69137,
+      "micro_precision": 0.9961558754805155,
+      "micro_recall": 0.9557834444653369,
+      "singleton_entities": 1130,
+      "singleton_false_positives": 35,
+      "singleton_false_positive_rate": 0.030973451327433628,
+      "non_singleton_empty_rate": 0.0042395336512983575,
+      "country_macro_f05": {
+        "us": {
+          "entities": 12039,
+          "macro_f05": 0.984179497777556
+        },
+        "india": {
+          "entities": 7961,
+          "macro_f05": 0.9760490102185185
+        }
+      }
+    },
+    "paired_macro_f05_delta": 0.00014620962053892762,
+    "paired_delta_95pct_ci": [
+      2.3874132686675632e-06,
+      0.00029138935949485746
+    ],
+    "country_deltas": {
+      "india": 2.839363723457573e-05,
+      "us": 0.00022411750683230296
+    },
+    "links": {
+      "true_removed": 0,
+      "false_removed": 0,
+      "true_added": 97,
+      "false_added": 20,
+      "newly_empty_non_singletons": 0,
+      "ownership_targets_changed": 117,
+      "baseline_collision_targets": 0,
+      "candidate_collision_targets": 0
+    },
+    "freshness": {
+      "reservation_verified": false
+    },
+    "runtime": {
+      "passed": false,
+      "failures": [
+        "runtime_not_provided"
+      ],
+      "evidence": null
+    },
+    "claimant_universe": {
+      "kind": "unspecified",
+      "complete": false
+    },
+    "ownership_limitation": "Cheap exact-key rivals or incomplete/in-sample claims cannot validate a global ownership gain.",
+    "bootstrap": {
+      "seed": 42,
+      "iterations": 2000,
+      "unit": "Source 1 entity",
+      "paired": true
+    },
+    "legacy_guard_diagnostics": {
+      "non_inferiority_pass": false,
+      "quality_non_inferiority_pass": false,
+      "quality_improvement_pass": false,
+      "ownership_scope_eligible": true,
+      "promotion_pass": false,
+      "evidence_scope": "quality_only_development_or_unverified_freshness",
+      "failures": [
+        "point_precision_fell"
+      ],
+      "rule": "Paired LCB > -0.0005, point precision does not fall, singleton false predictions do not rise, no country delta < -0.0005. Improvement additionally requires LCB > 0."
+    }
+  },
+  "changed_thresholds_accepted": true,
+  "effective_config": {
+    "threshold": 0.83,
+    "t_rest": 0.79,
+    "t_first": 0.6999999999999998
+  },
+  "protocol_sha256": "a72c20ad29f12f5553d643c7beb4385e1a3ca023b3138a1f6d0bad1b96a1a92e",
+  "source_sha256": "293e70063be6657a5c99ba5122ac2cda5755188e8cd4345b44688c78b6b25af4",
+  "extension_audit_labels_read": false,
+  "production_changed": false
+}

@@ -1,0 +1,9 @@
+{
+  "selected_on": "early10k",
+  "config": {
+    "threshold": 0.83,
+    "t_rest": 0.79,
+    "t_first": 0.6999999999999998
+  },
+  "macro_f05": 0.9808566500369456
+}

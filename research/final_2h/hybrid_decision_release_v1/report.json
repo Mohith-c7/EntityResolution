@@ -1,0 +1,26 @@
+{
+  "status": "label_free_complete_graph_replay_complete",
+  "declared_at": "2026-09-27T16:42:31.022739+00:00",
+  "decision_config": {
+    "threshold": 0.83,
+    "t_rest": 0.79,
+    "t_first": 0.6999999999999998
+  },
+  "post_selection_exclusivity": true,
+  "policy": "Apply unchanged decide, then retain highest-probability selected claim per target; source1 ID breaks exact ties. Unselected claims cannot compete.",
+  "reason": "New ordinary acceptance .79 is below inherited pre-arbitration .83; every finally proposed link must participate in final ownership resolution.",
+  "development_requirement": "Exact mask parity on all30000 owners; otherwise abort without release eligibility.",
+  "score_probe_sha256": "17b9b423d4cfd442c32494cd2662d158dc18699a5ceb8614fcb484db092dc231",
+  "pairs_sha256": "ccfd6dd3feb77b81c60f0b13179ce10302a9e2f2871eb7e5dfa80ff682b80bb3",
+  "helper_sha256": "1de93cd958df3dc5882dc3685d886f07969fd9990ee2c584b4ab1329f069b4fb",
+  "source_sha256": "fc6a8065ce1785cbd05e3eb8779e2bd0fb001a25571c8ac3a5eafbc12a9ceb5a",
+  "labels_read": false,
+  "extension_audit_labels_read": false,
+  "references": 30000,
+  "pairs": 1200000,
+  "selected": 99708,
+  "removed_by_exclusivity": 0,
+  "exact_mask_parity": true,
+  "eligible_for_fresh_audit": true,
+  "development_macro_f05": 0.9809431572046812
+}
