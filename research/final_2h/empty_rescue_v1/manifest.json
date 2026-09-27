@@ -1,0 +1,31 @@
+{
+  "status": "complete",
+  "source_sha256": "b4e5f22c332d03263f7b4bfd0a3bc8c80ef26ee1f59b15f4bc656ed5d59564ed",
+  "seconds": 512.2184749549997,
+  "protocol_sha256": "a97d154d40541a5a173768996fa7a788a2c1530e7ea0724c9e46937c55bb5191",
+  "baseline_selection_macro_f05": 0.9802609267254342,
+  "roles": {
+    "residual_train": {
+      "rows": 4636,
+      "empty_owners": 1159,
+      "feature_manifest_sha256": "d68195f772e8b455e1fced0c2017325f814b8d2f7957703cbcb03bb1b29acad1",
+      "input_manifest_sha256": "ccc70758e46f18884e4e017079977feb0ae02173e1c4c41a6d00b910077cf6fd"
+    },
+    "early_stop": {
+      "rows": 2468,
+      "empty_owners": 617,
+      "feature_manifest_sha256": "1b55dc47099ead915ffcc671424c9500c4c6d3f37c20dec1f8d761041f046d5a",
+      "input_manifest_sha256": "225daaf9f7bb23366a3db1c7784e8ca80fe0f607a65dc3366bc315ae0acd560e"
+    },
+    "selection": {
+      "rows": 4740,
+      "empty_owners": 1185,
+      "feature_manifest_sha256": "718b4f36437335e7c037aec93910219950821c4da0da50596fa669a21a2d7e30",
+      "input_manifest_sha256": "14a8a44d28190c97522af09ba3313ef3e7c97e2063d40e465805c4c8ce021175"
+    }
+  },
+  "audit_labels_read": false,
+  "extension_labels_read": false,
+  "pilot_selection_results_read": false,
+  "production_outputs_scored": false
+}
