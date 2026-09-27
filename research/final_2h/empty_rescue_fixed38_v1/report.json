@@ -1,0 +1,227 @@
+{
+  "status": "one_fixed_candidate_development_evaluation_complete",
+  "results": {
+    "early_stop": {
+      "status": "paired_evaluation_complete",
+      "role": "development",
+      "baseline": {
+        "macro_f05": 0.9799517632600462,
+        "entities": 10000,
+        "true_positive_links": 33150,
+        "predicted_links": 33286,
+        "true_links": 34748,
+        "micro_precision": 0.9959141981613892,
+        "micro_recall": 0.9540117416829745,
+        "singleton_entities": 596,
+        "singleton_false_positives": 19,
+        "singleton_false_positive_rate": 0.031879194630872486,
+        "non_singleton_empty_rate": 0.004253509145044662,
+        "country_macro_f05": {
+          "india": {
+            "entities": 4078,
+            "macro_f05": 0.9752952295753473
+          },
+          "us": {
+            "entities": 5922,
+            "macro_f05": 0.9831583394785873
+          }
+        }
+      },
+      "candidate": {
+        "macro_f05": 0.9804517632600462,
+        "entities": 10000,
+        "true_positive_links": 33157,
+        "predicted_links": 33295,
+        "true_links": 34748,
+        "micro_precision": 0.9958552335185463,
+        "micro_recall": 0.9542131921261655,
+        "singleton_entities": 596,
+        "singleton_false_positives": 21,
+        "singleton_false_positive_rate": 0.03523489932885906,
+        "non_singleton_empty_rate": 0.003509145044661846,
+        "country_macro_f05": {
+          "india": {
+            "entities": 4078,
+            "macro_f05": 0.9757856660638221
+          },
+          "us": {
+            "entities": 5922,
+            "macro_f05": 0.983664925091556
+          }
+        }
+      },
+      "paired_macro_f05_delta": 0.0005,
+      "paired_delta_95pct_ci": [
+        0.0,
+        0.0011
+      ],
+      "country_deltas": {
+        "india": 0.0004904364884747426,
+        "us": 0.0005065856129685917
+      },
+      "links": {
+        "true_removed": 0,
+        "false_removed": 0,
+        "true_added": 7,
+        "false_added": 2,
+        "newly_empty_non_singletons": 0,
+        "ownership_targets_changed": 9,
+        "baseline_collision_targets": 0,
+        "candidate_collision_targets": 0
+      },
+      "acceptance": {
+        "non_inferiority_pass": false,
+        "quality_non_inferiority_pass": false,
+        "quality_improvement_pass": false,
+        "ownership_scope_eligible": true,
+        "promotion_pass": false,
+        "evidence_scope": "quality_only_development_or_unverified_freshness",
+        "failures": [
+          "point_precision_fell",
+          "singleton_false_predictions_rose"
+        ],
+        "rule": "Paired LCB > -0.0005, point precision does not fall, singleton false predictions do not rise, no country delta < -0.0005. Improvement additionally requires LCB > 0."
+      },
+      "freshness": {
+        "reservation_verified": false
+      },
+      "runtime": {
+        "passed": false,
+        "failures": [
+          "runtime_not_provided"
+        ],
+        "evidence": null
+      },
+      "claimant_universe": {
+        "kind": "unspecified",
+        "complete": false
+      },
+      "ownership_limitation": "Cheap exact-key rivals or incomplete/in-sample claims cannot validate a global ownership gain.",
+      "bootstrap": {
+        "seed": 42,
+        "iterations": 2000,
+        "unit": "Source 1 entity",
+        "paired": true
+      }
+    },
+    "selection": {
+      "status": "paired_evaluation_complete",
+      "role": "development",
+      "baseline": {
+        "macro_f05": 0.9802609267254342,
+        "entities": 20000,
+        "true_positive_links": 65888,
+        "predicted_links": 66111,
+        "true_links": 69137,
+        "micro_precision": 0.9966268850872019,
+        "micro_recall": 0.9530063497114425,
+        "singleton_entities": 1130,
+        "singleton_false_positives": 34,
+        "singleton_false_positive_rate": 0.03008849557522124,
+        "non_singleton_empty_rate": 0.004716481187069422,
+        "country_macro_f05": {
+          "us": {
+            "entities": 12039,
+            "macro_f05": 0.9837388904368889
+          },
+          "india": {
+            "entities": 7961,
+            "macro_f05": 0.9750013858232611
+          }
+        }
+      },
+      "candidate": {
+        "macro_f05": 0.9805633076778151,
+        "entities": 20000,
+        "true_positive_links": 65897,
+        "predicted_links": 66122,
+        "true_links": 69137,
+        "micro_precision": 0.9965971991167841,
+        "micro_recall": 0.9531365260280313,
+        "singleton_entities": 1130,
+        "singleton_false_positives": 36,
+        "singleton_false_positive_rate": 0.03185840707964602,
+        "non_singleton_empty_rate": 0.0042395336512983575,
+        "country_macro_f05": {
+          "us": {
+            "entities": 12039,
+            "macro_f05": 0.9838081099180196
+          },
+          "india": {
+            "entities": 7961,
+            "macro_f05": 0.9756563645588829
+          }
+        }
+      },
+      "paired_macro_f05_delta": 0.00030238095238095236,
+      "paired_delta_95pct_ci": [
+        2.5000000000000005e-05,
+        0.0006023809523809523
+      ],
+      "country_deltas": {
+        "india": 0.000654978735621871,
+        "us": 6.921948113076945e-05
+      },
+      "links": {
+        "true_removed": 0,
+        "false_removed": 0,
+        "true_added": 9,
+        "false_added": 2,
+        "newly_empty_non_singletons": 0,
+        "ownership_targets_changed": 11,
+        "baseline_collision_targets": 0,
+        "candidate_collision_targets": 0
+      },
+      "acceptance": {
+        "non_inferiority_pass": false,
+        "quality_non_inferiority_pass": false,
+        "quality_improvement_pass": false,
+        "ownership_scope_eligible": true,
+        "promotion_pass": false,
+        "evidence_scope": "quality_only_development_or_unverified_freshness",
+        "failures": [
+          "point_precision_fell",
+          "singleton_false_predictions_rose"
+        ],
+        "rule": "Paired LCB > -0.0005, point precision does not fall, singleton false predictions do not rise, no country delta < -0.0005. Improvement additionally requires LCB > 0."
+      },
+      "freshness": {
+        "reservation_verified": false
+      },
+      "runtime": {
+        "passed": false,
+        "failures": [
+          "runtime_not_provided"
+        ],
+        "evidence": null
+      },
+      "claimant_universe": {
+        "kind": "unspecified",
+        "complete": false
+      },
+      "ownership_limitation": "Cheap exact-key rivals or incomplete/in-sample claims cannot validate a global ownership gain.",
+      "bootstrap": {
+        "seed": 42,
+        "iterations": 2000,
+        "unit": "Source 1 entity",
+        "paired": true
+      }
+    }
+  },
+  "acceptance_pass": false,
+  "predeclare_sha256": "9541fdae96725da1816d81672d0890a501ad1e5a07b391678391ad4a204673bd",
+  "pilot_validation_sha256": "44eb4b4fd9bba84d75ad6a9c1dd3bbae31aefe35603736024610a4fc59d0f287",
+  "candidate_pairs_sha256": "0d720743570d0168bd53c3fcc2ea6e7c7eaba96824638443c01a291f45696d11",
+  "source_sha256": "0a2ce396b6b598edc4279e4bc23f7237e3744ecf3f8d62bf559f3fc3a70d87e9",
+  "extra_keys": {
+    "residual_train": 4633,
+    "early_stop": 2460,
+    "selection": 4735
+  },
+  "existing_routed_probabilities_preserved_exactly": true,
+  "outside_extra_keys_unchanged": true,
+  "residual_in_sample_gate_or_other_model_trained": false,
+  "audit_labels_read": false,
+  "extension_labels_read": false,
+  "production_changes": false
+}
