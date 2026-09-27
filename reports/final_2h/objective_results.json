@@ -1,0 +1,232 @@
+{
+  "experiments": [
+    {
+      "name": "broad_v1",
+      "scope": "existing early10k; stopping/selection evidence only",
+      "macro_f05": 0.9784037866317987,
+      "baseline": 0.9789562060224467,
+      "delta": -0.0005524193906479281,
+      "ci": [
+        -0.0013255539859777013,
+        0.00022943666184789202
+      ],
+      "links": {
+        "true_removed": 109,
+        "false_removed": 48,
+        "true_added": 13,
+        "false_added": 3,
+        "newly_empty_non_singletons": 11,
+        "ownership_targets_changed": 173,
+        "baseline_collision_targets": 0,
+        "candidate_collision_targets": 0
+      },
+      "acceptance": {
+        "non_inferiority_pass": false,
+        "quality_non_inferiority_pass": false,
+        "quality_improvement_pass": false,
+        "ownership_scope_eligible": true,
+        "promotion_pass": false,
+        "evidence_scope": "quality_only_development_or_unverified_freshness",
+        "failures": [
+          "paired_lower_bound_not_above_minus_0.0005",
+          "known_country_point_loss_below_minus_0.0005"
+        ],
+        "rule": "Paired LCB > -0.0005, point precision does not fall, singleton false predictions do not rise, no country delta < -0.0005. Improvement additionally requires LCB > 0."
+      },
+      "best_iteration": 236,
+      "seconds": 25.684053705001133,
+      "mode": "anchored",
+      "training_error_weight": 1,
+      "model_sha256": "61cf65456517c517b7cfafa7e3a68e8428090709e94aecfd9061c841bd37c12a"
+    },
+    {
+      "name": "broad_alignment_v1",
+      "scope": "existing early10k; stopping/selection evidence only",
+      "macro_f05": 0.9784686450524903,
+      "baseline": 0.9789562060224467,
+      "delta": -0.0004875609699564654,
+      "ci": [
+        -0.0012242522655414119,
+        0.00022486939991189078
+      ],
+      "links": {
+        "true_removed": 107,
+        "false_removed": 46,
+        "true_added": 15,
+        "false_added": 2,
+        "newly_empty_non_singletons": 10,
+        "ownership_targets_changed": 170,
+        "baseline_collision_targets": 0,
+        "candidate_collision_targets": 0
+      },
+      "acceptance": {
+        "non_inferiority_pass": false,
+        "quality_non_inferiority_pass": false,
+        "quality_improvement_pass": false,
+        "ownership_scope_eligible": true,
+        "promotion_pass": false,
+        "evidence_scope": "quality_only_development_or_unverified_freshness",
+        "failures": [
+          "paired_lower_bound_not_above_minus_0.0005",
+          "known_country_point_loss_below_minus_0.0005"
+        ],
+        "rule": "Paired LCB > -0.0005, point precision does not fall, singleton false predictions do not rise, no country delta < -0.0005. Improvement additionally requires LCB > 0."
+      },
+      "best_iteration": 244,
+      "seconds": 24.96733178700015,
+      "mode": "anchored",
+      "training_error_weight": 1,
+      "model_sha256": "be3a3878bddc844b1e1f822d4fcc8f3cb1ff23d00b50bd156a7863f500e8c7c2"
+    },
+    {
+      "name": "broad_alignment_hard_v1",
+      "scope": "existing early10k; stopping/selection evidence only",
+      "macro_f05": 0.9790237384899793,
+      "baseline": 0.9789562060224467,
+      "delta": 6.753246753246752e-05,
+      "ci": [
+        -3.054586038961038e-05,
+        0.0001721665313852813
+      ],
+      "links": {
+        "true_removed": 6,
+        "false_removed": 4,
+        "true_added": 2,
+        "false_added": 0,
+        "newly_empty_non_singletons": 0,
+        "ownership_targets_changed": 12,
+        "baseline_collision_targets": 0,
+        "candidate_collision_targets": 0
+      },
+      "acceptance": {
+        "non_inferiority_pass": true,
+        "quality_non_inferiority_pass": true,
+        "quality_improvement_pass": false,
+        "ownership_scope_eligible": true,
+        "promotion_pass": false,
+        "evidence_scope": "quality_only_development_or_unverified_freshness",
+        "failures": [],
+        "rule": "Paired LCB > -0.0005, point precision does not fall, singleton false predictions do not rise, no country delta < -0.0005. Improvement additionally requires LCB > 0."
+      },
+      "best_iteration": 1,
+      "seconds": 19.732102648002183,
+      "mode": "anchored",
+      "training_error_weight": 4.0,
+      "model_sha256": "93c771f43fb5e609a94e3347bdde990d7aa25a47d9a82c1777b10b0a19ae841a"
+    },
+    {
+      "name": "broad_alignment_direct_v1",
+      "scope": "existing early10k; stopping/selection evidence only",
+      "macro_f05": 0.9759248636758848,
+      "baseline": 0.9789562060224467,
+      "delta": -0.0030313423465619265,
+      "ci": [
+        -0.004168212103391206,
+        -0.00183495434936387
+      ],
+      "links": {
+        "true_removed": 440,
+        "false_removed": 68,
+        "true_added": 131,
+        "false_added": 72,
+        "newly_empty_non_singletons": 17,
+        "ownership_targets_changed": 711,
+        "baseline_collision_targets": 0,
+        "candidate_collision_targets": 0
+      },
+      "acceptance": {
+        "non_inferiority_pass": false,
+        "quality_non_inferiority_pass": false,
+        "quality_improvement_pass": false,
+        "ownership_scope_eligible": true,
+        "promotion_pass": false,
+        "evidence_scope": "quality_only_development_or_unverified_freshness",
+        "failures": [
+          "paired_lower_bound_not_above_minus_0.0005",
+          "point_precision_fell",
+          "known_country_point_loss_below_minus_0.0005"
+        ],
+        "rule": "Paired LCB > -0.0005, point precision does not fall, singleton false predictions do not rise, no country delta < -0.0005. Improvement additionally requires LCB > 0."
+      },
+      "best_iteration": 458,
+      "seconds": 29.155846980000206,
+      "mode": "direct",
+      "training_error_weight": 1.0,
+      "model_sha256": "47c8a8ed722fa58412f28ca559607c0d2a8c9904b72625c3b9b55285d032578f"
+    },
+    {
+      "name": "broad_alignment_macro_v1",
+      "scope": "existing early10k; stopping/selection evidence only",
+      "macro_f05": 0.9789285096593854,
+      "baseline": 0.9789562060224467,
+      "delta": -2.7696363061315353e-05,
+      "ci": [
+        -0.0002914488428006921,
+        0.00018481134308897957
+      ],
+      "links": {
+        "true_removed": 20,
+        "false_removed": 9,
+        "true_added": 2,
+        "false_added": 0,
+        "newly_empty_non_singletons": 1,
+        "ownership_targets_changed": 31,
+        "baseline_collision_targets": 0,
+        "candidate_collision_targets": 0
+      },
+      "acceptance": {
+        "non_inferiority_pass": true,
+        "quality_non_inferiority_pass": true,
+        "quality_improvement_pass": false,
+        "ownership_scope_eligible": true,
+        "promotion_pass": false,
+        "evidence_scope": "quality_only_development_or_unverified_freshness",
+        "failures": [],
+        "rule": "Paired LCB > -0.0005, point precision does not fall, singleton false predictions do not rise, no country delta < -0.0005. Improvement additionally requires LCB > 0."
+      },
+      "best_iteration": 5,
+      "seconds": 19.902052409001044,
+      "mode": "anchored",
+      "training_error_weight": 1.0,
+      "model_sha256": "6f2bcbb93a2cf18b6f5f63cd0f9bd812c64b97d487ed00318acbc98bdda7235f"
+    },
+    {
+      "name": "broad_alignment_hardmacro_v1",
+      "scope": "existing early10k; stopping/selection evidence only",
+      "macro_f05": 0.9790237384899793,
+      "baseline": 0.9789562060224467,
+      "delta": 6.753246753246752e-05,
+      "ci": [
+        -3.054586038961038e-05,
+        0.0001721665313852813
+      ],
+      "links": {
+        "true_removed": 6,
+        "false_removed": 4,
+        "true_added": 2,
+        "false_added": 0,
+        "newly_empty_non_singletons": 0,
+        "ownership_targets_changed": 12,
+        "baseline_collision_targets": 0,
+        "candidate_collision_targets": 0
+      },
+      "acceptance": {
+        "non_inferiority_pass": true,
+        "quality_non_inferiority_pass": true,
+        "quality_improvement_pass": false,
+        "ownership_scope_eligible": true,
+        "promotion_pass": false,
+        "evidence_scope": "quality_only_development_or_unverified_freshness",
+        "failures": [],
+        "rule": "Paired LCB > -0.0005, point precision does not fall, singleton false predictions do not rise, no country delta < -0.0005. Improvement additionally requires LCB > 0."
+      },
+      "best_iteration": 1,
+      "seconds": 19.911888434999128,
+      "mode": "anchored",
+      "training_error_weight": 4.0,
+      "model_sha256": "5c77e029934bc3bc83ba950bf6f2161524b65dd145b2808261d9290ae5264c5c"
+    }
+  ],
+  "promoted": null,
+  "audit_labels_read": false
+}

@@ -19,8 +19,12 @@ Started after the user reopened model research at 12:22 UTC on 27 September 2026
 
 - Fused150-feature residual: early gain +0.0005513, selection score 0.9799258. This is below neural v2 0.9800089; it is not promoted.
 - Neural v2 selected20k remaining errors: 543 retrieved true links outside its route, 1,504 routed links still rejected, 1,267 true links not retrieved, 227 false links. Error categories overlap with the per-entity macro loss; counts are not score gains.
-- Broad60 data: approximately two million existing pair rows, prepared without reading labels. Model training is underway.
+- Broad60 and corrected alignment77: approximately two million existing pair rows, prepared without labels. Both log-loss-stopped adapters lost recall and were rejected. Removing the probability anchor also lost score. Training-error weighting and macro-F0.5 stopping produced no convincing gain. Compact measurements are in `objective_results.json`.
 - Full v2 alignment statistics: all 2,206,821 supplied Source1 training rows, 136.15 seconds, no labels read.
+- Neural v2 runtime gate passed on two actual country-stratified10k blocks, including France: projected full processing135.7 minutes with15% safety. This is a runtime estimate, not a new full submission or a portal score.
+- Three-epoch last-two-layer neural training is running on the Mac over the sealed120k outer-training pairs. The lower encoder layers remain frozen. No accuracy claim before keyed inference and development evaluation.
+- New sibling-neural evidence compares each routed candidate against predicted first-stage seeds. Training pairs for a dedicated sibling head use only the same outer-training businesses:115,530 pairs from18,823 owners. Calibration and evaluation retain the original Source1/target candidate keys. Inference seeds use predicted scores, never truth.
+- Missing-address quota retrieval with broad60 recovered15 true and2 false links on the old5k diagnostic but reduced precision and raised singleton errors; it is rejected. Later neural-quota checks must exclude every adapter/head-fitted owner from the labeled subset.
 
 ## Release boundaries
 
