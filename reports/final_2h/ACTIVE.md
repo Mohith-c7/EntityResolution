@@ -1,3 +1,15 @@
+# Current release status
+
+Updated 27 September 2026, 16:13 UTC / 21:43 IST.
+
+Submission 05 is complete, validated and packaged. The user reports portal macro F0.5 **0.970**, up **0.002** from Submission 04. Its fresh final audit was **0.9799622272**; these scores describe different populations. The .985 target remains unmet.
+
+The last8 and empty-rescue experiments finished and failed their predefined quality checks. No owned model job remains active. The final audit is consumed; the separately reserved extension audit is unopened. Preserve all release artifacts. See `docs/ER_HANDOVER_2026-09-27.md` and `reports/final_2h/submission_05_portal_result.json` for current evidence.
+
+## Historical starting snapshot
+
+The statements below describe the earlier research window, not current process or audit status.
+
 # Final improvement window
 
 Started after the user reopened model research at 12:22 UTC on 27 September 2026. Working cutoff: 14:22 UTC, followed by the user's separate submission-generation window.

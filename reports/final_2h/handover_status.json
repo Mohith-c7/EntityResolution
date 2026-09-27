@@ -1,9 +1,9 @@
 {
-  "captured_at": "2026-09-27T13:55:00Z",
+  "captured_at": "2026-09-27T16:13:08Z",
   "active_model_jobs": 0,
   "new_submission_running": false,
-  "final_audit_labels_opened": false,
-  "portal_team_reported": 0.968,
+  "final_audit_labels_opened": true,
+  "portal_team_reported": 0.97,
   "best_fresh_confirmation": 0.9794958376501831,
   "development_candidate": "neural_last4_fine_v1",
   "development_macro_f05": 0.9802609267254342,
@@ -12,8 +12,18 @@
     4.401708427816703e-05,
     0.0004706428713290225
   ],
-  "new38_release_helpers_implemented": false,
-  "new38_final_audit_completed": false,
+  "new38_release_helpers_implemented": true,
+  "new38_final_audit_completed": true,
   "model_sha256": "625268050ec1774ec2eb1c0c8d38b89bf13c284d3e7474b564bb8264eec0dac1",
-  "head_manifest_sha256": "60bca75bf41628f43eff487f8bdbb9b2f2f5ad54967af467807d7bc55417083c"
+  "head_manifest_sha256": "60bca75bf41628f43eff487f8bdbb9b2f2f5ad54967af467807d7bc55417083c",
+  "submission_05_complete": true,
+  "final_audit_consumed": true,
+  "extension_audit_labels_opened": false,
+  "portal_submission": "submission_05",
+  "portal_provenance": "user reported; not independently retrieved",
+  "best_fresh_final_audit": 0.9799622271615511,
+  "latest_experiment": "empty_rescue_fixed38_v1",
+  "latest_experiment_status": "rejected_precision_and_singleton_guards",
+  "latest_experiment_development_macro_f05": 0.9805633076778151,
+  "portal_result_record": "reports/final_2h/submission_05_portal_result.json"
 }

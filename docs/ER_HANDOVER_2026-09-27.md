@@ -1,6 +1,6 @@
 # Entity resolution handover — 27 September 2026
 
-Current state: **15:49 UTC / 21:19 IST**. Submission 05 is complete and upload-ready. This replaces earlier instructions that its audit, full run or ZIP were pending. The user explicitly authorized the four-layer submission below .99; the earlier .99 submission restriction was superseded. No Submission 05 portal result has been reported.
+Current state: **16:13 UTC / 21:43 IST**. The user reports **Submission 05 portal macro F0.5 = 0.970**, up **0.002** from Submission 04's 0.968. This is the best reported portal result. The result is user-reported, not independently retrieved from the portal; the submission receipt and unrounded score were not provided. The completed release files and ZIP remain unchanged. The user explicitly authorized the four-layer submission below .99; the earlier .99 submission restriction was superseded.
 
 ## Release to upload
 
@@ -38,9 +38,11 @@ The selected candidate is **`neural_last4_fine_v1`**, the anchored 38-feature ad
 | --- | ---: | ---: | --- |
 | Single-use final audit, 10k owners with 331,012-owner claim graph | **.9799622272** | Submission 04 .9793161919 | Consumed final audit; all promotion guards passed |
 | Exposed selection20k with complete 30k claim graph | .9802609267 | Submission 04 .9794740787 | Development selection |
-| Portal | **Not reported for 05** | Submission 04 **.968** | Team-reported04 portal result |
+| Portal | **.970** | Submission 04 **.968** | Team-reported results; displayed gain +.002 |
 
 The final-audit gain is **+.0006460352**, paired 95% CI **[+.0002035806,+.0010892613]**. Precision increased .9952899973→.9958352196 and recall .9544283274→.9553548163. Singleton false predictions stayed 12/528. US and India improved. This is not a leaderboard score or evidence of French accuracy. No verified .985 or .99 portal result exists; local-to-portal gaps are not a fixed adjustment.
+
+Submission 05's local-audit-to-portal difference is approximately **0.009962**, comparing different populations. It is descriptive, not an estimated calibration correction or a measured France score. The remaining gap from the reported portal result to 0.985 is **0.015**. Portal outcome provenance and release hashes are recorded in `reports/final_2h/submission_05_portal_result.json`.
 
 The final audit was opened once after candidate, complete-claim predictions and runtime evidence were sealed. It is consumed and must not be reused for tuning. The selected release freeze is `reports/final_2h/neural_last4_release_freeze_v3.json`, SHA:
 
@@ -106,4 +108,4 @@ The earlier13:55/ 15:11 UTC handovers described an incomplete audit/run/archive 
 - Dedicated sibling/peer neural additions did not beat the simpler eligible winner. Preselection ownership can suppress valid accepted owners; the separate pure post-selection helper adds no links but remains experimental. Correction strength1 stayed selected; no policy adjustment resulted.
 - Token-alignment fix `cursor/token-alignment-fix`, commit `ee1e0b5`, was reviewed with 13 tests; corresponding frequency statistics must be rebuilt before using its new schema. It is not permission to mutate frozen normalization or indices.
 
-Challenge constraints remain: only supplied entity evidence for fitting, no external business identities/registries/geocoding/augmentation or hosted inference, permitted model licenses/size, every official Source 1 reference including France and empty predictions emitted. Unlabeled statistics are diagnostics. The final audit is consumed; the extension audit is unopened. The next concrete step is uploading the completed safe archive and recording the portal05 result, while preserving release evidence and separating development experiments.
+Challenge constraints remain: only supplied entity evidence for fitting, no external business identities/registries/geocoding/augmentation or hosted inference, permitted model licenses/size, every official Source 1 reference including France and empty predictions emitted. Unlabeled statistics are diagnostics. The final audit is consumed; the extension audit is unopened. Preserve Submission 05 as the 0.970 portal baseline; any further candidate needs separate development evidence, a frozen evaluation and new versioned outputs. Do not alter the validated final ZIP merely to update an external score log.
