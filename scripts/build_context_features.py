@@ -71,12 +71,12 @@ def pair_context(reference, targets, ids, probabilities):
     return np.asarray(rows, dtype=np.float32).reshape(-1, len(CONTEXT_NAMES))
 
 
-def init(cache, probability_path, output, refs_path):
+def init(cache, probability_path, output, refs_path, split="tune"):
     global STATE
     os.nice(5); pa.set_cpu_count(1)
     conns = {s: sqlite3.connect(Path(f"models/index_train_{s}.sqlite").resolve().as_uri()+"?mode=ro", uri=True) for s in ("S2", "S3")}
     for conn in conns.values(): conn.execute("PRAGMA mmap_size=2147418112")
-    raw_refs = json.loads(Path(refs_path).read_text())["tune"]
+    raw_refs = json.loads(Path(refs_path).read_text())[split]
     refs = {}
     for r in raw_refs:
         n = normalize_record(r); refs[n.entity_id] = clean_record(n.name, n.address)
@@ -118,27 +118,31 @@ def main():
     p.add_argument("--first-stage-model", type=Path, default=Path("models/scale_v1_run/model_300k"))
     p.add_argument("--references", type=Path, default=Path("models/scale_v1_plan/sampled_references.json"))
     p.add_argument("--workers", type=int, default=4)
+    p.add_argument("--split", choices=("tune", "train"), default="tune")
+    p.add_argument("--probabilities", type=Path, help="Out-of-fold first-stage scores; required for the training split")
     args=p.parse_args()
+    if args.split == "train" and not args.probabilities: p.error("Training references need out-of-fold scores")
     if args.output.exists(): raise FileExistsError(args.output)
     args.output.mkdir(parents=True)
     cache=args.cache; model=args.first_stage_model
     protocol=json.loads((model/"protocol.json").read_text())
-    if digest(cache/"manifest.json") != protocol["tune_manifest_sha256"]: raise ValueError("Tuning cache changed")
+    if digest(cache/"manifest.json") != protocol[f"{args.split}_manifest_sha256"]: raise ValueError("Source cache changed")
     progress=json.loads((cache/"progress.json").read_text())
-    if progress["status"] != "complete": raise ValueError("Tuning cache incomplete")
+    if progress["status"] != "complete": raise ValueError("Source cache incomplete")
     tasks=[];offset=0
     for number in range(progress["chunks"]):
         m=json.loads((cache/f"{number:06d}.json").read_text());tasks.append((number,offset,m["pairs"]));offset+=m["pairs"]
-    probability_path=model/"probabilities_tune.npy"
+    probability_path=args.probabilities or model/"probabilities_tune.npy"
     if np.load(probability_path,mmap_mode="r").shape != (offset,): raise ValueError("Probability length mismatch")
     metadata={"status":"building","feature_names":CONTEXT_NAMES,"source_cache":str(cache),
         "probabilities_sha256":digest(probability_path),"source_manifest_sha256":digest(cache/"manifest.json"),
         "model_sha256":digest(model/"model.txt"),"source_script_sha256":digest(Path(__file__)),
-        "split":"outer_tune_only","fresh_audit_evaluated":False,"submission_generated":False}
+        "split":"outer_tune_only" if args.split == "tune" else "outer_train_out_of_fold",
+        "fresh_audit_evaluated":False,"submission_generated":False}
     write_json(args.output/"manifest.json",metadata)
     entities=pairs=0
     with ProcessPoolExecutor(max_workers=args.workers,mp_context=multiprocessing.get_context("spawn"),initializer=init,
-        initargs=(str(cache),str(probability_path),str(args.output),str(args.references))) as pool:
+        initargs=(str(cache),str(probability_path),str(args.output),str(args.references),args.split)) as pool:
         for ne,npairs in pool.map(chunk,tasks):
             entities+=ne;pairs+=npairs
             if entities%5000==0: print(json.dumps({"entities":entities,"pairs":pairs}),flush=True)

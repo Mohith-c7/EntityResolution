@@ -1,0 +1,24 @@
+{
+  "status": "selected_before_fresh_confirmation",
+  "selected_at": "2026-09-27T11:20:01.252193+00:00",
+  "candidate": "neural_v2",
+  "model": "research/sprint_6h/sibling/neural_v2/adapter.txt",
+  "head": "models/sprint_6h/neural/frozen_head120k_v1",
+  "source": "research/sprint_6h/validation/neural_v2_selection20k_independent/report.json",
+  "selection_macro_f05": 0.9800089319197799,
+  "gain": 0.00053485323664,
+  "reason": "Best measured same-cohort selection score; positive paired interval, both country deltas positive, point precision and recall up, singleton count unchanged.",
+  "route": "unchanged global20percent;4candidates;2seeds",
+  "decision": "unchanged original frozen policy and thresholds",
+  "fresh_labels_opened": false,
+  "portal04": 0.968,
+  "last2_not_promoted": "Early10k gain .00041756 below declared .0005 gate; selection20k deliberately unopened",
+  "goal_099_achieved": false,
+  "hashes": {
+    "research/sprint_6h/sibling/neural_v2/adapter.txt": "bc6b676412f498bcaa3b13db229ca804a5438f2f31c4ec939342277d29ee24e0",
+    "research/sprint_6h/sibling/neural_v2/manifest.json": "29a9a5c7f25e45d8957c6145e6cb029fbfee99a75cb1af43b853bf8cc1089d1d",
+    "models/sprint_6h/neural/frozen_head120k_v1/manifest.json": "f2b75c8a1ca5bcb7293b893c61791b619c02d5d7f38e75c7da197423b87dfd94",
+    "research/sprint_6h/neural_adapter.py": "9555ec8aaa30d94c52d9138b395ce5df771df3dba970adede64e8043734c7f1c",
+    "research/sprint_6h/neural_frozen_head.py": "a619ed6d1a9c7859e6d39001c9145dcb5ee6ff5cafea7510202a635eb2eb5f9d"
+  }
+}
