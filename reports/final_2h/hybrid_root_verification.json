@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "verified_at": "2026-09-27T16:58:30.072247+00:00",
+  "scope": "Independent metric formula and frozen native-eight checkpoint bytes; not a score evaluation",
+  "metric_check": {
+    "subset_cases": 256,
+    "included_both_empty_singleton": true,
+    "included_missing_non_singleton": true,
+    "maximum_formula_difference": 1.1102230246251565e-16,
+    "mixed_entity_macro": 0.5714285714285715,
+    "implementation_sha256": "8ad8dae2551699a2ff8203ff9fd8e58d0b91748091fd8f8de1d049f2fc8f5b69"
+  },
+  "targeted_tests": {
+    "passed": 36,
+    "duration_seconds": 2.23
+  },
+  "head8_manifest_sha256": "5626ab23f1dda7cab60192654cb6835c1d17fc2f87e64b31a3b8dbfef0ef549c",
+  "checkpoint_files": {
+    "config.json": "1820eb1ed21da123d4058d2781e5380f661e9392903c729c47987ae58f8f3d1d",
+    "model.safetensors": "2c07fd33ed4e95155ea2e142589a0d983671975314937c53a5a4be81803d1b61",
+    "sentencepiece.bpe.model": "cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865",
+    "special_tokens_map.json": "8c785abebea9ae3257b61681b4e6fd8365ceafde980c21970d001e834cf10835",
+    "tokenizer_config.json": "b2e0abfa1251ec878d056016f830bd2261869408e7e05f1a9de6df1d1f02e385"
+  },
+  "labels_read": false,
+  "portal_score_measured": false
+}
