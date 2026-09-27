@@ -1,0 +1,230 @@
+{
+  "scope": "Exposed development selection20k only; global decisions computed on complete30k graph",
+  "status": "development_loss_ledger_complete",
+  "source_sha256": "ded55885db29cb8683d7d230f64e0b0a6d703c2294a6a53879724fb081e471ea",
+  "entities": 20000,
+  "error_entities": 2973,
+  "macro_f05": 0.9802609267254342,
+  "exact_total_macro_loss": 0.019739073274565578,
+  "additive_oracle_recoverable_loss": {
+    "missing_candidates": 0.004620204901860191,
+    "retrieved_rejected_true_links": 0.006849964971674946,
+    "incorrect_positive_links": 0.0038189034010307084,
+    "empty_non_singletons": 0.00445
+  },
+  "claimant_graph_scope": "Frozen development30k only. Does not establish ownership parity for full331k heldout graph or official test.",
+  "selected_selection_replay_verified": true,
+  "expected_selected_macro_f05": 0.9802609267254342,
+  "attribution": "Empty non-singletons are a separate stratum repaired fully. Other owners use equal Shapley allocation over adding missing truths, adding retrieved/rejected truths, and deleting false positives. All four categories sum exactly to 1-macro F0.5.",
+  "singleton_convention": "Empty truth scores 1 only with empty prediction; any incorrect positive costs the whole singleton score.",
+  "overlapping_standalone_oracle_gains": {
+    "missing_candidates": 0.0072509379098341835,
+    "retrieved_rejected_true_links": 0.009354546373278972,
+    "incorrect_positive_links": 0.0038148499046172673
+  },
+  "route_oracle_bounds": {
+    "excluded_owners_existing_candidate_perfect_gain": 0.006523402255746411,
+    "currently_routed_owners_existing_candidate_perfect_gain": 0.006666458865193005,
+    "current_exact_scored_pair_perfect_gain": 0.005984469879452892
+  },
+  "route_bound_definition": "Perfect label-informed classification of fixed retrieved candidates on routed/excluded owners; missing candidates remain missing. Exact-scored-pair bound corrects only keys currently scored. These independent oracle prediction sets do not demonstrate globally feasible ownership corrections.",
+  "oracle_limit": "Diagnostic label-informed upper bounds, not measured achievable model gain. Missing targets cannot themselves be inside existing pair route; routed-owner counts indicate affected owners only.",
+  "counts": {
+    "missing_links": 1267,
+    "retrieved_rejected_true_links": 1982,
+    "incorrect_positive_links": 223,
+    "empty_non_singletons": 89,
+    "missing_links_routed_owners": 246,
+    "missing_error_routed_owners": 212,
+    "missing_error_unrouted_owners": 903,
+    "rejected_true_links_in_scored_route": 1439,
+    "incorrect_links_in_scored_route": 52,
+    "rejected_true_links_lost_to_global_rival": 0
+  },
+  "groups": {
+    "country=us": {
+      "owners": 12039,
+      "error_owners": 1571,
+      "loss_sum": 195.7674980302957,
+      "missing_links": 395,
+      "rejected_links": 1249,
+      "incorrect_links": 133,
+      "empty_non_singletons": 33,
+      "macro_loss_contribution": 0.009788374901514785,
+      "within_group_macro_loss": 0.0162611095631112,
+      "additive_macro_loss": {
+        "missing_candidates": 0.0014610405560836629,
+        "retrieved_rejected_true_links": 0.004339572796699472,
+        "incorrect_positive_links": 0.0023377615487316958,
+        "empty_non_singletons": 0.00165
+      }
+    },
+    "neural_route=unrouted": {
+      "owners": 16021,
+      "error_owners": 1456,
+      "loss_sum": 244.01821644415094,
+      "missing_links": 1021,
+      "rejected_links": 484,
+      "incorrect_links": 158,
+      "empty_non_singletons": 86,
+      "macro_loss_contribution": 0.012200910822207547,
+      "within_group_macro_loss": 0.015231147646473438,
+      "additive_macro_loss": {
+        "missing_candidates": 0.0036522440224560013,
+        "retrieved_rejected_true_links": 0.0015991786331854714,
+        "incorrect_positive_links": 0.002649488166566137,
+        "empty_non_singletons": 0.0043
+      }
+    },
+    "script=latin": {
+      "owners": 20000,
+      "error_owners": 2973,
+      "loss_sum": 394.78146549131156,
+      "missing_links": 1267,
+      "rejected_links": 1982,
+      "incorrect_links": 223,
+      "empty_non_singletons": 89,
+      "macro_loss_contribution": 0.019739073274565578,
+      "within_group_macro_loss": 0.019739073274565578,
+      "additive_macro_loss": {
+        "missing_candidates": 0.004620204901860191,
+        "retrieved_rejected_true_links": 0.006849964971674946,
+        "incorrect_positive_links": 0.0038189034010307084,
+        "empty_non_singletons": 0.00445
+      }
+    },
+    "name=2_to_4_words": {
+      "owners": 17228,
+      "error_owners": 2591,
+      "loss_sum": 339.745570225183,
+      "missing_links": 1089,
+      "rejected_links": 1741,
+      "incorrect_links": 199,
+      "empty_non_singletons": 67,
+      "macro_loss_contribution": 0.016987278511259148,
+      "within_group_macro_loss": 0.019720546216924945,
+      "additive_macro_loss": {
+        "missing_candidates": 0.004000966856880139,
+        "retrieved_rejected_true_links": 0.006073863983405258,
+        "incorrect_positive_links": 0.0035624476709739325,
+        "empty_non_singletons": 0.00335
+      }
+    },
+    "address=has_digits": {
+      "owners": 19267,
+      "error_owners": 2878,
+      "loss_sum": 382.93377479481563,
+      "missing_links": 1236,
+      "rejected_links": 1919,
+      "incorrect_links": 212,
+      "empty_non_singletons": 88,
+      "macro_loss_contribution": 0.01914668873974078,
+      "within_group_macro_loss": 0.01987511157911536,
+      "additive_macro_loss": {
+        "missing_candidates": 0.004518746747908429,
+        "retrieved_rejected_true_links": 0.0066113446432894424,
+        "incorrect_positive_links": 0.0036165973485431657,
+        "empty_non_singletons": 0.0044
+      }
+    },
+    "country=india": {
+      "owners": 7961,
+      "error_owners": 1402,
+      "loss_sum": 199.0139674610193,
+      "missing_links": 872,
+      "rejected_links": 733,
+      "incorrect_links": 90,
+      "empty_non_singletons": 56,
+      "macro_loss_contribution": 0.009950698373050964,
+      "within_group_macro_loss": 0.024998614176739015,
+      "additive_macro_loss": {
+        "missing_candidates": 0.003159164345776504,
+        "retrieved_rejected_true_links": 0.002510392174975475,
+        "incorrect_positive_links": 0.0014811418522990057,
+        "empty_non_singletons": 0.0028
+      }
+    },
+    "neural_route=routed": {
+      "owners": 3979,
+      "error_owners": 1517,
+      "loss_sum": 150.76324904716412,
+      "missing_links": 246,
+      "rejected_links": 1498,
+      "incorrect_links": 65,
+      "empty_non_singletons": 3,
+      "macro_loss_contribution": 0.007538162452358206,
+      "within_group_macro_loss": 0.03788973336194122,
+      "additive_macro_loss": {
+        "missing_candidates": 0.0009679608794041755,
+        "retrieved_rejected_true_links": 0.005250786338489468,
+        "incorrect_positive_links": 0.001169415234464565,
+        "empty_non_singletons": 0.00015
+      }
+    },
+    "name=long_5plus_words": {
+      "owners": 2636,
+      "error_owners": 361,
+      "loss_sum": 53.23316245972104,
+      "missing_links": 171,
+      "rejected_links": 225,
+      "incorrect_links": 22,
+      "empty_non_singletons": 22,
+      "macro_loss_contribution": 0.0026616581229860522,
+      "within_group_macro_loss": 0.02019467468122953,
+      "additive_macro_loss": {
+        "missing_candidates": 0.0005914783047203025,
+        "retrieved_rejected_true_links": 0.0007284951015093947,
+        "incorrect_positive_links": 0.0002416847167563478,
+        "empty_non_singletons": 0.0011
+      }
+    },
+    "address=no_digits": {
+      "owners": 733,
+      "error_owners": 95,
+      "loss_sum": 11.847690696496187,
+      "missing_links": 31,
+      "rejected_links": 63,
+      "incorrect_links": 11,
+      "empty_non_singletons": 1,
+      "macro_loss_contribution": 0.0005923845348248094,
+      "within_group_macro_loss": 0.016163288808316762,
+      "additive_macro_loss": {
+        "missing_candidates": 0.00010145815395176008,
+        "retrieved_rejected_true_links": 0.00023862032838550847,
+        "incorrect_positive_links": 0.00020230605248754068,
+        "empty_non_singletons": 5e-05
+      }
+    },
+    "name=short_1word": {
+      "owners": 136,
+      "error_owners": 21,
+      "loss_sum": 1.8027328064092774,
+      "missing_links": 7,
+      "rejected_links": 16,
+      "incorrect_links": 2,
+      "empty_non_singletons": 0,
+      "macro_loss_contribution": 9.013664032046387e-05,
+      "within_group_macro_loss": 0.013255388282421158,
+      "additive_macro_loss": {
+        "missing_candidates": 2.7759740259740262e-05,
+        "retrieved_rejected_true_links": 4.7605886760298535e-05,
+        "incorrect_positive_links": 1.4771013300425062e-05,
+        "empty_non_singletons": 0.0
+      }
+    }
+  },
+  "source1_records_available": 20000,
+  "class_definitions": "Source1 name Unicode letter script; name whitespace word-count; address empty/digits. Groups overlap across dimensions and must not be summed across dimensions.",
+  "input_sha256": {
+    "research/final_2h/neural_last4_fine_v1/pairs.parquet": "0af8eb23426be73cb6562019ea9568ec118d2293f186820824b349aa6e7a67f6",
+    "research/sprint_6h/sibling/learned30k/pairs.parquet": "fe6f11a7fe71a3f58e3692bed371d15d79b615cdc23724116f258ccfba656f6f",
+    "research/sprint_6h/sibling/workbenches50k/selection/truth.json": "684c0119aae3331987042b9f1231aaa11a4a22ccbe77c9544bb43aee796c452f",
+    "research/sprint_6h/sibling/workbenches50k/selection/countries.json": "bf588d2417b8835dbcdb4f9b940cbf6ca08875da2429c6d1e172d7c51eeabe81",
+    "research/sprint_6h/sibling/neural_v1_features30k/features.parquet": "a4f30f426e5ac19dd5259191c1fa6dcc8747d0c945e667c80ef292a4893985ff",
+    "research/sprint_6h/coordination/baseline_freeze/frozen.json": "68d6148b3aedd1473b95503a7734a93dc6ccf5ebdc1a2e51041939305a32c0a9",
+    "dataset/train/train_source1.tsv": "591af0e1dfeb65cab71ea6ee8cb69df00f92d6ba6fa79e05746c938775d14973"
+  },
+  "audit_labels_read": false,
+  "extension_labels_read": false,
+  "production_changes": false
+}
