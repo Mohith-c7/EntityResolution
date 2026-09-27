@@ -1,0 +1,22 @@
+{
+  "declared_at": "2026-09-27T13:24:23.588842+00:00",
+  "input_rows": 115530,
+  "positive_pairs": 65676,
+  "negative_pairs": 49854,
+  "owners": 18823,
+  "input_manifest_sha256": "551682a8351982cd01ad00cb44884369e2138b2ba03a0e2ee0fdd22b67d79aec",
+  "training_corpus": "sealed outer-training owners only",
+  "seed_selection_in_training": "first distinct labeled-positive sibling per owner",
+  "seed_selection_in_inference": "existing p1>=.90 route, max2other seeds, no truth",
+  "model": "MIT multilingualMiniLM117.7M frozen;1536-input MLP256/64/2,5epochs",
+  "calibration": "residual20k,early10k,anchoredp2,31leaves,800treecap,seed42",
+  "variants": [
+    "old37inputs plusfine-tuned neural probability",
+    "old37inputs plusmax/mean/count ofneural-sibling agreement",
+    "old37inputs plusbothsignals"
+  ],
+  "selection": "existing exposed development only; unchanged thresholds .83/.70; freshfinalauditonce afterfreeze",
+  "audit_labels_read": false,
+  "test_pseudo_labels": false,
+  "external_identity_lookup": false
+}
