@@ -1,0 +1,19 @@
+{
+  "recorded_at_utc": "2026-09-27T18:13:16.275102+00:00",
+  "status": "all_project_cloud_resources_deleted",
+  "verified_active_subscription_resource_groups": [],
+  "deleted_resource_groups": [
+    "er-temp-rg",
+    "er-expcpu-0927-e70007-rg",
+    "NetworkWatcherRG"
+  ],
+  "verification": "az group list returned [] after deletion",
+  "local_files_deleted": false,
+  "submission_06_completed": false,
+  "best_reported_portal_macro_f05": 0.97,
+  "best_verified_local_audit_macro_f05": 0.9811416632804336,
+  "address_dropout_training_completed": true,
+  "address_dropout_two_development_score_sets_completed": true,
+  "address_dropout_calibration_reviewed": false,
+  "further_experiment_work_authorized": false
+}

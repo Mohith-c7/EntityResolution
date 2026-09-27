@@ -1,5 +1,7 @@
 # Current release status
 
+> **Final shutdown status — 27 September 2026.** All experiments and submission runs were stopped. Both Azure VMs were deallocated, then both experiment resource groups and automatic Network Watcher resources were deleted; Azure returned an empty resource-group inventory. Submission 06 export was terminated before completion. The balanced address-dropout model and two development score sets completed locally, but no calibration result was reviewed or promoted. Submission 05 remained the best completed portal result at **0.970**; the best verified local hybrid audit remained **0.9811416633**. Earlier process descriptions below are historical. See [the project retrospective](../../docs/PROJECT_RETROSPECTIVE.md).
+
 Updated 27 September 2026, 17:21 UTC /22:51 IST.
 
 Submission 05 is complete and preserved, with user-reported portal macro F0.5 **0.970** versus Submission 04 **0.968**. The user now requests only the new upload TSV; no new ZIP is being built. Submission06 export is **paused** at the user’s request while model accuracy research continues. Its portal result is unknown. The supplied qualification screenshot shows **0.989279**; no result at that level has been demonstrated.

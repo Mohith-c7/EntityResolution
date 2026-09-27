@@ -1,5 +1,7 @@
 # Entity resolution handover — 27 September 2026
 
+> **Final shutdown status — 27 September 2026.** All experiments and submission runs were stopped. Both Azure VMs were deallocated, then both experiment resource groups and automatic Network Watcher resources were deleted; Azure returned an empty resource-group inventory. Submission 06 export was terminated before completion. The balanced address-dropout model and two development score sets completed locally, but no calibration result was reviewed or promoted. Submission 05 remained the best completed portal result at **0.970**; the best verified local hybrid audit remained **0.9811416633**. Earlier process descriptions below are historical. See [the project retrospective](PROJECT_RETROSPECTIVE.md).
+
 Current state: **17:21 UTC /22:51 IST**. The locked Submission06 hybrid passed its separately reserved fresh extension audit. Export is now SIGSTOP-paused with state preserved at the user’s request for further model accuracy work. Root requested replacement of the capacity-only12-layer run with an8-layer continuation using balanced target-address dropout on the same sealed120k training keys/labels/owners; no newer model score is claimed. This round requests **only the upload TSV**, with no new ZIP. Submission05 remains immutable and is the best user-reported portal result: **0.970**, versus04 **0.968**. Submission06 has no portal result yet. The latest supplied qualification cutoff is **0.989279**; no result at that level has been demonstrated.
 
 ## Audited Submission06, export paused
