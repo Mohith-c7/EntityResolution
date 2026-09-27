@@ -1,0 +1,35 @@
+{
+  "status": "validator_only_change_verified",
+  "labels_read": false,
+  "audit_freeze_sha256": "eee9067df380a21cf3d87ace97b55aeb2c84ab50045ec00b3fde892d10cf8982",
+  "audited_exporter_sha256": "fe1cb2341220e56c5c15a1d9913c95ee003c43d8329cc39d037a44269d8906f6",
+  "release_exporter_sha256": "1839811f68993e126f2aad6c9dccc0d115ca275e5209c0545d7208ea16d31af9",
+  "audited_source_snapshot": "research/final_2h/snapshots/build_neural_last4_submission_audited_fe1cb234.py",
+  "scoring_function_ast_sha256": {
+    "assemble_fine": "5964ec5340e00a628d143456503b6c51fd774c92e4db578a78f7ddf01b85ab5a",
+    "route_positions": "6bc8235ed84492f6a69fbe90ef2030bbeb4ec89360a1ea3429009c2488abb394",
+    "scatter_corrections": "63dbbe2fdc05b28620407fc40d479b119fffbd7d2452055aad8ebd83bcf4cc52",
+    "apply_adapter": "0fd1ced4fc0f967ff19368b61fae9f20330995c25e890d4dd4a97972c7730284",
+    "verify_model": "49c730a2dd07a3ddce1e55b5dba9d7b6a488af8db858e98d516c339ef1b3dc8f",
+    "load_fine": "b20f35a9ffbb6ae6fca6a8beca7a29a5ada0ab0ccc9bf802d38338e78720421d"
+  },
+  "scoring_call_sites_ast_sha256": [
+    "63ed48776b6a8e1efc7ac4a63a6a01f13789171daa40bc1c05df2b792c3e789f",
+    "64a1205e621ea4035848e2e6e8cae998e3abb7a1bdf5728bf8eb5c01bb3a386f",
+    "e60e8a9c66dc5c35f7046942bd4ceef7ed581660919abcc61ebc9c6e96fc037e",
+    "edb44e98658a2b98e3650ce20353a569159f4e76628a985fdb99ce7874683d03"
+  ],
+  "scoring_ast_unchanged": true,
+  "original_decision_sha256": "197eb696454cbdfe5d88e971c86fc2e223bbabf298eed7f5a77e1e63486b6052",
+  "route_peer_edges": 1473940,
+  "distinct_route_pairs": 801380,
+  "route_sha256": "59f97840df91d73f618f09f6bd089ff1f3eb2fdc105eea991682a02448d7d66e",
+  "global_pair_order_sha256": "97c9aba60de88f0026b97f546eabca72393db5d5cbd604ac96afd1d4a2c44fc1",
+  "base_pairs_sha256": "ab9fea30b1bfbdcd5d944c02eb40117fe64d0911260ed5e2ab16dedc08cbb57c",
+  "full_base_rows_checked": 69301760,
+  "routed_owners_checked": 346508,
+  "all_routed_owners_have_full40_candidates": true,
+  "all_route_and_peer_pair_keys_found": true,
+  "seconds": 89.59600747199875,
+  "change": "Validate immutable unique peer triplets then dedupe pair keys before exact801380 feature coverage check; no scoring or decision changes."
+}

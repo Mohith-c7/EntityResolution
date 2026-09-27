@@ -82,7 +82,7 @@ The command rebuilds full S2/S3 indices and frequencies, full Source1 reverse
 index, and the native postings extension; scores the frozen forward pipeline;
 pins one global reverse/neural route; reconstructs 33 reverse plus 3 score/rank
 features; serializes supplied test text; scores both offline neural branches in
-bounded 10k-pair batches; joins 38 features; applies the selected native anchored
+bounded 10,240-pair partitions aligned to both original inference batch sizes; joins 38 features; applies the selected native anchored
 adapter; decides once on the complete Source1 claimant graph; and runs both
 strict and unmodified organizer validators with target-ID checks.
 

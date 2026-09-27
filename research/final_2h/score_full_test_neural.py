@@ -19,6 +19,23 @@ def write(path, value):
     path.write_text(json.dumps(value, indent=2)+'\n')
 
 
+def verify_part(directory, head, head_key, code, input_path, manifest_path, rows):
+    """A scorer can return zero after its time limit without completing."""
+    path = directory / 'manifest.json'
+    if not path.is_file():
+        raise ValueError('Neural scorer returned without a completed partition: ' + str(directory))
+    marker = json.loads(path.read_text())
+    if (marker.get('status') != 'complete' or marker.get('labels_read') is not False
+            or marker.get('rows') != rows or marker.get(head_key) != sha(head / 'manifest.json')
+            or marker.get('code_sha256') != sha(code)
+            or marker.get('scores_sha256') != sha(directory / 'scores.jsonl')
+            or marker.get('input_sha256') != sha(input_path)
+            or ('input_manifest_sha256' in marker
+                and marker['input_manifest_sha256'] != sha(manifest_path))):
+        raise ValueError('Neural partition completion/provenance differs')
+    return marker
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--inputs', type=Path, required=True)
@@ -56,10 +73,14 @@ def main():
             '--base', str(ROOT / 'models/sprint_6h/neural/minilm_base'),
             '--head', str(old_head), '--output', str(directory / 'old')],
             cwd=ROOT, check=True)
+        verify_part(directory / 'old', old_head, 'head_manifest_sha256', old_code,
+                    input_path, manifest_path, len(lines))
         subprocess.run([sys.executable, str(fine_code), 'score',
             '--input', str(input_path), '--input-manifest', str(manifest_path),
             '--model', str(fine_head / 'checkpoint'), '--max-minutes', '30',
             '--output', str(directory / 'fine')], cwd=ROOT, check=True)
+        verify_part(directory / 'fine', fine_head, 'checkpoint_manifest_sha256',
+                    fine_code, input_path, manifest_path, len(lines))
         entries.append(directory)
         print(json.dumps({'stage': 'both_heads_part_complete', 'part': number,
                           'rows': len(lines), 'seconds': time.monotonic()-started}), flush=True)

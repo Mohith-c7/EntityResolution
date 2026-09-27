@@ -1,8 +1,11 @@
 # ML Challenge 2026: Business Entity Resolution
 
-**Team:** EntityResolution  
-**Members:** Mohith, Sanhitha, Harsha, Sahasra  
-**Date:** 27 September 2026  
+**Team:** EntityResolution
+
+**Members:** Mohith, Sanhitha, Harsha, Sahasra
+
+**Date:** 27 September 2026
+
 **Selected system:** Frozen bridge pipeline with a four-layer neural continuation
 and an anchored 38-feature residual adapter.
 
@@ -177,14 +180,14 @@ selected four-layer system.
 
 The archive contains exactly named complete TSVs under `output/`, all inference
 source under `code/business_entity_resolution/src/`, offline model weights,
-pinned requirements, and this completed method document. A separate release freeze links to the audited freeze and records a correction
+pinned requirements, and this completed method document. A separate release
+freeze links to the audited freeze and records a correction
 to export validation: peer triplets are validated before taking their distinct
 scored pair keys. This accommodates multiple peer edges for one scored pair.
 The six scoring functions, global decision call, weights, thresholds and
 routing policy remain unchanged, with source comparison proof and the original
 audited exporter included. No further audit evaluation or tuning follows this
-validation correction. The final output report
-records input/output hashes, candidate counts, frozen candidate hash, stages,
+validation correction. The final output report records input/output hashes, candidate counts, frozen candidate hash, stages,
 and strict/official validator results. Submission 04 is preserved separately.
 
 Package verification uses a sealed exposed runtime subset of 100 owners,

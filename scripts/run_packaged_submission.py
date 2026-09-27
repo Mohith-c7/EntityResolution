@@ -158,6 +158,8 @@ def base(args, root):
 
 def features(args, root):
     setup(root)
+    from dataclasses import asdict
+    import shutil
     import build_gated_submission as reuse
     import train_sibling_matcher as sibling
     work=args.work_dir
@@ -167,75 +169,45 @@ def features(args, root):
     baseline=root/'research/sprint_6h/coordination/baseline_freeze/frozen.json'
     reuse_path=work/'reuse_manifest.json'
     reuse.seal_reuse_manifest(work/'base',args.test_dir,baseline,{str(p):sha(p) for p in paths},reuse_path,root=work)
-    rows,frame=reuse.load_verified_chunks(json.loads(reuse_path.read_text()),args.test_dir,root=work)
-    full=work/'full_claims'; full.mkdir(exist_ok=False)
-    frame.to_parquet(full/'pairs.parquet',index=False)
-    write(full/'manifest.json',{'status':'complete','reference_ids':[r['entity_id'] for r in rows],
-        'verified_current_pipeline':True,
-        'entities':len(rows),'pairs':len(frame),'pairs_sha256':sha(full/'pairs.parquet'),
-        'pair_order_sha256':sibling.pair_order_hash(frame),'frozen_sha256':sha(baseline),
-        'split':'test','role':'test','labels_read':False})
-    del frame
-    command(args.cpu_python,root/'research/sprint_6h/parallel_reverse_features.py',
+    full=work/'full_claims'
+    command(args.cpu_python,root/'research/final_2h/prepare_full_test_base.py',
+        '--reuse-manifest',reuse_path,'--test-dir',args.test_dir,'--output',full,cwd=work)
+    frame,marker=sibling.load_pairs(full/'pairs.parquet',full/'manifest.json')
+    ids=marker['reference_ids']
+    route_dir=work/'global_route'; route_dir.mkdir()
+    selected=sibling.select_route(frame,universe_ids=ids)
+    edges=sibling.route_edges(frame,selected)
+    edges.to_parquet(route_dir/'route.parquet',index=False)
+    if len(edges[sibling.KEYS].drop_duplicates())!=801380:
+        raise ValueError('Rebuilt official test route differs from selected route')
+    write(route_dir/'manifest.json',{'status':'complete','route':asdict(sibling.RouteConfig()),
+        'global_references':len(ids),'global_pair_order_sha256':marker['pair_order_sha256'],
+        'route_sha256':sha(route_dir/'route.parquet'),'frozen_sha256':marker['frozen_sha256'],
+        'labels_read':False})
+    del frame,selected,edges
+    command(args.cpu_python,root/'research/final_2h/parallel_test_reverse.py',
         '--pairs',full/'pairs.parquet','--manifest',full/'manifest.json','--index',work/'test_s1.sqlite',
         '--target-index-prefix',work/'models/index_test','--workers',args.workers,
-        '--output',work/'reverse',cwd=work)
-    command(args.cpu_python,root/'research/sprint_6h/sibling/train_reverse_adapter.py','join',
-        '--pairs',full/'pairs.parquet','--manifest',full/'manifest.json',
-        '--reverse-features',work/'reverse/features.parquet','--reverse-manifest',work/'reverse/manifest.json',
-        '--route-plan',work/'reverse/global_route','--output',work/'combined_reverse',cwd=work)
-    raw=work/'provided_test_inputs'; raw.mkdir()
-    for n in (1,2,3): (raw/f'train_source{n}.tsv').symlink_to(args.test_dir/f'test_source{n}.tsv')
-    command(args.cpu_python,root/'research/sprint_6h/prepare_neural_inputs.py',
-        '--features',work/'combined_reverse','--data-dir',raw,
+        '--route-plan',route_dir,'--output',work/'reverse',cwd=work)
+    # A real copy can be transferred to a separate MPS host without preserving
+    # source-machine symlinks or mutating the immutable package.
+    shutil.copytree(work/'reverse/combined36',work/'combined_reverse')
+    command(args.cpu_python,root/'research/final_2h/prepare_test_neural_inputs.py',
+        '--features',work/'combined_reverse','--data-dir',args.test_dir,
         '--output',work/'neural/neural_inputs/test',cwd=work)
 
 
 def neural_scores(args, root):
-    """Bound both offline neural scorers into sealed 10k-row inference batches."""
+    """Use sealed partitions aligned to both audited inference batch sizes."""
     work=args.work_dir
     inputs=work/'neural/neural_inputs/test'
-    full=json.loads((inputs/'manifest.json').read_text())
-    pieces=work/'neural/pieces'; pieces.mkdir(exist_ok=False)
-    old_parts=[]; fine_parts=[]
-    def process(number,lines):
-        part=pieces/str(number); part.mkdir()
-        input_path=part/'pairs.jsonl'; input_path.write_text(''.join(lines))
-        im={**full,'rows':len(lines),'input_sha256':sha(input_path),'parent_input_manifest_sha256':sha(inputs/'manifest.json')}
-        write(part/'manifest.json',im)
-        command(args.neural_python,root/'research/sprint_6h/neural_frozen_head.py','score',
-            '--input',input_path,'--manifest',part/'manifest.json',
-            '--base',root/'models/sprint_6h/neural/minilm_base',
-            '--head',root/'models/sprint_6h/neural/frozen_head120k_v1',
-            '--output',part/'old_scores',cwd=work)
-        command(args.neural_python,root/'research/final_2h/neural_layers.py','score',
-            '--input',input_path,'--input-manifest',part/'manifest.json',
-            '--model',root/'models/final_2h/neural_last4_continue_v1/checkpoint',
-            '--max-minutes',30,'--output',part/'fine_scores',cwd=work)
-        old_parts.append(part/'old_scores'); fine_parts.append(part/'fine_scores')
-    lines=[]; total=0; number=0
-    with (inputs/'pairs.jsonl').open() as stream:
-        for line in stream:
-            lines.append(line); total+=1
-            if len(lines)==10000:
-                process(number,lines); number+=1; lines=[]
-    if lines: process(number,lines)
-    if total!=full['rows']: raise ValueError('Neural input coverage changed')
-    for name,parts,head_field,head in [('test',old_parts,'head_manifest_sha256',root/'models/sprint_6h/neural/frozen_head120k_v1/manifest.json'),
-                                    ('fine_test',fine_parts,'checkpoint_manifest_sha256',root/'models/final_2h/neural_last4_continue_v1/manifest.json')]:
-        output=work/'neural'/name; output.mkdir()
-        with (output/'scores.jsonl').open('x') as dest:
-            for part in parts:
-                pm=json.loads((part/'manifest.json').read_text())
-                if pm['status']!='complete' or pm.get('labels_read') is not False or pm[head_field]!=sha(head) or sha(part/'scores.jsonl')!=pm['scores_sha256']:
-                    raise ValueError('Neural part is incomplete or unsealed')
-                with (part/'scores.jsonl').open() as source:
-                    for line in source: dest.write(line)
-        write(output/'manifest.json',{'status':'complete','labels_read':False,'rows':total,
-            'scores_sha256':sha(output/'scores.jsonl'),head_field:sha(head),
-            'input_sha256':full['input_sha256'],'input_manifest_sha256':sha(inputs/'manifest.json'),
-            'bounded_part_manifest_sha256':[sha(p/'manifest.json') for p in parts],
-            'score_code_sha256':sha(__file__)})
+    # 10,240 rows is divisible by both encoder32 and frozen-head512 batches.
+    # This bounds the original scorer's 900-second cap without changing batch
+    # membership or precision. Only the final full-input remainder is shorter.
+    command(args.neural_python,root/'research/final_2h/score_full_test_neural.py',
+        '--inputs',inputs,'--parts',work/'neural/pieces',
+        '--old-output',work/'neural/test','--fine-output',work/'neural/fine_test',
+        '--part-rows',10240,cwd=work)
     command(args.cpu_python,root/'research/sprint_6h/neural_adapter.py','join',
         '--features',work/'combined_reverse','--neural',work/'neural/test',
         '--head-manifest',root/'models/sprint_6h/neural/frozen_head120k_v1/manifest.json',
@@ -266,7 +238,7 @@ def export(args, root):
         '--fine-head-manifest',root/'models/final_2h/neural_last4_continue_v1/manifest.json',
         '--old-head-manifest',root/'models/sprint_6h/neural/frozen_head120k_v1/manifest.json',
         '--model',root/'research/final_2h/neural_last4_fine_v1',
-        '--route-manifest',work/'reverse/global_route/manifest.json',
+        '--route-manifest',work/'global_route/manifest.json',
         '--test-dir',args.test_dir,'--threads',args.workers,'--output',work/'final_output',cwd=work)
 
 

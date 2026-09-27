@@ -1,14 +1,14 @@
 # Entity resolution handover — 27 September 2026
 
-Current release update: 14:49 UTC / 20:19 IST. The detailed historical sections below retain the earlier 13:55 UTC handover. Access details are in the private Downloads copy.
+Current release update: 15:11 UTC / 20:41 IST. The detailed historical sections below retain the earlier 13:55 UTC handover. Access details are in the private Downloads copy.
 
 ## Start here
 
 The selected candidate is **`neural_last4_fine_v1`**. Its fresh, single-use 10,000-reference audit scored **0.9799622272**, against **0.9793161919** for submission_04 on the same references. Gain **+0.0006460352**, paired 95% CI **[+0.0002035806, +0.0010892613]**; precision and recall improved, singleton errors stayed at 12, and both countries improved. Promotion passed. The audit is consumed. Development selection remains **0.9802609267**; submission_04's user-reported portal score remains **0.968**. No 0.985 result is verified.
 
-Full submission preparation is running on VM1: all 1,732,544 references and 69,301,760 baseline candidate pairs verified; 32 workers are generating exact evidence for the pinned 801,380-pair sparse route. Both neural heads run on Mac MPS after serialization. Exactly two Sol agents handle release validation and packaging. A separate eight-layer continuation has a 14-minute cap and does not change the audited candidate.
+Full submission preparation is running: the complete 1,732,544-reference / 69,301,760-candidate base graph, all exact reverse features and official test text are finished. Both audited neural heads are scoring the pinned 801,380 pairs on Mac MPS, started 15:05 UTC. The automatic finalizer waits for their completed integrity-checked manifests, then joins and exports on VM1, runs strict and official ID validators, copies verified TSVs to Downloads/EntityResolution_submission_05, and builds Downloads/EntityResolution_submission_05.zip. Exactly two Sol agents handle separate eight-layer calibration on VM2 and offline package checks. The safe four-layer submission will not wait for that experiment.
 
-The 38-feature exporter is implemented and subset parity is tested. Two real country-stratified runtime blocks passed strict and organizer validators; conservative projection is 146 minutes with 15% margin. A validator-only fix distinguishes sibling edges from distinct candidate pairs in a new release freeze; the original audited freeze is preserved. Final TSVs and ZIP are still pending full inference. The correction-strength grid chose the existing strength 1; post-selection exclusivity changed no links on the development graph.
+The 38-feature exporter is implemented and subset parity is tested. Two real country-stratified runtime blocks passed strict and organizer validators; conservative projection is 146 minutes with 15% margin. A validator-only fix distinguishes sibling edges from distinct candidate pairs in release freeze v3 SHA 39c00889453f513099ed01746f627cdb43f7a49d300d6f01718b5a12f3532af7; the original audited freeze is preserved. Final TSVs and ZIP are still pending full inference. The correction-strength grid chose the existing strength 1; post-selection exclusivity changed no links on the development graph.
 
 Repository: `https://github.com/Mohith-c7/EntityResolution`, branch **Harsha**. Do not reset, force-push, switch the shared worktree, overwrite existing outputs, or merge unvalidated experimental models. Models, datasets and large caches are not in Git; a clone alone cannot reproduce the current state.
 

@@ -1,0 +1,27 @@
+{
+  "status": "ready_for_validated_final_outputs",
+  "selected_release_freeze": "reports/final_2h/neural_last4_release_freeze_v3.json",
+  "selected_release_freeze_sha256": "39c00889453f513099ed01746f627cdb43f7a49d300d6f01718b5a12f3532af7",
+  "audited_freeze_sha256": "eee9067df380a21cf3d87ace97b55aeb2c84ab50045ec00b3fde892d10cf8982",
+  "stage": "/tmp/entity-final-package-stage-release-v3-downloads",
+  "verification": "/tmp/entity-final-package-verification-release-v3-downloads/verification.json",
+  "sealed_files": 284,
+  "offline_model_assets_included": true,
+  "all_source_under_required_src": true,
+  "raw_datasets_included": false,
+  "audit_truth_included": false,
+  "labels_read_by_packaging": false,
+  "owned_vm_processes": [],
+  "remaining_required_steps": [
+    "Wait for completed final output directory with strict and official validator PASS and release freeze SHA binding.",
+    "Run archive command; inspect resulting ZIP manifest and exact output member names."
+  ],
+  "archive_command": "/tmp/entity-final-package-venv/bin/python scripts/package_final_submission.py archive --stage /tmp/entity-final-package-stage-release-v3-downloads --submission /Users/sriharsha/Downloads/EntityResolution_submission_05 --verification /tmp/entity-final-package-verification-release-v3-downloads/verification.json --output /Users/sriharsha/Downloads/EntityResolution_submission_05.zip",
+  "verified_scope": "Actual exposed numeric 100-owner /4000-pair sparse native scoring and original decisions; synthetic cold CPU index/native/forward smoke; required CLI import checks. Cold full-test and new live neural inference not executed by packaging.",
+  "package_manifest_sha256": "1e81e7aa43ce1b49c79eba507861f8f69b9a3e220a88e8d1eb516408ee4ba52b",
+  "guarded_neural_driver_sha256": "62f71bc4553f5526bda375daa0a0644d92d7c1de65f2f275bcd846de03a1f37e",
+  "source_files": 236,
+  "documentation_trailing_whitespace": false,
+  "source_docs_stage_immutable": true,
+  "downloads_output": "/Users/sriharsha/Downloads/EntityResolution_submission_05.zip"
+}

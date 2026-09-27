@@ -160,6 +160,10 @@ def stage(args):
     repo = args.repo.resolve()
     freeze = json.loads(args.freeze.read_text())
     if freeze.get('status') != 'candidate_frozen': raise ValueError('Selected candidate freeze required')
+    for field in ('audit_freeze', 'release_validation_proof', 'audit_report', 'runtime_evidence'):
+        evidence = freeze.get(field)
+        if evidence and digest(relative_file(repo,evidence['path'])) != evidence['sha256']:
+            raise ValueError('Release lineage evidence changed: '+field)
     sources = source_files(repo)
     sources = set(sources)
     for name, expected in freeze.get('code_sha256',{}).items():
@@ -198,6 +202,7 @@ def stage(args):
         shutil.copyfile(source,destination)
         if digest(source)!=digest(destination): raise ValueError('Asset copy differs: '+str(name))
     copy_file(repo,'code/business_entity_resolution/src/model/MODEL_LICENSE.txt',runtime)
+    copy_file(repo,'code/business_entity_resolution/src/model/MODEL_LICENSE.txt',args.output)
     shutil.copyfile(args.freeze, runtime/'selected_release_freeze.json')
     # Aggregate audit/runtime evidence only: no owner truth or raw datasets.
     for name in EVIDENCE: copy_file(repo,name,runtime)
