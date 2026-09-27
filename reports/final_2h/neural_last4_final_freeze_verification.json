@@ -1,0 +1,21 @@
+{
+  "status": "all_final_artifacts_verified_before_audit",
+  "labels_read": false,
+  "verified_at": "2026-09-27T14:33:01.156489+00:00",
+  "freeze_sha256": "eee9067df380a21cf3d87ace97b55aeb2c84ab50045ec00b3fde892d10cf8982",
+  "superseded_provisional_sha256": "427ef0d16cf061d312e100f49f4ad60b3c1e2b19055b109d63d84faaca053045",
+  "added_wrappers": {
+    "research/final_2h/parallel_test_reverse.py": "3b02c23349f6e47e4ae0f2bce5c3942187b36eda5aacb296fbbf8275fc35d884",
+    "research/final_2h/prepare_test_neural_inputs.py": "09a0c0f1205e905ab2a9236ef2b7174c069ce30302c7dcbd934431a5d5293cff",
+    "research/final_2h/prepare_full_test_base.py": "6d2cc33e4a30ac6e4340ba047215add55cc4f359e273c28273bcf5e028939801"
+  },
+  "artifact_counts": {
+    "code_sha256": 80,
+    "model_sha256": 24,
+    "schema_sha256": 2,
+    "index_sha256": 6,
+    "native_sha256": 1
+  },
+  "audit_reference_sha256": "0e75ee00dce50eec160bd0ee0e13e6c9bb4224e6248eb9601e046c2ab91ae66b",
+  "runtime_and_predictions_require_same_final_freeze": true
+}

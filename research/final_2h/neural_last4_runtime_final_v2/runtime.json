@@ -1,0 +1,227 @@
+{
+  "mode": "R2",
+  "measured": true,
+  "candidate_frozen_sha256": "eee9067df380a21cf3d87ace97b55aeb2c84ab50045ec00b3fde892d10cf8982",
+  "synthetic_fixture_runtime": false,
+  "full_test_eta_supported": true,
+  "estimated_processing_seconds": 8768.913181471129,
+  "processing_budget_seconds": 10800,
+  "safety_margin_fraction": 0.15,
+  "blocks": [
+    {
+      "references": 10000,
+      "pairs": 400000,
+      "routed_pairs": 4599,
+      "country_stratified": true,
+      "countries": {
+        "india": 4675,
+        "us": 3827,
+        "france": 1498
+      },
+      "seconds": {
+        "reads": 0.1495279410009971,
+        "lookups": 146.53448543099876,
+        "normalization": 0.0,
+        "gate_or_features": 6.854882727999211,
+        "predict": 11.212289293005597,
+        "global_decision": 0.483075814001495,
+        "diagnostic_write": 0.000376224001229275,
+        "tsv_export": 0.12879531699582003,
+        "strict_validator": 19.981197895998775,
+        "official_validator": 8.041814999000053
+      },
+      "validation": {
+        "strict": "PASS",
+        "official": "PASS",
+        "strict_issues": [],
+        "official_returncode": 0,
+        "id_checking": true,
+        "official_command": [
+          "/mnt/er/venv/bin/python",
+          "-S",
+          "/mnt/er/entity/code/business_entity_resolution/src/utils/organizer_validate_submission.py",
+          "--matching",
+          "research/final_2h/neural_last4_runtime_final_v2/block_0/matching_results.tsv",
+          "--candidate",
+          "research/final_2h/neural_last4_runtime_final_v2/block_0/candidate_pairs.tsv",
+          "--test-dir",
+          "research/final_2h/neural_last4_runtime_final_v2/block_0/test",
+          "--check-ids"
+        ],
+        "validator_sha256": {
+          "strict": "ce0a9219cdc9154ef5ed4f191634ef546f0da13e358a9e1a9f8a651d8ae0e72a",
+          "official": "f96f59934383a15095914f507620c078c474e8f9c60e864b2d051ed173a22dfc"
+        },
+        "stage_seconds": {
+          "strict_validator": 19.981197895998775,
+          "official_validator": 8.041814999000053
+        }
+      },
+      "statistics": {
+        "country": {
+          "india": {
+            "entities": 4675,
+            "scored_candidates": 187000,
+            "predicted_links": 15329,
+            "empty_predictions": 290,
+            "empty_candidates": 0
+          },
+          "us": {
+            "entities": 3827,
+            "scored_candidates": 153080,
+            "predicted_links": 12682,
+            "empty_predictions": 230,
+            "empty_candidates": 0
+          },
+          "france": {
+            "entities": 1498,
+            "scored_candidates": 59920,
+            "predicted_links": 5289,
+            "empty_predictions": 57,
+            "empty_candidates": 0
+          }
+        },
+        "candidate_histogram": {
+          "40": 10000
+        },
+        "empty_predictions": 577
+      },
+      "scoring_manifest_sha256": "44c6e3ea40c0bc1e7befdf584faa86db6a460b122d17c5ddf97b98cf0a79ef49",
+      "fine_manifest_sha256": "55630ecc9163c9cc5ebf3bacebb7c18c81eeaecba44834f35e11792afbb991f6"
+    },
+    {
+      "references": 10000,
+      "pairs": 400000,
+      "routed_pairs": 4577,
+      "country_stratified": true,
+      "countries": {
+        "india": 4675,
+        "us": 3827,
+        "france": 1498
+      },
+      "seconds": {
+        "reads": 0.12711195399606368,
+        "lookups": 139.6771662730025,
+        "normalization": 0.0,
+        "gate_or_features": 6.941114836004999,
+        "predict": 10.075992723024683,
+        "global_decision": 0.47589014199911617,
+        "diagnostic_write": 0.00038402900099754333,
+        "tsv_export": 0.13293516200064914,
+        "strict_validator": 20.279621690999193,
+        "official_validator": 8.000719896001101
+      },
+      "validation": {
+        "strict": "PASS",
+        "official": "PASS",
+        "strict_issues": [],
+        "official_returncode": 0,
+        "id_checking": true,
+        "official_command": [
+          "/mnt/er/venv/bin/python",
+          "-S",
+          "/mnt/er/entity/code/business_entity_resolution/src/utils/organizer_validate_submission.py",
+          "--matching",
+          "research/final_2h/neural_last4_runtime_final_v2/block_1/matching_results.tsv",
+          "--candidate",
+          "research/final_2h/neural_last4_runtime_final_v2/block_1/candidate_pairs.tsv",
+          "--test-dir",
+          "research/final_2h/neural_last4_runtime_final_v2/block_1/test",
+          "--check-ids"
+        ],
+        "validator_sha256": {
+          "strict": "ce0a9219cdc9154ef5ed4f191634ef546f0da13e358a9e1a9f8a651d8ae0e72a",
+          "official": "f96f59934383a15095914f507620c078c474e8f9c60e864b2d051ed173a22dfc"
+        },
+        "stage_seconds": {
+          "strict_validator": 20.279621690999193,
+          "official_validator": 8.000719896001101
+        }
+      },
+      "statistics": {
+        "country": {
+          "france": {
+            "entities": 1498,
+            "scored_candidates": 59920,
+            "predicted_links": 5307,
+            "empty_predictions": 59,
+            "empty_candidates": 0
+          },
+          "us": {
+            "entities": 3827,
+            "scored_candidates": 153080,
+            "predicted_links": 12819,
+            "empty_predictions": 230,
+            "empty_candidates": 0
+          },
+          "india": {
+            "entities": 4675,
+            "scored_candidates": 187000,
+            "predicted_links": 15363,
+            "empty_predictions": 288,
+            "empty_candidates": 0
+          }
+        },
+        "candidate_histogram": {
+          "40": 10000
+        },
+        "empty_predictions": 577
+      },
+      "scoring_manifest_sha256": "c53538be1900dbaae76f89a8c4e2404318eb72e9c80a1d9914fbb85b920bceb0",
+      "fine_manifest_sha256": "608f62559327f5bf5b6e53b85f3744c914c07151cb4c9bd1adce8af04d9313a7"
+    }
+  ],
+  "passed": true,
+  "full_references": 1732544,
+  "full_pairs": 69301760,
+  "routed_pairs": 801380,
+  "projection_seconds": {
+    "full_route_setup": 589.1781242809993,
+    "features_16_workers": 2781.8778543689323,
+    "neural_and_adapter_single_mac": 1953.7517707390357,
+    "source_serialization_and_transfer_allowance": 600.0,
+    "index_and_asset_integrity_allowance": 120.0,
+    "full_reads": 25.906373701363147,
+    "feature_join": 1215.3092871482818,
+    "global_decision": 117.14104687181212,
+    "export": 23.031601731325267,
+    "validators_fixed": 27.330899429995043,
+    "validators_reference_processing": 171.61493865967216
+  },
+  "runtime_workers": 16,
+  "fixed_validator_evidence": {
+    "strict": "PASS",
+    "official": "PASS",
+    "strict_issues": [],
+    "official_returncode": 0,
+    "id_checking": true,
+    "official_command": [
+      "/mnt/er/venv/bin/python",
+      "-S",
+      "/mnt/er/entity/code/business_entity_resolution/src/utils/organizer_validate_submission.py",
+      "--matching",
+      "research/final_2h/neural_last4_runtime_final_v2/fixed_validator/matching_results.tsv",
+      "--candidate",
+      "research/final_2h/neural_last4_runtime_final_v2/fixed_validator/candidate_pairs.tsv",
+      "--test-dir",
+      "research/final_2h/neural_last4_runtime_final_v2/fixed_validator/test",
+      "--check-ids"
+    ],
+    "validator_sha256": {
+      "strict": "ce0a9219cdc9154ef5ed4f191634ef546f0da13e358a9e1a9f8a651d8ae0e72a",
+      "official": "f96f59934383a15095914f507620c078c474e8f9c60e864b2d051ed173a22dfc"
+    },
+    "stage_seconds": {
+      "strict_validator": 19.97806326799764,
+      "official_validator": 7.352836161997402
+    }
+  },
+  "scope": "Actual full candidate populations of two country-stratified 10k blocks. Block-local decisions measure runtime, not full-test ownership quality.",
+  "timing_note": "Normalization and candidate record reads are included in the unchanged reverse-feature builder total under lookups; zero is not an omitted normalization job.",
+  "benchmark_code_sha256": "0f587a5baa2a0cb1ac462739a7ec3ba4ec9fcab49aa762b2528d30384de45fb6",
+  "timing_reuse": "Unchanged reverse features, routing setup and old neural head reuse prior actual measurements on these exact blocks; new fine head, 38-feature join, native adapter, decisions, exports and validators are measured for the selected new candidate. Frozen index and original code hashes remain unchanged.",
+  "acceptance": {
+    "passed": true,
+    "failures": []
+  }
+}

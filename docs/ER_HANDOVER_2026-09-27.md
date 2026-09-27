@@ -1,14 +1,14 @@
 # Entity resolution handover — 27 September 2026
 
-Status captured at 13:55 UTC / 19:25 IST. Access details are in the private Downloads copy of this document.
+Current release update: 14:49 UTC / 20:19 IST. The detailed historical sections below retain the earlier 13:55 UTC handover. Access details are in the private Downloads copy.
 
 ## Start here
 
-The latest credible development candidate is **`neural_last4_fine_v1`**, with macro F0.5 **0.9802609267** on the already exposed 20,000-reference selection set. It is not a fresh audit or portal score. The best completed fresh confirmation remains **0.9794958377** for `neural_v2`. Submission 04 scored **0.968 on the portal**, as reported by the team.
+The selected candidate is **`neural_last4_fine_v1`**. Its fresh, single-use 10,000-reference audit scored **0.9799622272**, against **0.9793161919** for submission_04 on the same references. Gain **+0.0006460352**, paired 95% CI **[+0.0002035806, +0.0010892613]**; precision and recall improved, singleton errors stayed at 12, and both countries improved. Promotion passed. The audit is consumed. Development selection remains **0.9802609267**; submission_04's user-reported portal score remains **0.968**. No 0.985 result is verified.
 
-All training and development-scoring jobs launched in this session have finished. Both VMs are powered on but have no active experiment or submission processes at the final process check. No new full submission was started. All delegated work has stopped. The reserved final audit labels remain unopened.
+Full submission preparation is running on VM1: all 1,732,544 references and 69,301,760 baseline candidate pairs verified; 32 workers are generating exact evidence for the pinned 801,380-pair sparse route. Both neural heads run on Mac MPS after serialization. Exactly two Sol agents handle release validation and packaging. A separate eight-layer continuation has a 14-minute cap and does not change the audited candidate.
 
-The next step is to finish validation and inference integration for the new 38-feature candidate, rather than repeat completed experiments. The 38-feature production/runtime helper is **not implemented**. The new candidate has **not** been cleared for deployment.
+The 38-feature exporter is implemented and subset parity is tested. Two real country-stratified runtime blocks passed strict and organizer validators; conservative projection is 146 minutes with 15% margin. A validator-only fix distinguishes sibling edges from distinct candidate pairs in a new release freeze; the original audited freeze is preserved. Final TSVs and ZIP are still pending full inference. The correction-strength grid chose the existing strength 1; post-selection exclusivity changed no links on the development graph.
 
 Repository: `https://github.com/Mohith-c7/EntityResolution`, branch **Harsha**. Do not reset, force-push, switch the shared worktree, overwrite existing outputs, or merge unvalidated experimental models. Models, datasets and large caches are not in Git; a clone alone cannot reproduce the current state.
 
