@@ -84,8 +84,13 @@ validators. The user deliverable is only `matching_results.tsv`; no ZIP is
 created. A new output directory is mandatory. No label file is read by this
 exporter.
 
-Verification: seven scoped tests cover overlap-after-top4/no refill,
+Verification: eight scoped tests cover overlap-after-top4/no refill,
 deterministic ties/full40 context, original-anchor single scatter, outside-route
 invariance, duplicate/changed anchors/ranks, exact keyed joins, route replay and
-wrong-freeze/legacy-audit gate rejection. Full production export must wait for
+wrong-freeze/legacy-audit gate rejection. An actual eight-layer score-manifest
+regression binds generic `neural_layers.py` inference (training used
+`neural_layers8.py`). Independent completed full-test validation passed all
+393,220 diagnostics, input/feature order, disjoint routes and 32 part seals;
+its aggregate evidence is `reports/final_2h/hybrid_test_rescue_validation.json`.
+Full production export must wait for
 the fresh audit gate.

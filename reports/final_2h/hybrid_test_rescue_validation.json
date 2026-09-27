@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "feature_manifest_sha256": "b829c7955fec30adf797f3d46d82efdf7fc87c53a29539d42faee2a32feddeea",
+  "protocol_sha256": "443e1f0d7c7b40d15d173c5c1d2cbdf1234e00ddc0a23d556c777b0d5292b738",
+  "raw_manifest_sha256": "30eed157557c096811bc09e353d1b4466c265b82fe7c282fee888994a2c6644a",
+  "raw_input_sha256": "e4ec9708010524322757eb45c21fc8e03ee760a03f9a32f13e8a9524fde32b26",
+  "features_sha256": "289485b19bae6aae34140ea96e28194c9a108d12be521769bcd7d8e6a0992e4a",
+  "rows": 393220,
+  "empty_owners": 99399,
+  "overlap_removed": 4376,
+  "diagnostics_verified": 393220,
+  "workers": 32,
+  "exact_input_feature_key_order": true,
+  "original_neural_route_disjoint": true,
+  "rank_limited_to_original_top4": true,
+  "actual_own_excluded_reverse_queries": true,
+  "labels_read": false,
+  "audit_labels_read": false,
+  "source_sha256": "6c62580717e900be76cb167766e8ad1b57d2279ac3734719619cdfc5052ab8c3",
+  "builder_sha256": "38059c8afd36746db32b621d4f098494ecb2520f80e1325c19431069dad9a441"
+}
