@@ -1,12 +1,12 @@
 {
-  "captured_at": "2026-09-27T16:13:08Z",
-  "active_model_jobs": 0,
-  "new_submission_running": false,
+  "captured_at": "2026-09-27T16:55:00Z",
+  "active_model_jobs": 1,
+  "new_submission_running": true,
   "final_audit_labels_opened": true,
   "portal_team_reported": 0.97,
   "best_fresh_confirmation": 0.9794958376501831,
-  "development_candidate": "neural_last4_fine_v1",
-  "development_macro_f05": 0.9802609267254342,
+  "development_candidate": "hybrid8_empty4_calibrated_exclusive_v1",
+  "development_macro_f05": 0.9809431572046812,
   "development_gain_vs_neural_v2": 0.0002519948056544368,
   "development_gain_ci95": [
     4.401708427816703e-05,
@@ -22,8 +22,13 @@
   "portal_submission": "submission_05",
   "portal_provenance": "user reported; not independently retrieved",
   "best_fresh_final_audit": 0.9799622271615511,
-  "latest_experiment": "empty_rescue_fixed38_v1",
-  "latest_experiment_status": "rejected_precision_and_singleton_guards",
-  "latest_experiment_development_macro_f05": 0.9805633076778151,
-  "portal_result_record": "reports/final_2h/submission_05_portal_result.json"
+  "latest_experiment": "hybrid8_empty4_calibrated_exclusive_v1",
+  "latest_experiment_status": "development_selected_fresh_extension_pending",
+  "latest_experiment_development_macro_f05": 0.9809431572046812,
+  "portal_result_record": "reports/final_2h/submission_05_portal_result.json",
+  "submission_06_stage": "test_extra_neural_scoring_and_unopened_extension_sealing",
+  "qualification_cutoff_user_screenshot": 0.989279,
+  "new_zip_requested": false,
+  "full_test_extra_pairs": 393220,
+  "full_test_main_eight_layer_pairs": 801380
 }

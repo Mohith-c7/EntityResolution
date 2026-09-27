@@ -1,10 +1,20 @@
 # Current release status
 
-Updated 27 September 2026, 16:13 UTC / 21:43 IST.
+Updated 27 September 2026, 16:55 UTC / 22:25 IST.
 
-Submission 05 is complete, validated and packaged. The user reports portal macro F0.5 **0.970**, up **0.002** from Submission 04. Its fresh final audit was **0.9799622272**; these scores describe different populations. The .985 target remains unmet.
+Submission 05 is complete and preserved. The user reports portal macro F0.5 **0.970**, up **0.002** from Submission 04. Its fresh final audit was **0.9799622272**; these scores describe different populations. The latest supplied qualification screenshot shows **0.989279** at rank 100. This round requires a TSV, so no new ZIP is being built.
 
-The last8 and empty-rescue experiments finished and failed their predefined quality checks. No owned model job remains active. The final audit is consumed; the separately reserved extension audit is unopened. Preserve all release artifacts. See `docs/ER_HANDOVER_2026-09-27.md` and `reports/final_2h/submission_05_portal_result.json` for current evidence.
+The standalone last8 and empty-rescue experiments failed their original quality checks; those results remain rejected. A separately declared combined candidate, `hybrid8_empty4_calibrated_exclusive_v1`, reached **0.9809431572** on the existing 20,000-reference development set. This is not a fresh audit or a portal score. Its prospective audit rule requires macro gain of at least 0.0003, paired 95% lower confidence bound above zero, and no known-country macro loss below -0.0005. Precision and singleton changes are reported as diagnostics; the original rejected component checks are not rewritten.
+
+Current work:
+
+- Mac: old-head and four-layer scoring over **393,220** extra official-test pairs. These are the original-p2 top four candidates of globally empty Submission 05 owners, excluding original neural-route pairs without refilling slots.
+- VM 1: full-test reverse features are complete and independently verified; **801,380** original-route eight-layer scores are complete. The complete 331,012-owner heldout graph has been rescored for the fixed hybrid. A separate 10,000-owner extension audit is being sealed; its labels remain unopened.
+- Two agents: one owns the extension audit, one owns the final TSV exporter. Export is conditional on that audit passing. Submission 05 stays immutable.
+
+Native corrections are anchored to original probabilities once, with disjoint routes. The candidate uses ordinary threshold 0.79, first-candidate threshold 0.6999999999999998, original ownership threshold 0.83, then accepted-only exclusive ownership. Baseline 05 keeps its original thresholds and decisions. The same 40 forward candidates per Source 1 entity remain in the candidate TSV.
+
+Root verification: 36 scoped tests pass. An independent 256-case check matches the official F0.5 formula, including singleton handling, to floating-point precision. Neither check implies a model score gain.
 
 ## Historical starting snapshot
 
