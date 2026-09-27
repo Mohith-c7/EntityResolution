@@ -2,6 +2,10 @@
 
 Updated 2026-09-27. Coordinator: parent session subagent `cursor_final_coordination`.
 
+Review complete: all ownership variants have zero development gain on both original and neural-v2 probabilities over the complete existing 30k graph; zero collisions and zero changed links. Independent tests reproduce ineligible-rival suppression and empty-input defects. Full findings: `docs/CURSOR_POLICY_REVIEW.md` in the parent workspace.
+
+Cursor's separate feature delivery is now pushed at `43e14c633f45193611c8b2ea96d094dac957a919` on `cursor/token-alignment`. The coordinator's corrected version is pushed at `ee1e0b5b4c5ffcabc5f3fe54993fdd7e9d3908e1` on `cursor/token-alignment-fix`, with 13 tests passing. It fixes accent-folded/phonetic DF views, statistics provenance and salient token selection. Artifact versions are v2; rebuild v1 statistics. Integration remains the parent's responsibility.
+
 Cursor's implemented branch is `retrieval-improve-0927`, locally at `608749aa62af4c0f73f513b86e87baf82641cf86`, based on safety commit `85c615b`. Its retrieval commit is `917264e494aab82e11cd3795903382217d9139e5`. Neither branch was advertised by origin when inspected. The separate `cursor/token-alignment` worktree remains at `00fa19b` with no committed feature delivery.
 
 ## Cursor delivery request
