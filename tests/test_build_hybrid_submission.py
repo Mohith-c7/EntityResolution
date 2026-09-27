@@ -55,9 +55,22 @@ def test_audit_cannot_reuse_wrong_freeze_or_legacy_acceptance(tmp_path,monkeypat
     path=tmp_path/'gate.json';freeze=tmp_path/'freeze.json';freeze.write_text('{}')
     frozen={'baseline_frozen_sha256':'baseline','reservation_plan_sha256':'reserve','audit_freeze_sha256':'audit','extension_acceptance_criteria':m.CRITERIA}
     gate={'status':'paired_extension_audit_complete','candidate_frozen_sha256':'audit','baseline_frozen_sha256':'baseline','reservation_plan_sha256':'reserve','hybrid_prospective_acceptance':{'passed':True,'criteria':m.CRITERIA}}
+    gate.update(runtime={'passed':True,'evidence':{'candidate_frozen_sha256':'audit'}},full_claim_graph={'references':331012,'pairs':13240480},claimant_universe={'kind':'complete_heldout','complete':True,'scoring_complete':True,'supervised_training_excluded':True,'declared_references':331012,'scored_references':331012,'pairs':13240480})
     monkeypatch.setattr(m,'pinned',lambda path,frozen,group:json.loads(path.read_text()))
     path.write_text(json.dumps(gate));assert m.verify_audit(path,frozen,freeze)==gate
     gate['candidate_frozen_sha256']='old';path.write_text(json.dumps(gate))
     with pytest.raises(ValueError,match='another'):m.verify_audit(path,frozen,freeze)
     gate['candidate_frozen_sha256']='audit';gate.pop('hybrid_prospective_acceptance');gate['acceptance']={'promotion_pass':True};path.write_text(json.dumps(gate))
     with pytest.raises(ValueError,match='failed'):m.verify_audit(path,frozen,freeze)
+
+
+def test_extra_route_uses_blue_global_empty_and_top4_not_fifth(tmp_path):
+    base,route,extra=inputs();blue=tmp_path/'blue';blue.mkdir()
+    pd.DataFrame({'source1_entity_id':['S1-a'],'matched_entity_ids':['']}).to_csv(blue/'matching_results.tsv',sep='\t',index=False)
+    protocol={'blue_matching_sha256':m.reuse.digest(blue/'matching_results.tsv')}
+    old=base.iloc[[0]][m.KEYS]
+    expected=base.iloc[[1,2,3]].copy()
+    assert m.validate_extra_route(base,old,expected,blue,protocol)==1
+    bad=base.iloc[[1,2,4]].copy()
+    with pytest.raises(ValueError,match='top4'):
+        m.validate_extra_route(base,old,bad,blue,protocol)

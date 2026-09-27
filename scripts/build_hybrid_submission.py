@@ -55,6 +55,15 @@ def verify_audit(path,frozen,freeze_path):
         raise ValueError('Fresh hybrid audit absent, failed, or wrong comparator/reservation')
     if gate.get('candidate_frozen_sha256') not in [reuse.digest(freeze_path),frozen.get('audit_freeze_sha256')]:
         raise ValueError('Fresh audit belongs to another scoring freeze')
+    runtime=gate.get('runtime',{});universe=gate.get('claimant_universe',{})
+    if (runtime.get('passed') is not True
+            or runtime.get('evidence',{}).get('candidate_frozen_sha256')!=gate['candidate_frozen_sha256']
+            or gate.get('full_claim_graph')!={'references':331012,'pairs':13240480}
+            or universe.get('kind')!='complete_heldout'
+            or any(universe.get(k) is not True for k in ['complete','scoring_complete','supervised_training_excluded'])
+            or universe.get('declared_references')!=331012 or universe.get('scored_references')!=331012
+            or universe.get('pairs')!=13240480):
+        raise ValueError('Fresh audit runtime/full claimant graph evidence incomplete')
     return gate
 
 def read_scores(directory,input_manifest,head_sha,head_field,code,frozen,rows):
@@ -126,7 +135,8 @@ def export_matching(rows,frame,chosen,blue,output):
 
 def build(a):
     start=time.monotonic();stages={}
-    if a.output.exists() or a.output.resolve() in [(ROOT/'output'/f'submission_{v}').resolve() for v in ['03','04','05']]:raise ValueError('Require new versioned output')
+    preserved=[(ROOT/'output'/f'submission_{v}').resolve() for v in ['03','04','05']]
+    if a.output.exists() or any(a.output.resolve()==p or p in a.output.resolve().parents for p in preserved):raise ValueError('Require new versioned output')
     if a.threads<=0:raise ValueError('Positive threads required')
     frozen=verify_freeze(a.freeze);gate=verify_audit(a.audit_evidence,frozen,a.freeze)
     reuse_manifest=json.loads(a.reuse_manifest.read_text())
