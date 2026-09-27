@@ -1,0 +1,27 @@
+{
+  "status": "declared_before_new_model_results",
+  "declared_at": "2026-09-27T17:30:00.036202+00:00",
+  "source_sha256": "623daf32b74f0146a95afeda268bfb2b396adc1f4b382b34e92dcf5b3f0978fe",
+  "candidate": "new balanced-target-dropout8 native38 original-route probabilities plus EXACT saved fixed4 disjoint empty-extra probabilities; anchored ORIGINALp2 once; one candidate no search",
+  "baseline": "current calibrated/exclusive hybrid8_empty4",
+  "baseline_pairs_sha256": "ccfd6dd3feb77b81c60f0b13179ce10302a9e2f2871eb7e5dfa80ff682b80bb3",
+  "baseline_development_macro_f05": 0.9809431572046812,
+  "decision_config": {
+    "threshold": 0.83,
+    "t_first": 0.6999999999999998,
+    "t_rest": 0.79
+  },
+  "post_selection_policy": "existing exclusive_selected probability then lexical source1ID",
+  "post_selection_helper_sha256": "1de93cd958df3dc5882dc3685d886f07969fd9990ee2c584b4ab1329f069b4fb",
+  "criteria": {
+    "minimum_point_macro_gain": 0.0003,
+    "paired_ci_lower_bound_strictly_above": 0.0,
+    "country_macro_delta_floor": -0.0005,
+    "precision_singletons_diagnostic_only": true
+  },
+  "fit": "existing residual20k only, logloss early-stop early10k only, same anchored38 native hyperparameters as8",
+  "evaluation": "complete frozen30k graph; exposed early10k and selection20k only; one selection comparison",
+  "audit_labels_read": false,
+  "extension_audit_labels_read": false,
+  "production_modified": false
+}
