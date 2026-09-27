@@ -1,0 +1,26 @@
+{
+  "status": "independent_target_address_dropout_validation_passed",
+  "rows": 120000,
+  "training_owners": 20000,
+  "owner_keys_labels_order_preserved": true,
+  "source1_text_preserved": true,
+  "source1_missing_addresses": 0,
+  "masked_target_pairs_by_label": {
+    "1": 10000,
+    "0": 10000
+  },
+  "target_missing_total_by_label": {
+    "1": 11969,
+    "0": 10122
+  },
+  "street_decoy_pairs_excluded": 7338,
+  "street_decoy_pairs_changed": 0,
+  "labels_outer_training_only": true,
+  "input_sha256": {
+    "original": "25b5904fca2d1a6b88754b34adab52cbc2889fc3327eba13cb76d83135ed0ad6",
+    "street": "e2e232a81dd3b5d041e5a08b00f6cc53c03ed73d909d6782894e59498aa8e1eb",
+    "masked": "89ae4661ae5009440c185291f93d31909420a513378c5ff10cf283b5ef5dbe60",
+    "manifest": "66abfb0b79d333fc678d1dc6f2d1fbd334c7b830f807c37bdf1c70fd9f6a72a2"
+  },
+  "source_sha256": "87b271bb511ed94981e405c2ffe66d9b57bc2dc190699674d51f83887500a53b"
+}

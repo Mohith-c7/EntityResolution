@@ -1,0 +1,12 @@
+{
+  "status": "independent_target_dropout_exact_text_conflict_check_passed",
+  "training_only": true,
+  "before_cross_label_exact_text_keys": 0,
+  "after_cross_label_exact_text_keys": 0,
+  "introduced_conflicting_text_keys": 0,
+  "input_sha256": {
+    "models/sprint_6h/neural/train120k_street_decoys.jsonl": "e2e232a81dd3b5d041e5a08b00f6cc53c03ed73d909d6782894e59498aa8e1eb",
+    "models/final_2h/neural_address_dropout_training_v1/pairs.jsonl": "89ae4661ae5009440c185291f93d31909420a513378c5ff10cf283b5ef5dbe60"
+  },
+  "raw_texts_or_owner_ids_in_report": false
+}
