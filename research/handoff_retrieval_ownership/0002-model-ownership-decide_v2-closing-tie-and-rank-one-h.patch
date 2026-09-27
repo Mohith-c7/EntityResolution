@@ -1,0 +1,220 @@
+From 608749aa62af4c0f73f513b86e87baf82641cf86 Mon Sep 17 00:00:00 2001
+From: harsha-cpp <sriharshatummalapalli@gmail.com>
+Date: Sun, 27 Sep 2026 17:52:10 +0530
+Subject: [PATCH 2/2] model: ownership decide_v2 closing tie and rank-one holes
+
+- decide_v2 reproduces frozen decide() exactly when flags off (parity test)
+- tie_break: exact-probability ties resolve to one deterministic owner
+- cover_rank_one: rescued rank-one links (t_first..threshold) compete for
+  ownership, closing the bypass that left multi-owner targets
+
+Co-authored-by: Cursor <cursoragent@cursor.com>
+---
+ .../src/model/ownership.py                    | 106 ++++++++++++++++++
+ tests/test_ownership.py                       |  81 +++++++++++++
+ 2 files changed, 187 insertions(+)
+ create mode 100644 code/business_entity_resolution/src/model/ownership.py
+ create mode 100644 tests/test_ownership.py
+
+diff --git a/code/business_entity_resolution/src/model/ownership.py b/code/business_entity_resolution/src/model/ownership.py
+new file mode 100644
+index 0000000..cb6be4a
+--- /dev/null
++++ b/code/business_entity_resolution/src/model/ownership.py
+@@ -0,0 +1,106 @@
++"""Ownership / exclusivity decision rules.
++
++This module reimplements the frozen ``decide()`` ownership logic with two
++documented holes closed, behind explicit config flags so the original behavior
++is reproduced exactly when the flags are off:
++
++* ``tie_break`` — the original rule drops a claim only when a rival is
++  *strictly* higher (``rival > p``). Exact ties keep every claimant, so a
++  target can end with multiple owners even though training has none.
++* ``cover_rank_one`` — the original exclusivity check only inspects claims at
++  or above ``threshold``. A candidate accepted by the rank-one rule at
++  ``t_first`` is never checked against rivals, and rivals are never checked
++  against it, so a rescued link and a strong rival can both survive.
++
++A target has exactly one owner in the supplied training labels (0 dual owners
++in 7.6M links), so multi-owner outcomes are structural errors.
++
++No labels are read here. All inputs are scored candidate rows.
++"""
++
++from __future__ import annotations
++
++import numpy as np
++import pandas as pd
++
++
++def decide(frame, claims, config):
++    """Original frozen decision rule, reproduced exactly.
++
++    frame: rows to decide, in candidate order per reference.
++    claims: every scored (reference, target, probability).
++    """
++    threshold, t_first, t_rest = config["threshold"], config["t_first"], config["t_rest"]
++    strong = claims[claims.probability >= threshold].sort_values("probability", ascending=False, kind="stable")
++    top = strong.groupby("candidate_entity_id", sort=False).head(2)
++    best = {}
++    for c, s, p in zip(top.candidate_entity_id, top.source1_entity_id, top.probability):
++        best.setdefault(c, []).append((s, p))
++    probability = frame.probability.to_numpy()
++    lost = np.zeros(len(frame), dtype=bool)
++    for i in np.flatnonzero(probability >= threshold):
++        s, c = frame.source1_entity_id.iat[i], frame.candidate_entity_id.iat[i]
++        rival = max((p for owner, p in best.get(c, ()) if owner != s), default=-1.0)
++        lost[i] = rival > probability[i]
++    adjusted = np.where(lost, 0.0, probability)
++    codes, _ = pd.factorize(frame.source1_entity_id)
++    order = np.lexsort((-adjusted, codes))
++    first = np.zeros(len(frame), dtype=bool)
++    first[order[np.r_[True, codes[order][1:] != codes[order][:-1]]]] = True
++    chosen = (adjusted >= t_rest) | (first & (adjusted >= t_first))
++    return chosen, lost
++
++
++def decide_v2(frame, claims, config):
++    """Ownership decision with tie-break and rank-one coverage.
++
++    Additional config keys (all optional, defaulting to original behavior):
++      tie_break:       drop a claim when a rival is >= its probability
++                       (instead of strictly >). Deterministic: among exact ties
++                       the lexicographically smaller source1 id wins.
++      cover_rank_one:  also consider claims in [t_first, threshold) as rivals,
++                       so a rescued rank-one link competes for ownership.
++    """
++    tie_break = bool(config.get("tie_break", False))
++    cover_rank_one = bool(config.get("cover_rank_one", False))
++    if not tie_break and not cover_rank_one:
++        return decide(frame, claims, config)
++
++    threshold, t_first, t_rest = config["threshold"], config["t_first"], config["t_rest"]
++    # Rival pool: strong claims, optionally extended down to t_first so rescued
++    # rank-one links participate in ownership.
++    rival_floor = min(threshold, t_first) if cover_rank_one else threshold
++    strong = claims[claims.probability >= rival_floor].sort_values(
++        ["probability", "source1_entity_id"], ascending=[False, True], kind="stable")
++    top = strong.groupby("candidate_entity_id", sort=False).head(2)
++    best = {}
++    for c, s, p in zip(top.candidate_entity_id, top.source1_entity_id, top.probability):
++        best.setdefault(c, []).append((s, p))
++
++    probability = frame.probability.to_numpy()
++    lost = np.zeros(len(frame), dtype=bool)
++    check_floor = rival_floor if cover_rank_one else threshold
++    for i in np.flatnonzero(probability >= check_floor):
++        s, c = frame.source1_entity_id.iat[i], frame.candidate_entity_id.iat[i]
++        rivals = [(owner, p) for owner, p in best.get(c, ()) if owner != s]
++        if not rivals:
++            continue
++        rival = max(p for _, p in rivals)
++        if tie_break:
++            # Drop on >=, but keep the deterministic smallest-id claimant so a
++            # exact tie resolves to exactly one owner.
++            if rival > probability[i]:
++                lost[i] = True
++            elif rival == probability[i]:
++                winner = min(owner for owner, p in rivals if p == rival)
++                if s > winner:
++                    lost[i] = True
++        else:
++            lost[i] = rival > probability[i]
++    adjusted = np.where(lost, 0.0, probability)
++    codes, _ = pd.factorize(frame.source1_entity_id)
++    order = np.lexsort((-adjusted, codes))
++    first = np.zeros(len(frame), dtype=bool)
++    first[order[np.r_[True, codes[order][1:] != codes[order][:-1]]]] = True
++    chosen = (adjusted >= t_rest) | (first & (adjusted >= t_first))
++    return chosen, lost
+diff --git a/tests/test_ownership.py b/tests/test_ownership.py
+new file mode 100644
+index 0000000..c366c4b
+--- /dev/null
++++ b/tests/test_ownership.py
+@@ -0,0 +1,81 @@
++"""Tests for ownership decision rules (tie-break and rank-one coverage)."""
++
++import sys
++import unittest
++from pathlib import Path
++
++import pandas as pd
++
++PROJECT_CODE = Path(__file__).resolve().parents[1] / "code" / "business_entity_resolution"
++if str(PROJECT_CODE) not in sys.path:
++    sys.path.insert(0, str(PROJECT_CODE))
++
++from src.model.ownership import decide, decide_v2  # noqa: E402
++
++CONFIG = {"threshold": 0.83, "t_first": 0.70, "t_rest": 0.83}
++
++
++def _frame(rows):
++    return pd.DataFrame(rows, columns=["source1_entity_id", "candidate_entity_id", "probability"])
++
++
++class ParityTests(unittest.TestCase):
++    def test_flags_off_matches_original(self) -> None:
++        frame = _frame([
++            ("S1-1", "S2-1", 0.90),
++            ("S1-1", "S2-2", 0.50),
++            ("S1-2", "S2-1", 0.85),
++            ("S1-3", "S3-9", 0.95),
++        ])
++        chosen0, lost0 = decide(frame, frame, CONFIG)
++        chosen1, lost1 = decide_v2(frame, frame, CONFIG)
++        self.assertTrue((chosen0 == chosen1).all())
++        self.assertTrue((lost0 == lost1).all())
++
++
++class TieBreakTests(unittest.TestCase):
++    def test_exact_tie_leaves_one_owner(self) -> None:
++        # Two S1s claim the same target at identical probability.
++        frame = _frame([
++            ("S1-1", "S2-1", 0.90),
++            ("S1-2", "S2-1", 0.90),
++        ])
++        config = {**CONFIG, "tie_break": True}
++        chosen, lost = decide_v2(frame, frame, config)
++        # Exactly one claimant survives; the deterministic smaller id wins.
++        self.assertEqual(int(chosen.sum()), 1)
++        ids = list(frame.source1_entity_id)
++        self.assertTrue(bool(chosen[ids.index("S1-1")]))
++        self.assertFalse(bool(chosen[ids.index("S1-2")]))
++
++    def test_original_keeps_both_on_tie(self) -> None:
++        frame = _frame([
++            ("S1-1", "S2-1", 0.90),
++            ("S1-2", "S2-1", 0.90),
++        ])
++        chosen, _ = decide(frame, frame, CONFIG)
++        # Original rule keeps both (the documented hole).
++        self.assertEqual(int(chosen.sum()), 2)
++
++
++class RankOneCoverageTests(unittest.TestCase):
++    def test_rescued_rank_one_competes(self) -> None:
++        # S1-1 has a strong claim on S2-1 (0.95). S1-2's only candidate is S2-1
++        # at 0.72 (rescued by rank-one). Without coverage, both survive.
++        frame = _frame([
++            ("S1-1", "S2-1", 0.95),
++            ("S1-2", "S2-1", 0.72),
++        ])
++        chosen0, _ = decide(frame, frame, CONFIG)
++        self.assertEqual(int(chosen0.sum()), 2)  # hole: rescued link not checked
++        config = {**CONFIG, "cover_rank_one": True}
++        chosen1, _ = decide_v2(frame, frame, config)
++        # With coverage, the weaker rescued claim loses ownership.
++        self.assertEqual(int(chosen1.sum()), 1)
++        ids = list(frame.source1_entity_id)
++        self.assertTrue(bool(chosen1[ids.index("S1-1")]))
++        self.assertFalse(bool(chosen1[ids.index("S1-2")]))
++
++
++if __name__ == "__main__":
++    unittest.main()
+-- 
+2.49.0
+

@@ -1,0 +1,36 @@
+--- a/scripts/run_frozen_pipeline.py
++++ b/scripts/run_frozen_pipeline.py
+@@ -130,10 +130,10 @@ def score_chunk(task):
+     number, rows, output = task
+     output = Path(output)
+     marker = output / f"{number:07d}.json"
+-    ids = [r["entity_id"] for r in rows]
++    reference_ids = [r["entity_id"] for r in rows]
+     if marker.exists():
+         saved = json.loads(marker.read_text())
+-        if saved["input_ids_sha256"] != hashlib.sha256("\n".join(ids).encode()).hexdigest():
++        if saved["input_ids_sha256"] != hashlib.sha256("\n".join(reference_ids).encode()).hexdigest():
+             raise ValueError("Checkpoint belongs to different references")
+         return saved
+     indexes, first, second, counts_conn, config, aliases = WORKER
+@@ -155,9 +155,9 @@ def score_chunk(task):
+         p1 = first.predict(matrix, num_threads=1)
+         targets, target_keys = {}, {}
+         for index in indexes:
+-            ids = sorted({c for c in frame.candidate_entity_id if c.startswith(index.source)})
+-            for i in range(0, len(ids), 500):
+-                part = ids[i:i + 500]
++            candidate_ids = sorted({c for c in frame.candidate_entity_id if c.startswith(index.source)})
++            for i in range(0, len(candidate_ids), 500):
++                part = candidate_ids[i:i + 500]
+                 for cid, name, core, address in index.connection.execute(
+                         f"SELECT id,name,core,address FROM records WHERE id IN ({','.join('?' * len(part))})", part):
+                     targets[cid] = clean_record(name, address); target_keys[cid] = record_keys(name, core, address)
+@@ -190,6 +190,6 @@ def score_chunk(task):
+     temporary = path.with_suffix(".partial.parquet")
+     frame.to_parquet(temporary, index=False); temporary.replace(path)
+     result = {"chunk": number, "entities": len(rows), "pairs": len(frame),
+-              "input_ids_sha256": hashlib.sha256("\n".join(ids).encode()).hexdigest(), "parquet_sha256": digest(path)}
++              "input_ids_sha256": hashlib.sha256("\n".join(reference_ids).encode()).hexdigest(), "parquet_sha256": digest(path)}
+     write_json(marker, result)
+     return result

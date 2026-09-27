@@ -1,0 +1,32 @@
+{
+  "status": "declared_before_training_and_early_selection",
+  "declared_at": "2026-09-27T17:23:49.799742+00:00",
+  "source_sha256": "603ce6a6813aed801d565bfaada5c731874871130120040d5a26fea6b58d5a5e",
+  "checkpoints": [
+    80,
+    160,
+    320,
+    600
+  ],
+  "shifts": [
+    -0.25,
+    0.0,
+    0.25,
+    0.5
+  ],
+  "recipes": [
+    "anchored",
+    "direct",
+    "anchored_missing2x"
+  ],
+  "selection": "Maximum early10k macro; fewer trees, smaller absolute shift, recipe order break ties. Evaluate winner once on exposed selection20k.",
+  "decision_config": {
+    "threshold": 0.83,
+    "t_rest": 0.79,
+    "t_first": 0.6999999999999998
+  },
+  "post_selection_exclusivity": true,
+  "baseline": "hybrid8_empty4_calibrated_exclusive_v1",
+  "fresh_audit_labels_read": false,
+  "test_records_read": false
+}
