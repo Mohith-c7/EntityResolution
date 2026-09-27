@@ -1,0 +1,23 @@
+{
+  "status": "predeclared_before_training",
+  "declared_at": "2026-09-27T17:26:01.142292+00:00",
+  "experiment": "neural_address_dropout8_v1",
+  "parent": "verified complete neural_last2_3epoch_v1",
+  "epochs": 1,
+  "trainable_encoder_layers": 8,
+  "embeddings_frozen": true,
+  "encoder_learning_rate": 1e-05,
+  "classifier_learning_rate": 0.0001,
+  "max_minutes": 14,
+  "batch_size": 32,
+  "max_length": 128,
+  "seed": 42,
+  "training_transform": "exactly10000 positive and10000 negative nonempty target address suffixes deleted; all original/street modified pairs excluded; reject opposite-label identicaltext conflicts; deterministic next eligible fill",
+  "training_keys_labels_owners_order_unchanged": true,
+  "training_source": "provided sealed outer-training120k only",
+  "audit_labels_read": false,
+  "development_labels_read": false,
+  "test_records_read": false,
+  "partial_checkpoint_promotion_forbidden": true,
+  "evaluation": "existing residual20k fit, early10k stop, one exposed selection20k comparison against current hybrid under fixed .83/.70/.79 +selected-only exclusivity and fixed4 empty rescue; no consumed audit selection"
+}

@@ -1,0 +1,374 @@
+{
+  "status": "paired_evaluation_complete",
+  "role": "final_audit",
+  "baseline": {
+    "macro_f05": 0.9793161919231165,
+    "entities": 10000,
+    "true_positive_links": 32965,
+    "predicted_links": 33121,
+    "true_links": 34539,
+    "micro_precision": 0.9952899972826907,
+    "micro_recall": 0.9544283273980139,
+    "singleton_entities": 528,
+    "singleton_false_positives": 12,
+    "singleton_false_positive_rate": 0.022727272727272728,
+    "non_singleton_empty_rate": 0.005278716216216216,
+    "country_macro_f05": {
+      "US": {
+        "entities": 6056,
+        "macro_f05": 0.981375278152127
+      },
+      "India": {
+        "entities": 3944,
+        "macro_f05": 0.976154471283439
+      }
+    }
+  },
+  "candidate": {
+    "macro_f05": 0.9799622271615511,
+    "entities": 10000,
+    "true_positive_links": 32997,
+    "predicted_links": 33135,
+    "true_links": 34539,
+    "micro_precision": 0.9958352195563603,
+    "micro_recall": 0.9553548162946235,
+    "singleton_entities": 528,
+    "singleton_false_positives": 12,
+    "singleton_false_positive_rate": 0.022727272727272728,
+    "non_singleton_empty_rate": 0.005278716216216216,
+    "country_macro_f05": {
+      "US": {
+        "entities": 6056,
+        "macro_f05": 0.9821165890910605
+      },
+      "India": {
+        "entities": 3944,
+        "macro_f05": 0.9766542109736435
+      }
+    }
+  },
+  "paired_macro_f05_delta": 0.0006460352384348255,
+  "paired_delta_95pct_ci": [
+    0.00020358063755603208,
+    0.0010892612810024529
+  ],
+  "country_deltas": {
+    "India": 0.0004997396902044851,
+    "US": 0.0007413109389335809
+  },
+  "links": {
+    "true_removed": 68,
+    "false_removed": 35,
+    "true_added": 100,
+    "false_added": 17,
+    "newly_empty_non_singletons": 0,
+    "ownership_targets_changed": 220,
+    "baseline_collision_targets": 0,
+    "candidate_collision_targets": 0
+  },
+  "acceptance": {
+    "non_inferiority_pass": true,
+    "quality_non_inferiority_pass": true,
+    "quality_improvement_pass": true,
+    "ownership_scope_eligible": true,
+    "promotion_pass": true,
+    "evidence_scope": "fresh_evaluation",
+    "failures": [],
+    "rule": "Paired LCB > -0.0005, point precision does not fall, singleton false predictions do not rise, no country delta < -0.0005. Improvement additionally requires LCB > 0."
+  },
+  "freshness": {
+    "reservation_verified": true,
+    "reservation_plan_sha256": "48e4a0bbfe0dc022ddda342c8513787f399aca3bebb379d9721c428c3f405cbe",
+    "reserved_at": "2026-09-27T07:48:42.515658+00:00",
+    "role": "final_audit",
+    "candidate_preselected": true,
+    "frozen_rules_verified": true,
+    "candidate_frozen_sha256": "eee9067df380a21cf3d87ace97b55aeb2c84ab50045ec00b3fde892d10cf8982",
+    "prediction_evidence_sha256": "ba66416106b8d4205e87e310c47240858b3154beeaf6ee999755a2de71736dfd"
+  },
+  "runtime": {
+    "passed": true,
+    "failures": [],
+    "evidence": {
+      "mode": "R2",
+      "measured": true,
+      "candidate_frozen_sha256": "eee9067df380a21cf3d87ace97b55aeb2c84ab50045ec00b3fde892d10cf8982",
+      "synthetic_fixture_runtime": false,
+      "full_test_eta_supported": true,
+      "estimated_processing_seconds": 8768.913181471129,
+      "processing_budget_seconds": 10800,
+      "safety_margin_fraction": 0.15,
+      "blocks": [
+        {
+          "references": 10000,
+          "pairs": 400000,
+          "routed_pairs": 4599,
+          "country_stratified": true,
+          "countries": {
+            "india": 4675,
+            "us": 3827,
+            "france": 1498
+          },
+          "seconds": {
+            "reads": 0.1495279410009971,
+            "lookups": 146.53448543099876,
+            "normalization": 0.0,
+            "gate_or_features": 6.854882727999211,
+            "predict": 11.212289293005597,
+            "global_decision": 0.483075814001495,
+            "diagnostic_write": 0.000376224001229275,
+            "tsv_export": 0.12879531699582003,
+            "strict_validator": 19.981197895998775,
+            "official_validator": 8.041814999000053
+          },
+          "validation": {
+            "strict": "PASS",
+            "official": "PASS",
+            "strict_issues": [],
+            "official_returncode": 0,
+            "id_checking": true,
+            "official_command": [
+              "/mnt/er/venv/bin/python",
+              "-S",
+              "/mnt/er/entity/code/business_entity_resolution/src/utils/organizer_validate_submission.py",
+              "--matching",
+              "research/final_2h/neural_last4_runtime_final_v2/block_0/matching_results.tsv",
+              "--candidate",
+              "research/final_2h/neural_last4_runtime_final_v2/block_0/candidate_pairs.tsv",
+              "--test-dir",
+              "research/final_2h/neural_last4_runtime_final_v2/block_0/test",
+              "--check-ids"
+            ],
+            "validator_sha256": {
+              "strict": "ce0a9219cdc9154ef5ed4f191634ef546f0da13e358a9e1a9f8a651d8ae0e72a",
+              "official": "f96f59934383a15095914f507620c078c474e8f9c60e864b2d051ed173a22dfc"
+            },
+            "stage_seconds": {
+              "strict_validator": 19.981197895998775,
+              "official_validator": 8.041814999000053
+            }
+          },
+          "statistics": {
+            "country": {
+              "india": {
+                "entities": 4675,
+                "scored_candidates": 187000,
+                "predicted_links": 15329,
+                "empty_predictions": 290,
+                "empty_candidates": 0
+              },
+              "us": {
+                "entities": 3827,
+                "scored_candidates": 153080,
+                "predicted_links": 12682,
+                "empty_predictions": 230,
+                "empty_candidates": 0
+              },
+              "france": {
+                "entities": 1498,
+                "scored_candidates": 59920,
+                "predicted_links": 5289,
+                "empty_predictions": 57,
+                "empty_candidates": 0
+              }
+            },
+            "candidate_histogram": {
+              "40": 10000
+            },
+            "empty_predictions": 577
+          },
+          "scoring_manifest_sha256": "44c6e3ea40c0bc1e7befdf584faa86db6a460b122d17c5ddf97b98cf0a79ef49",
+          "fine_manifest_sha256": "55630ecc9163c9cc5ebf3bacebb7c18c81eeaecba44834f35e11792afbb991f6"
+        },
+        {
+          "references": 10000,
+          "pairs": 400000,
+          "routed_pairs": 4577,
+          "country_stratified": true,
+          "countries": {
+            "india": 4675,
+            "us": 3827,
+            "france": 1498
+          },
+          "seconds": {
+            "reads": 0.12711195399606368,
+            "lookups": 139.6771662730025,
+            "normalization": 0.0,
+            "gate_or_features": 6.941114836004999,
+            "predict": 10.075992723024683,
+            "global_decision": 0.47589014199911617,
+            "diagnostic_write": 0.00038402900099754333,
+            "tsv_export": 0.13293516200064914,
+            "strict_validator": 20.279621690999193,
+            "official_validator": 8.000719896001101
+          },
+          "validation": {
+            "strict": "PASS",
+            "official": "PASS",
+            "strict_issues": [],
+            "official_returncode": 0,
+            "id_checking": true,
+            "official_command": [
+              "/mnt/er/venv/bin/python",
+              "-S",
+              "/mnt/er/entity/code/business_entity_resolution/src/utils/organizer_validate_submission.py",
+              "--matching",
+              "research/final_2h/neural_last4_runtime_final_v2/block_1/matching_results.tsv",
+              "--candidate",
+              "research/final_2h/neural_last4_runtime_final_v2/block_1/candidate_pairs.tsv",
+              "--test-dir",
+              "research/final_2h/neural_last4_runtime_final_v2/block_1/test",
+              "--check-ids"
+            ],
+            "validator_sha256": {
+              "strict": "ce0a9219cdc9154ef5ed4f191634ef546f0da13e358a9e1a9f8a651d8ae0e72a",
+              "official": "f96f59934383a15095914f507620c078c474e8f9c60e864b2d051ed173a22dfc"
+            },
+            "stage_seconds": {
+              "strict_validator": 20.279621690999193,
+              "official_validator": 8.000719896001101
+            }
+          },
+          "statistics": {
+            "country": {
+              "france": {
+                "entities": 1498,
+                "scored_candidates": 59920,
+                "predicted_links": 5307,
+                "empty_predictions": 59,
+                "empty_candidates": 0
+              },
+              "us": {
+                "entities": 3827,
+                "scored_candidates": 153080,
+                "predicted_links": 12819,
+                "empty_predictions": 230,
+                "empty_candidates": 0
+              },
+              "india": {
+                "entities": 4675,
+                "scored_candidates": 187000,
+                "predicted_links": 15363,
+                "empty_predictions": 288,
+                "empty_candidates": 0
+              }
+            },
+            "candidate_histogram": {
+              "40": 10000
+            },
+            "empty_predictions": 577
+          },
+          "scoring_manifest_sha256": "c53538be1900dbaae76f89a8c4e2404318eb72e9c80a1d9914fbb85b920bceb0",
+          "fine_manifest_sha256": "608f62559327f5bf5b6e53b85f3744c914c07151cb4c9bd1adce8af04d9313a7"
+        }
+      ],
+      "passed": true,
+      "full_references": 1732544,
+      "full_pairs": 69301760,
+      "routed_pairs": 801380,
+      "projection_seconds": {
+        "full_route_setup": 589.1781242809993,
+        "features_16_workers": 2781.8778543689323,
+        "neural_and_adapter_single_mac": 1953.7517707390357,
+        "source_serialization_and_transfer_allowance": 600.0,
+        "index_and_asset_integrity_allowance": 120.0,
+        "full_reads": 25.906373701363147,
+        "feature_join": 1215.3092871482818,
+        "global_decision": 117.14104687181212,
+        "export": 23.031601731325267,
+        "validators_fixed": 27.330899429995043,
+        "validators_reference_processing": 171.61493865967216
+      },
+      "runtime_workers": 16,
+      "fixed_validator_evidence": {
+        "strict": "PASS",
+        "official": "PASS",
+        "strict_issues": [],
+        "official_returncode": 0,
+        "id_checking": true,
+        "official_command": [
+          "/mnt/er/venv/bin/python",
+          "-S",
+          "/mnt/er/entity/code/business_entity_resolution/src/utils/organizer_validate_submission.py",
+          "--matching",
+          "research/final_2h/neural_last4_runtime_final_v2/fixed_validator/matching_results.tsv",
+          "--candidate",
+          "research/final_2h/neural_last4_runtime_final_v2/fixed_validator/candidate_pairs.tsv",
+          "--test-dir",
+          "research/final_2h/neural_last4_runtime_final_v2/fixed_validator/test",
+          "--check-ids"
+        ],
+        "validator_sha256": {
+          "strict": "ce0a9219cdc9154ef5ed4f191634ef546f0da13e358a9e1a9f8a651d8ae0e72a",
+          "official": "f96f59934383a15095914f507620c078c474e8f9c60e864b2d051ed173a22dfc"
+        },
+        "stage_seconds": {
+          "strict_validator": 19.97806326799764,
+          "official_validator": 7.352836161997402
+        }
+      },
+      "scope": "Actual full candidate populations of two country-stratified 10k blocks. Block-local decisions measure runtime, not full-test ownership quality.",
+      "timing_note": "Normalization and candidate record reads are included in the unchanged reverse-feature builder total under lookups; zero is not an omitted normalization job.",
+      "benchmark_code_sha256": "0f587a5baa2a0cb1ac462739a7ec3ba4ec9fcab49aa762b2528d30384de45fb6",
+      "timing_reuse": "Unchanged reverse features, routing setup and old neural head reuse prior actual measurements on these exact blocks; new fine head, 38-feature join, native adapter, decisions, exports and validators are measured for the selected new candidate. Frozen index and original code hashes remain unchanged.",
+      "acceptance": {
+        "passed": true,
+        "failures": []
+      }
+    }
+  },
+  "claimant_universe": {
+    "kind": "complete_heldout",
+    "complete": true,
+    "scoring_complete": true,
+    "supervised_training_excluded": true,
+    "declared_references": 331012,
+    "scored_references": 331012,
+    "pair_bearing_references": 331012,
+    "zero_candidate_references": 0,
+    "zero_candidate_reference_ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "pairs": 13240480,
+    "processed_chunks": 1325,
+    "score_manifest_sha256": "c7bbd0547faf2c3d397b55fb71b86b396fa0547480259ee93d2d7e1680f42118",
+    "pairs_sha256": "e555a1e2b28b6dff1afcf9e51d5e42e9cfaed9c3f82620a2ac7b71b1b6e2944b",
+    "pair_order_sha256": "37c708ca5a22b0ebcb83a963790bc519f3cdf3feb8a103cfa8e9e80df4ade07e",
+    "raw_reference_records_sha256": "460e1d3691d8d7d2b601dd9fdfc9f160871089183046b0fe3c1b9b0b126a07c8",
+    "frozen_control_sha256": "68d6148b3aedd1473b95503a7734a93dc6ccf5ebdc1a2e51041939305a32c0a9",
+    "reservation_plan_sha256": "48e4a0bbfe0dc022ddda342c8513787f399aca3bebb379d9721c428c3f405cbe",
+    "prepared_at": "2026-09-27T08:31:38.095115+00:00",
+    "fresh_cohorts": {
+      "confirmation": {
+        "references": 10000,
+        "references_sha256": "a01f8fe73c2470fddb78027855942a406eceee4085c943bfd2492c6335355fe1",
+        "complete_claimant_scores_available": true
+      },
+      "audit": {
+        "references": 10000,
+        "references_sha256": "0e75ee00dce50eec160bd0ee0e13e6c9bb4224e6248eb9601e046c2ab91ae66b",
+        "complete_claimant_scores_available": true
+      }
+    },
+    "labels_read": false,
+    "exposed_holdout_claimants_retained": true,
+    "fit_owner_exclusion_evidence": {
+      "incumbent_fitted_owner_ids_sha256": "1a0208034802b9f6e720a0fe0a1aa65815e22e477ffac52fd222f4b1647b425b",
+      "capture_script_sha256": "a64aba793b717b9f1da64db2e3e5b5836b9b57b6fa7662a4bc1da0e049cada07",
+      "note": "Capture verifies the shared current incumbent fit-owner ledger disjoint from every heldout reference."
+    },
+    "limitation": "Complete declared outer-heldout claim universe; official-test claimant density and country mix differ. Only reserved previously unexposed cohorts may supply fresh quality evidence."
+  },
+  "ownership_limitation": "Complete within a declared heldout universe does not reproduce full official-test claimant density.",
+  "bootstrap": {
+    "seed": 42,
+    "iterations": 2000,
+    "unit": "Source 1 entity",
+    "paired": true
+  },
+  "input_sha256": {
+    "truth": "87fcf26ca6411832d506578cb18c2b65a8fa32d6e3d67fd4299ad2cdb2be721b",
+    "baseline": "585f75ce5816f3745809d396ef4c1f99a59c2f6bc60e7a543ce6d5af79c2430d",
+    "candidate": "3e3e6b0f378798d1de84c1cce9549c57d92b3e7f0df34c69cbfec2231ad7f243",
+    "references": "0e75ee00dce50eec160bd0ee0e13e6c9bb4224e6248eb9601e046c2ab91ae66b",
+    "universe": "45bda16fc85dcef403f46ada8897612e0dfffb544fc42fc9f70d97157760e716"
+  }
+}

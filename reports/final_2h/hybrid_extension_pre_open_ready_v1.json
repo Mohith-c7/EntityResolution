@@ -1,0 +1,16 @@
+{
+  "status": "hybrid_label_free_gates_passed_labels_still_unopened",
+  "reservation_verified": true,
+  "role": "extension_final_audit",
+  "reservation_plan_sha256": "7e0ae6bd98c6023690935f5317b3ea09550fcb5b117a23058db17b61566e8f2a",
+  "references_sha256": "15294a3af61c5866d02891f4337230457fefa2804814efa181f63af0a84cfcc8",
+  "reference_ids_sha256": "4b8ec21351a6265051ad412892061e63b291652122711457fdb934775a012af3",
+  "reserved_at": "2026-09-27T15:01:08.100664+00:00",
+  "owners": 10000,
+  "labels_read": false,
+  "candidate_frozen_sha256": "ab2506d2d5e48114246eeb76869b910cfec62402ecb06cfcbdc62bd7bc5b98e1",
+  "baseline_release_freeze_sha256": "39c00889453f513099ed01746f627cdb43f7a49d300d6f01718b5a12f3532af7",
+  "prediction_evidence_sha256": "92df351bbef94b37989e39bd7150d743d05296fbfe16b86b3e75b594a5f92826",
+  "runtime_sha256": "80d9fc2555c52b0119ed0a6e8c9a0ccb1de6188f1499d6d57b3723b8f18e29fc",
+  "promotion_sha256": "ed4bd1328e2fd97f0d7cdd4870c1cdbb6f531cf5b8fa0b190f04976bef441488"
+}

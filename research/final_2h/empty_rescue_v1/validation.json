@@ -1,0 +1,43 @@
+{
+  "status": "passed",
+  "roles": {
+    "residual_train": {
+      "rows": 4636,
+      "empty_owners": 1159,
+      "overlapping_existing38_keys": 3,
+      "new_extra_keys": 4633,
+      "exact36_overlap_parity_passed": true,
+      "neural_head_training_owners_excluded": true,
+      "feature_manifest_sha256": "d68195f772e8b455e1fced0c2017325f814b8d2f7957703cbcb03bb1b29acad1",
+      "input_manifest_sha256": "ccc70758e46f18884e4e017079977feb0ae02173e1c4c41a6d00b910077cf6fd"
+    },
+    "early_stop": {
+      "rows": 2468,
+      "empty_owners": 617,
+      "overlapping_existing38_keys": 8,
+      "new_extra_keys": 2460,
+      "exact36_overlap_parity_passed": true,
+      "neural_head_training_owners_excluded": true,
+      "feature_manifest_sha256": "1b55dc47099ead915ffcc671424c9500c4c6d3f37c20dec1f8d761041f046d5a",
+      "input_manifest_sha256": "225daaf9f7bb23366a3db1c7784e8ca80fe0f607a65dc3366bc315ae0acd560e"
+    },
+    "selection": {
+      "rows": 4740,
+      "empty_owners": 1185,
+      "overlapping_existing38_keys": 5,
+      "new_extra_keys": 4735,
+      "exact36_overlap_parity_passed": true,
+      "neural_head_training_owners_excluded": true,
+      "feature_manifest_sha256": "718b4f36437335e7c037aec93910219950821c4da0da50596fa669a21a2d7e30",
+      "input_manifest_sha256": "14a8a44d28190c97522af09ba3313ef3e7c97e2063d40e465805c4c8ce021175"
+    }
+  },
+  "all_source_hashes_match_original_supplied_train": true,
+  "original_route_corrections_must_be_preserved": true,
+  "apply_only_new_extra_keys": true,
+  "audit_labels_read": false,
+  "extension_labels_read": false,
+  "pilot_selection_results_read": false,
+  "source_sha256": "3ceb0d709652607c1c9ba22c97851b19d91de5a8fa9071fd1c55f44383cf1f02",
+  "preparation_manifest_sha256": "ca4cba10ac9dfe1bdedc539a84f1b6d2641fa6a0f914dba681673d519673f8f4"
+}

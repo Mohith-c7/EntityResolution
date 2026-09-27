@@ -1,0 +1,43 @@
+{
+  "status": "prospective_fixed_hybrid_declared_before_combined_results",
+  "declared_at": "2026-09-27T16:26:06.691702+00:00",
+  "source_sha256": "c145de6ea74c540a7f041533f56006b73859e82997f729894c25d4e5f3a958b8",
+  "candidate": "NN8 saved probabilities on original native route; fixed4 saved empty-rescue probabilities on ONLY disjoint extra keys; exact corrected-probability overwrite, no double anchor",
+  "baseline": "Selected frozen05 four-layer global30k decisions",
+  "criteria": {
+    "primary": "Paired macroF0.5 confidence interval lower bound strictly above0 versus05",
+    "minimum_point_macro_gain": 0.0003,
+    "country_macro_delta_floor": -0.0005,
+    "microprecision_and_singleton_false_predictions": "Diagnostics only under NEW prospective rule"
+  },
+  "old_component_rejections_retained": true,
+  "no_search_fitting_threshold_or_strength_tuning": true,
+  "scope": "Exposed early10k/selection20k, complete frozen30k claimant graph; no full331k ownership parity claim",
+  "fresh_or_extension_audit_labels_read": false,
+  "input_sha256": {
+    "original": "fe6f11a7fe71a3f58e3692bed371d15d79b615cdc23724116f258ccfba656f6f",
+    "baseline05": "0af8eb23426be73cb6562019ea9568ec118d2293f186820824b349aa6e7a67f6",
+    "eight": "fc766a254395b9b398d8a6449a316a1224b7315faabcad1db193fb861b1fe1dc",
+    "rescue": "0d720743570d0168bd53c3fcc2ea6e7c7eaba96824638443c01a291f45696d11",
+    "original_route": "a4f30f426e5ac19dd5259191c1fa6dcc8747d0c945e667c80ef292a4893985ff",
+    "eight_report": "6caf777140df0166bb0eee390103066004b9b5d3479c07af23dbe43992e5f7af",
+    "four_report": "27f6289130c9db95977b33ba9b9c497ce64cb112ef2c9bd74c9faf4b643bb318",
+    "old_eight_selection": "16f7776dcc36aa20399da77c31d58da8352193ae802d9afa62b2f1d952bc331f",
+    "old_rescue_result": "77553f7515b985d96a9ce43a7f112fa99095c3f23f7a8db90b5f4c3304d1d0ac",
+    "pilot_protocol": "a97d154d40541a5a173768996fa7a788a2c1530e7ea0724c9e46937c55bb5191",
+    "pilot_validation": "44eb4b4fd9bba84d75ad6a9c1dd3bbae31aefe35603736024610a4fc59d0f287"
+  },
+  "models_sha256": {
+    "native8": "b462edc1d2a6cae9efdaa5ccb2f9463a49d53f8377049fbaa87ee23ae3da57ef",
+    "native4": "625268050ec1774ec2eb1c0c8d38b89bf13c284d3e7474b564bb8264eec0dac1",
+    "head8": "5626ab23f1dda7cab60192654cb6835c1d17fc2f87e64b31a3b8dbfef0ef549c",
+    "head4": "60bca75bf41628f43eff487f8bdbb9b2f2f5ad54967af467807d7bc55417083c",
+    "old_head": "f2b75c8a1ca5bcb7293b893c61791b619c02d5d7f38e75c7da197423b87dfd94"
+  },
+  "bootstrap": {
+    "seed": 42,
+    "iterations": 2000,
+    "unit": "Source1 owner",
+    "paired": true
+  }
+}

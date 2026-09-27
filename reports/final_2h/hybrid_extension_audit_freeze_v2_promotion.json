@@ -1,0 +1,8 @@
+{
+  "status": "root_promoted_hybrid_to_extension_audit",
+  "authorized_by": "root",
+  "candidate_frozen_sha256": "ab2506d2d5e48114246eeb76869b910cfec62402ecb06cfcbdc62bd7bc5b98e1",
+  "reservation_plan_sha256": "7e0ae6bd98c6023690935f5317b3ea09550fcb5b117a23058db17b61566e8f2a",
+  "extension_labels_read": false,
+  "authorization": "Root directed exact locked freeze/preflight/sealing; OPEN remains separate."
+}

@@ -1,0 +1,248 @@
+{
+  "status": "one_fixed_hybrid_development_evaluation_complete",
+  "results": {
+    "early_stop": {
+      "status": "paired_evaluation_complete",
+      "role": "development",
+      "baseline": {
+        "macro_f05": 0.9799517632600462,
+        "entities": 10000,
+        "true_positive_links": 33150,
+        "predicted_links": 33286,
+        "true_links": 34748,
+        "micro_precision": 0.9959141981613892,
+        "micro_recall": 0.9540117416829745,
+        "singleton_entities": 596,
+        "singleton_false_positives": 19,
+        "singleton_false_positive_rate": 0.031879194630872486,
+        "non_singleton_empty_rate": 0.004253509145044662,
+        "country_macro_f05": {
+          "india": {
+            "entities": 4078,
+            "macro_f05": 0.9752952295753473
+          },
+          "us": {
+            "entities": 5922,
+            "macro_f05": 0.9831583394785873
+          }
+        }
+      },
+      "candidate": {
+        "macro_f05": 0.9806742230193799,
+        "entities": 10000,
+        "true_positive_links": 33183,
+        "predicted_links": 33322,
+        "true_links": 34748,
+        "micro_precision": 0.9958285817177841,
+        "micro_recall": 0.9549614366294463,
+        "singleton_entities": 596,
+        "singleton_false_positives": 21,
+        "singleton_false_positive_rate": 0.03523489932885906,
+        "non_singleton_empty_rate": 0.003509145044661846,
+        "country_macro_f05": {
+          "india": {
+            "entities": 4078,
+            "macro_f05": 0.9761772295751344
+          },
+          "us": {
+            "entities": 5922,
+            "macro_f05": 0.9837709368433638
+          }
+        }
+      },
+      "paired_macro_f05_delta": 0.0007224597593337912,
+      "paired_delta_95pct_ci": [
+        0.00014116329627601525,
+        0.001319890627774305
+      ],
+      "country_deltas": {
+        "india": 0.000881999999787065,
+        "us": 0.0006125973647764707
+      },
+      "links": {
+        "true_removed": 22,
+        "false_removed": 5,
+        "true_added": 55,
+        "false_added": 8,
+        "newly_empty_non_singletons": 0,
+        "ownership_targets_changed": 90,
+        "baseline_collision_targets": 0,
+        "candidate_collision_targets": 0
+      },
+      "freshness": {
+        "reservation_verified": false
+      },
+      "runtime": {
+        "passed": false,
+        "failures": [
+          "runtime_not_provided"
+        ],
+        "evidence": null
+      },
+      "claimant_universe": {
+        "kind": "unspecified",
+        "complete": false
+      },
+      "ownership_limitation": "Cheap exact-key rivals or incomplete/in-sample claims cannot validate a global ownership gain.",
+      "bootstrap": {
+        "seed": 42,
+        "iterations": 2000,
+        "unit": "Source 1 entity",
+        "paired": true
+      },
+      "legacy_guard_diagnostics": {
+        "non_inferiority_pass": false,
+        "quality_non_inferiority_pass": false,
+        "quality_improvement_pass": false,
+        "ownership_scope_eligible": true,
+        "promotion_pass": false,
+        "evidence_scope": "quality_only_development_or_unverified_freshness",
+        "failures": [
+          "point_precision_fell",
+          "singleton_false_predictions_rose"
+        ],
+        "rule": "Paired LCB > -0.0005, point precision does not fall, singleton false predictions do not rise, no country delta < -0.0005. Improvement additionally requires LCB > 0."
+      },
+      "new_prospective_metric_rule_pass": true
+    },
+    "selection": {
+      "status": "paired_evaluation_complete",
+      "role": "development",
+      "baseline": {
+        "macro_f05": 0.9802609267254342,
+        "entities": 20000,
+        "true_positive_links": 65888,
+        "predicted_links": 66111,
+        "true_links": 69137,
+        "micro_precision": 0.9966268850872019,
+        "micro_recall": 0.9530063497114425,
+        "singleton_entities": 1130,
+        "singleton_false_positives": 34,
+        "singleton_false_positive_rate": 0.03008849557522124,
+        "non_singleton_empty_rate": 0.004716481187069422,
+        "country_macro_f05": {
+          "us": {
+            "entities": 12039,
+            "macro_f05": 0.9837388904368889
+          },
+          "india": {
+            "entities": 7961,
+            "macro_f05": 0.9750013858232611
+          }
+        }
+      },
+      "candidate": {
+        "macro_f05": 0.9807969475841423,
+        "entities": 20000,
+        "true_positive_links": 65983,
+        "predicted_links": 66218,
+        "true_links": 69137,
+        "micro_precision": 0.9964511160107523,
+        "micro_recall": 0.9543804330532132,
+        "singleton_entities": 1130,
+        "singleton_false_positives": 35,
+        "singleton_false_positive_rate": 0.030973451327433628,
+        "non_singleton_empty_rate": 0.0042395336512983575,
+        "country_macro_f05": {
+          "us": {
+            "entities": 12039,
+            "macro_f05": 0.9839553802707235
+          },
+          "india": {
+            "entities": 7961,
+            "macro_f05": 0.9760206165812839
+          }
+        }
+      },
+      "paired_macro_f05_delta": 0.0005360208587079073,
+      "paired_delta_95pct_ci": [
+        0.00019871207770791698,
+        0.0009002537610593405
+      ],
+      "country_deltas": {
+        "india": 0.0010192307580229863,
+        "us": 0.00021648983383479965
+      },
+      "links": {
+        "true_removed": 40,
+        "false_removed": 10,
+        "true_added": 135,
+        "false_added": 22,
+        "newly_empty_non_singletons": 0,
+        "ownership_targets_changed": 207,
+        "baseline_collision_targets": 0,
+        "candidate_collision_targets": 0
+      },
+      "freshness": {
+        "reservation_verified": false
+      },
+      "runtime": {
+        "passed": false,
+        "failures": [
+          "runtime_not_provided"
+        ],
+        "evidence": null
+      },
+      "claimant_universe": {
+        "kind": "unspecified",
+        "complete": false
+      },
+      "ownership_limitation": "Cheap exact-key rivals or incomplete/in-sample claims cannot validate a global ownership gain.",
+      "bootstrap": {
+        "seed": 42,
+        "iterations": 2000,
+        "unit": "Source 1 entity",
+        "paired": true
+      },
+      "legacy_guard_diagnostics": {
+        "non_inferiority_pass": false,
+        "quality_non_inferiority_pass": false,
+        "quality_improvement_pass": false,
+        "ownership_scope_eligible": true,
+        "promotion_pass": false,
+        "evidence_scope": "quality_only_development_or_unverified_freshness",
+        "failures": [
+          "point_precision_fell",
+          "singleton_false_predictions_rose"
+        ],
+        "rule": "Paired LCB > -0.0005, point precision does not fall, singleton false predictions do not rise, no country delta < -0.0005. Improvement additionally requires LCB > 0."
+      },
+      "new_prospective_metric_rule_pass": true
+    }
+  },
+  "prospective_acceptance_pass": true,
+  "protocol_sha256": "f399fb99216cefbb66f1ceeca2004f1a943a9a22e8ae99778b62d2613647d42f",
+  "source_sha256": "c145de6ea74c540a7f041533f56006b73859e82997f729894c25d4e5f3a958b8",
+  "hybrid_pairs_sha256": "ccfd6dd3feb77b81c60f0b13179ce10302a9e2f2871eb7e5dfa80ff682b80bb3",
+  "original_route_keys": 11144,
+  "extra_keys": {
+    "early_stop": 2460,
+    "selection": 4735
+  },
+  "NN8_original_route_preserved_exactly": true,
+  "outside_original_and_extra_keys_unchanged": true,
+  "corrections_added_to_corrected_anchor": false,
+  "old_component_failures_remain_failed": true,
+  "extension_audit_labels_read": false,
+  "production_changes": false,
+  "models_sha256": {
+    "native8": "b462edc1d2a6cae9efdaa5ccb2f9463a49d53f8377049fbaa87ee23ae3da57ef",
+    "native4": "625268050ec1774ec2eb1c0c8d38b89bf13c284d3e7474b564bb8264eec0dac1",
+    "head8": "5626ab23f1dda7cab60192654cb6835c1d17fc2f87e64b31a3b8dbfef0ef549c",
+    "head4": "60bca75bf41628f43eff487f8bdbb9b2f2f5ad54967af467807d7bc55417083c",
+    "old_head": "f2b75c8a1ca5bcb7293b893c61791b619c02d5d7f38e75c7da197423b87dfd94"
+  },
+  "input_sha256": {
+    "original": "fe6f11a7fe71a3f58e3692bed371d15d79b615cdc23724116f258ccfba656f6f",
+    "baseline05": "0af8eb23426be73cb6562019ea9568ec118d2293f186820824b349aa6e7a67f6",
+    "eight": "fc766a254395b9b398d8a6449a316a1224b7315faabcad1db193fb861b1fe1dc",
+    "rescue": "0d720743570d0168bd53c3fcc2ea6e7c7eaba96824638443c01a291f45696d11",
+    "original_route": "a4f30f426e5ac19dd5259191c1fa6dcc8747d0c945e667c80ef292a4893985ff",
+    "eight_report": "6caf777140df0166bb0eee390103066004b9b5d3479c07af23dbe43992e5f7af",
+    "four_report": "27f6289130c9db95977b33ba9b9c497ce64cb112ef2c9bd74c9faf4b643bb318",
+    "old_eight_selection": "16f7776dcc36aa20399da77c31d58da8352193ae802d9afa62b2f1d952bc331f",
+    "old_rescue_result": "77553f7515b985d96a9ce43a7f112fa99095c3f23f7a8db90b5f4c3304d1d0ac",
+    "pilot_protocol": "a97d154d40541a5a173768996fa7a788a2c1530e7ea0724c9e46937c55bb5191",
+    "pilot_validation": "44eb4b4fd9bba84d75ad6a9c1dd3bbae31aefe35603736024610a4fc59d0f287"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "status": "hybrid_release_supporting_checks_passed",
+  "checked_at": "2026-09-27T17:12:25.583452+00:00",
+  "local_frozen_code_files_verified": 97,
+  "source_mismatches": [],
+  "unchanged_audit_to_release": {
+    "code_sha256": true,
+    "model_sha256": true,
+    "index_sha256": true,
+    "native_sha256": true,
+    "decision_config": true,
+    "baseline_decision_config": true,
+    "hybrid_policy": true,
+    "candidate_post_selection_policy": true,
+    "prediction_input_sha256": true
+  },
+  "schema_additions": [
+    "research/final_2h/hybrid_audit/extension_evaluation_v1/report.json"
+  ],
+  "single_use_audit_report_verified": true,
+  "production_exporter_freeze_and_audit_guards_passed_on_runtime_machine": true,
+  "raw_truth_or_owner_records_in_this_report": false
+}

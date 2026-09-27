@@ -31,6 +31,7 @@ from src.model.crossfit_aliases import inner_fold
 from src.model.name_aliases import NameAliases
 
 STATE = None
+BRIDGE = None
 
 
 def digest(path):
@@ -45,16 +46,30 @@ def write_json(path, value):
     temporary.write_text(json.dumps(value, indent=2) + "\n"); temporary.replace(path)
 
 
-def init(index_dir, aliases_path, database, search, postings, native, split, output):
-    global STATE
+def init(index_dir, aliases_path, database, search, postings, native, split, output, bridge=None):
+    global STATE, BRIDGE
     os.nice(10); pa.set_cpu_count(1)
     aliases = NameAliases.load(aliases_path)
+    ranker = None
+    if bridge:
+        import lightgbm as lgb
+        ranker = lgb.Booster(model_file=bridge["ranking_model"])
+        BRIDGE = ranker, {k: bridge[k] for k in ("min_probability", "max_seeds", "informative_only")}
     indexes = [PostingsSourceIndex(Path(index_dir) / f"index_train_{s}.sqlite", DiskSearchConfig(**search),
-        aliases=aliases, postings_config=PostingsConfig(**postings), native_extension=native) for s in ("S2", "S3")]
+        aliases=aliases, postings_config=PostingsConfig(**postings), native_extension=native, ranking_model=ranker) for s in ("S2", "S3")]
     conn = sqlite3.connect(Path(database).resolve().as_uri() + "?mode=ro", uri=True)
     conn.execute("PRAGMA cache_size=-16384")
     conn.execute("PRAGMA mmap_size=2147418112")
     STATE = indexes, conn, aliases, split, Path(output)
+
+
+def retrieve(reference, indexes):
+    if BRIDGE is None:
+        return [(candidate, target, index) for index in indexes for candidate, target in index.query(reference)]
+    from src.blocking.bridge import retrieve_with_bridges
+    ranker, options = BRIDGE
+    bridged = retrieve_with_bridges(reference, indexes, ranker, **options)
+    return [(candidate, target, index) for index in indexes for candidate, target in bridged[index.source]]
 
 
 def make_chunk(task):
@@ -72,8 +87,7 @@ def make_chunk(task):
     groups = []
     for raw in raw_rows:
         reference = normalize_record(raw)
-        pairs = [(candidate, target, index) for index in indexes for candidate, target in index.query(reference)]
-        groups.append((reference, pairs))
+        groups.append((reference, retrieve(reference, indexes)))
     roles = {}
     if split == "train":
         candidates = sorted({c.candidate_entity_id for _, pairs in groups for c, _, _ in pairs})
@@ -126,6 +140,8 @@ def main():
     p.add_argument("--submission-progress", type=Path, default=Path("output/submission_03/progress.json"))
     p.add_argument("--batch-size", type=int, default=250)
     p.add_argument("--output", type=Path, required=True)
+    p.add_argument("--bridge", action="store_true", help="One-hop bridge retrieval with the cheap blocking ranker")
+    p.add_argument("--ranking-model", type=Path, default=Path("models/redesign/cheap_ranker_v1/model.txt"))
     args = p.parse_args()
     if args.limit < 0 or min(args.workers, args.idle_workers, args.batch_size) < 1: p.error("Invalid size or worker count")
     selection = None
@@ -141,7 +157,9 @@ def main():
         groups = {fold: [r for r in references if inner_fold(r["entity_id"]) == fold] for fold in range(5)}
     else: groups = {None: references}
     search = json.loads(Path("models/features_v3_audit01/report.json").read_text())["search_config"]
-    postings = asdict(PostingsConfig(max_postings=100000))
+    postings = asdict(PostingsConfig(max_postings=100000, fused_budget=128 if args.bridge else 64))
+    bridge = {"ranking_model": str(args.ranking_model.resolve()), "ranking_model_sha256": digest(args.ranking_model),
+              "min_probability": .99, "max_seeds": 2, "informative_only": False} if args.bridge else None
     aliases_dir = args.plan / "aliases"
     native = Path("models/runtime/erpostings.dylib").resolve()
     database = (aliases_dir / "counts.sqlite").resolve()
@@ -157,6 +175,7 @@ def main():
         "aliases": {str(f): {"path": str(path), "sha256": digest(path)} for f,path in alias_paths.items()},
         "native_sha256": digest(native), "code_sha256": {str(path): digest(path) for path in code_files},
         "counts_fingerprint": counts_fingerprint, "audit_selection": selection}
+    if bridge: manifest["bridge"] = bridge
     args.output.mkdir(parents=True, exist_ok=True)
     lock = (args.output / "build.lock").open("a")
     fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -186,7 +205,7 @@ def main():
             wave = tasks[cursor:cursor+workers*20]; cursor += len(wave)
             with ProcessPoolExecutor(max_workers=workers, mp_context=multiprocessing.get_context("spawn"), initializer=init,
                 initargs=(str(Path("models").resolve()), str(alias_paths[fold]), str(database), search, postings,
-                          str(native), args.split, str(args.output.resolve()))) as pool:
+                          str(native), args.split, str(args.output.resolve()), bridge)) as pool:
                 for result in pool.map(make_chunk, wave):
                     completed += result["entities"]; total_pairs += result["pairs"]
                     state = {"status": "building", "split": args.split, "entities": completed,

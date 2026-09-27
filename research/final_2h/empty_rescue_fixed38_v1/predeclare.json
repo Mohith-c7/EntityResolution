@@ -1,0 +1,20 @@
+{
+  "status": "fixed_candidate_predeclared_before_rescue_selection_results",
+  "declared_at": "2026-09-27T15:49:32.815081+00:00",
+  "candidate": "Selected native38 unchanged; apply once from ORIGINALp2 to extra empty top4 keys; existing corrections exact unchanged",
+  "quality_checks": {
+    "paired_gain_ci_lower_bound_above": 0.0,
+    "micro_precision_must_not_fall": true,
+    "singleton_false_predictions_must_not_rise": true,
+    "country_delta_floor": -0.0005
+  },
+  "no_training_gate_threshold_or_strength_tuning": true,
+  "baseline_expected_macro_f05": 0.9802609267254342,
+  "scope": "Frozen development30k only; no full331k ownership parity claim",
+  "pilot_manifest_sha256": "ca4cba10ac9dfe1bdedc539a84f1b6d2641fa6a0f914dba681673d519673f8f4",
+  "validation_sha256": "44eb4b4fd9bba84d75ad6a9c1dd3bbae31aefe35603736024610a4fc59d0f287",
+  "adapter_sha256": "625268050ec1774ec2eb1c0c8d38b89bf13c284d3e7474b564bb8264eec0dac1",
+  "source_sha256": "0a2ce396b6b598edc4279e4bc23f7237e3744ecf3f8d62bf559f3fc3a70d87e9",
+  "audit_labels_read": false,
+  "extension_labels_read": false
+}

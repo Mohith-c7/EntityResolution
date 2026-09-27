@@ -1,0 +1,24 @@
+{
+  "recorded_at_utc": "2026-09-27T16:13:08Z",
+  "submission": "submission_05",
+  "metric": "macro_f0.5",
+  "portal_score": 0.97,
+  "score_precision": "as reported by user; unrounded score unavailable",
+  "provenance": "user message: we got 0.970",
+  "portal_independently_verified": false,
+  "portal_receipt": null,
+  "previous_submission": "submission_04",
+  "previous_user_reported_portal_score": 0.968,
+  "displayed_portal_gain": 0.002,
+  "local_final_audit_macro_f05": 0.9799622271615511,
+  "local_to_portal_difference_descriptive": 0.0099622271615511,
+  "target_portal_macro_f05": 0.985,
+  "displayed_gap_to_target": 0.015,
+  "release_frozen_sha256": "39c00889453f513099ed01746f627cdb43f7a49d300d6f01718b5a12f3532af7",
+  "files_sha256": {
+    "matching_results.tsv": "3705f27dbc21a693cde2633c9d00a495c1458d11bac4c92bf3c66ceba837de0e",
+    "candidate_pairs.tsv": "cfc74f994f0a00c15cae7002c0fef1882e26bfb91ac349b4b23e3e0c5e74c84f"
+  },
+  "archive_sha256": "7db0a38c93e1f828ce1033a3619e85803933f7631da058d0d279917e2e42730d",
+  "release_artifacts_modified": false
+}

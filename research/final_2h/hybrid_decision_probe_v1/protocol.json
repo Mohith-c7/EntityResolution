@@ -1,0 +1,143 @@
+{
+  "status": "declared_before_calibration_results",
+  "declared_at": "2026-09-27T16:35:00.108228+00:00",
+  "source_sha256": "293e70063be6657a5c99ba5122ac2cda5755188e8cd4345b44688c78b6b25af4",
+  "hybrid_pairs_sha256": "ccfd6dd3feb77b81c60f0b13179ce10302a9e2f2871eb7e5dfa80ff682b80bb3",
+  "baseline": "Fixed hybrid using inherited thresholds; separate from already-passed model combination",
+  "grid": [
+    {
+      "threshold": 0.83,
+      "t_rest": 0.79,
+      "t_first": 0.6
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.79,
+      "t_first": 0.65
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.79,
+      "t_first": 0.6999999999999998
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.79,
+      "t_first": 0.75
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.79,
+      "t_first": 0.8
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.81,
+      "t_first": 0.6
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.81,
+      "t_first": 0.65
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.81,
+      "t_first": 0.6999999999999998
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.81,
+      "t_first": 0.75
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.81,
+      "t_first": 0.8
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.8300000000000004,
+      "t_first": 0.6
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.8300000000000004,
+      "t_first": 0.65
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.8300000000000004,
+      "t_first": 0.6999999999999998
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.8300000000000004,
+      "t_first": 0.75
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.8300000000000004,
+      "t_first": 0.8
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.85,
+      "t_first": 0.6
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.85,
+      "t_first": 0.65
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.85,
+      "t_first": 0.6999999999999998
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.85,
+      "t_first": 0.75
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.85,
+      "t_first": 0.8
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.87,
+      "t_first": 0.6
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.87,
+      "t_first": 0.65
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.87,
+      "t_first": 0.6999999999999998
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.87,
+      "t_first": 0.75
+    },
+    {
+      "threshold": 0.83,
+      "t_rest": 0.87,
+      "t_first": 0.8
+    }
+  ],
+  "ownership_threshold_fixed": 0.83,
+  "selection": "Maximize early10k macro F0.5, break ties by nearest inherited settings then higher thresholds; score chosen setting once on exposed selection20k",
+  "retain_changed_thresholds_only_if": {
+    "selection_paired_ci_lower_above": 0.0,
+    "selection_minimum_point_gain_vs_fixed_hybrid": 0.0001,
+    "country_delta_floor": -0.0005
+  },
+  "no_model_route_or_feature_changes": true,
+  "extension_audit_labels_read": false
+}

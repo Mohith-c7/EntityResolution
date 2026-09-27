@@ -1,0 +1,76 @@
+{
+  "status": "consumed_audit_pair_traits_only",
+  "cohort_consumed": true,
+  "no_new_predictions_or_candidate_selection": true,
+  "pair_traits": {
+    "retrieved_true_rejected": {
+      "pairs": 906,
+      "counts": {
+        "route_main8": 682,
+        "owner_already_nonempty": 882,
+        "p1_rank_le4": 467,
+        "original_p2_rank_le4": 487,
+        "name_similarity_ge95": 248,
+        "address_missing_either": 558,
+        "number_conflict": 154,
+        "current_p_ge_079": 1,
+        "current_p_05_to_079": 271,
+        "current_p_below_003": 109,
+        "route_extra4": 24,
+        "owner_empty": 24,
+        "route_unrouted": 200
+      },
+      "corrected_probability_quantiles": {
+        "0.0": 1.1353913580310021e-05,
+        "0.25": 0.09808620712620045,
+        "0.5": 0.30377895681626604,
+        "0.75": 0.55103185779663,
+        "1.0": 0.8463149039307791
+      }
+    },
+    "accepted_false": {
+      "pairs": 156,
+      "counts": {
+        "route_unrouted": 108,
+        "owner_already_nonempty": 156,
+        "p1_rank_le4": 111,
+        "original_p2_rank_le4": 109,
+        "name_similarity_ge95": 36,
+        "address_missing_either": 26,
+        "number_conflict": 21,
+        "current_p_ge_079": 154,
+        "current_p_05_to_079": 2,
+        "current_p_below_003": 0,
+        "route_main8": 47,
+        "route_extra4": 1
+      },
+      "corrected_probability_quantiles": {
+        "0.0": 0.7510212735862095,
+        "0.25": 0.8954350904498051,
+        "0.5": 0.9423946019753293,
+        "0.75": 0.9783993164699185,
+        "1.0": 0.9999731540363647
+      }
+    }
+  },
+  "conditional_oracle_pockets": {
+    "unrouted_high_p1": {
+      "true_pairs": 71,
+      "owners": 69,
+      "perfect_true_only_addition_macro_upper_bound": 0.0009013618326118326
+    },
+    "unrouted_very_high_name_similarity": {
+      "true_pairs": 32,
+      "owners": 30,
+      "perfect_true_only_addition_macro_upper_bound": 0.0003234497800674271
+    },
+    "near_acceptance_threshold": {
+      "true_pairs": 271,
+      "owners": 261,
+      "perfect_true_only_addition_macro_upper_bound": 0.002396234160035457
+    }
+  },
+  "oracle_pockets_are_not_tested_gains": true,
+  "raw_examples_private_not_for_git": true,
+  "source_sha256": "7ba8d690342c4be0eddecc9ac9990c3879f09320c3d28860d9df3fd868e9a1c0"
+}

@@ -1,0 +1,21 @@
+{
+  "status": "predeclared_diagnostic_preparation_before_pilot_evaluation",
+  "declared_at_epoch": 1790522805.0220168,
+  "route": "All final selected-four empty-prediction owners; original40 top4 by frozenp2 descending, targetID ascending. No confident sibling seed or peer.",
+  "original_route_changed": true,
+  "production_route_changed": false,
+  "selection_pilot_results_read": false,
+  "allowed_fit": "Only residual20k; any learned rescue early-stop only early10k, predeclare before selection results",
+  "first_candidate": "Existing selected four-layer correction from originalp2 anchor once, unchanged global decide, separate pilot only",
+  "required_acceptance": "Exact baseline selection replay .9802609267254342, paired gain CI lower>0, precision must not fall, singleton false positives must not rise, no country delta<-.0005",
+  "claimant_graphs": "Development30k shared by early10k/selection20k; residual20k separate diagnostic global graph, in-sample adapter predictions. No full331k parity claim.",
+  "selected_adapter_sha256": "625268050ec1774ec2eb1c0c8d38b89bf13c284d3e7474b564bb8264eec0dac1",
+  "selected_report_sha256": "27f6289130c9db95977b33ba9b9c497ce64cb112ef2c9bd74c9faf4b643bb318",
+  "heads": {
+    "old": "f2b75c8a1ca5bcb7293b893c61791b619c02d5d7f38e75c7da197423b87dfd94",
+    "fine": "60bca75bf41628f43eff487f8bdbb9b2f2f5ad54967af467807d7bc55417083c"
+  },
+  "source_sha256": "b4e5f22c332d03263f7b4bfd0a3bc8c80ef26ee1f59b15f4bc656ed5d59564ed",
+  "audit_labels_read": false,
+  "extension_labels_read": false
+}

@@ -1,0 +1,181 @@
+{
+  "status": "complete_label_free_aggregate_diff",
+  "created_at": "2026-09-27T15:43:48.517719+00:00",
+  "scope": "Validated official-test Submission04 versus05; country attributes only; no truth or external entity evidence; structural changes do not establish accuracy.",
+  "labels_read": false,
+  "audit_labels_read": false,
+  "raw_records_or_owner_ids_in_report": false,
+  "outputs_modified": false,
+  "source1_country_input": "dataset/test/test_source1.tsv",
+  "source1_country_sha256": "3d4a32c54c2ca9c53fd7c2be105bf26f708f94c4d2f88eb370972a195665c2f5",
+  "inputs": [
+    {
+      "path": "output/submission_04",
+      "matching_sha256": "4bc03605d2892e463484b39d23cf1982803bee270f003e2e1e7f8307ed4e207f",
+      "validated_report_sha256": "231da5296ebd7f1429f5b01ac3da491452659ef26e1ccc61eada617d0192c3b9"
+    },
+    {
+      "path": "output/submission_05",
+      "matching_sha256": "3705f27dbc21a693cde2633c9d00a495c1458d11bac4c92bf3c66ceba837de0e",
+      "validated_report_sha256": "8f8eceb56883ce8ea9a2abe4eaa84f6f5e5cfbb7f4be069776b3a89cd573b64f"
+    }
+  ],
+  "candidate_tsv_identical_sha256": "cfc74f994f0a00c15cae7002c0fef1882e26bfb91ac349b4b23e3e0c5e74c84f",
+  "owner_row_alignment_verified": true,
+  "overall": {
+    "owners": 1732544,
+    "links_before": 5772161,
+    "links_after": 5772254,
+    "added_links": 22460,
+    "removed_links": 22367,
+    "changed_owners": 41951,
+    "newly_empty": 728,
+    "newly_nonempty": 168,
+    "empty_before": 98839,
+    "empty_after": 99399,
+    "net_link_change": 93,
+    "net_empty_change": 560
+  },
+  "by_country": {
+    "us": {
+      "owners": 663106,
+      "links_before": 2219647,
+      "links_after": 2223884,
+      "added_links": 7801,
+      "removed_links": 3564,
+      "changed_owners": 10812,
+      "newly_empty": 17,
+      "newly_nonempty": 7,
+      "empty_before": 38786,
+      "empty_after": 38796,
+      "net_link_change": 4237,
+      "net_empty_change": 10
+    },
+    "india": {
+      "owners": 809986,
+      "links_before": 2646154,
+      "links_after": 2653206,
+      "added_links": 11021,
+      "removed_links": 3969,
+      "changed_owners": 14200,
+      "newly_empty": 50,
+      "newly_nonempty": 18,
+      "empty_before": 49694,
+      "empty_after": 49726,
+      "net_link_change": 7052,
+      "net_empty_change": 32
+    },
+    "france": {
+      "owners": 259452,
+      "links_before": 906360,
+      "links_after": 895164,
+      "added_links": 3638,
+      "removed_links": 14834,
+      "changed_owners": 16939,
+      "newly_empty": 661,
+      "newly_nonempty": 143,
+      "empty_before": 10359,
+      "empty_after": 10877,
+      "net_link_change": -11196,
+      "net_empty_change": 518
+    }
+  },
+  "duplicate_target_ownership_before": {
+    "overall": {
+      "duplicate_targets": 1198,
+      "claims_on_duplicate_targets": 2425,
+      "excess_claims": 1227,
+      "maximum_claimants": 5,
+      "cross_country_duplicate_targets": 0
+    },
+    "by_country": {
+      "us": {
+        "duplicate_targets": 56,
+        "claims_on_duplicate_targets": 112,
+        "excess_claims": 56,
+        "maximum_claimants": 2
+      },
+      "india": {
+        "duplicate_targets": 176,
+        "claims_on_duplicate_targets": 352,
+        "excess_claims": 176,
+        "maximum_claimants": 2
+      },
+      "france": {
+        "duplicate_targets": 966,
+        "claims_on_duplicate_targets": 1961,
+        "excess_claims": 995,
+        "maximum_claimants": 5
+      }
+    }
+  },
+  "duplicate_target_ownership_after": {
+    "overall": {
+      "duplicate_targets": 915,
+      "claims_on_duplicate_targets": 1847,
+      "excess_claims": 932,
+      "maximum_claimants": 5,
+      "cross_country_duplicate_targets": 0
+    },
+    "by_country": {
+      "us": {
+        "duplicate_targets": 51,
+        "claims_on_duplicate_targets": 102,
+        "excess_claims": 51,
+        "maximum_claimants": 2
+      },
+      "india": {
+        "duplicate_targets": 169,
+        "claims_on_duplicate_targets": 338,
+        "excess_claims": 169,
+        "maximum_claimants": 2
+      },
+      "france": {
+        "duplicate_targets": 695,
+        "claims_on_duplicate_targets": 1407,
+        "excess_claims": 712,
+        "maximum_claimants": 5
+      }
+    }
+  },
+  "target_claimant_transitions": {
+    "definition": "A claimant replacement is a shared target with at least one prior owner removed and at least one new owner added; new/unclaimed targets and owner-set expansions/contractions are reported separately.",
+    "overall": {
+      "targets_newly_claimed": 20920,
+      "targets_newly_unclaimed": 20532,
+      "shared_targets_owner_set_changed": 1969,
+      "shared_targets_claimant_replaced": 1343,
+      "shared_targets_claimants_only_added": 194,
+      "shared_targets_claimants_only_removed": 432,
+      "cross_country_target_owner_set_changes": 0,
+      "target_owner_sets_changed": 43421
+    },
+    "by_country": {
+      "us": {
+        "targets_newly_claimed": 7719,
+        "targets_newly_unclaimed": 3477,
+        "shared_targets_owner_set_changed": 88,
+        "shared_targets_claimant_replaced": 80,
+        "shared_targets_claimants_only_added": 2,
+        "shared_targets_claimants_only_removed": 6
+      },
+      "india": {
+        "targets_newly_claimed": 10840,
+        "targets_newly_unclaimed": 3781,
+        "shared_targets_owner_set_changed": 199,
+        "shared_targets_claimant_replaced": 170,
+        "shared_targets_claimants_only_added": 11,
+        "shared_targets_claimants_only_removed": 18
+      },
+      "france": {
+        "targets_newly_claimed": 2361,
+        "targets_newly_unclaimed": 13274,
+        "shared_targets_owner_set_changed": 1682,
+        "shared_targets_claimant_replaced": 1093,
+        "shared_targets_claimants_only_added": 181,
+        "shared_targets_claimants_only_removed": 408
+      }
+    }
+  },
+  "elapsed_seconds": 29.655342322999786
+}

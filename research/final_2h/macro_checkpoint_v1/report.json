@@ -1,0 +1,445 @@
+{
+  "status": "exposed_development_only",
+  "role": "development",
+  "baseline": {
+    "macro_f05": 0.9809431572046812,
+    "entities": 20000,
+    "true_positive_links": 66080,
+    "predicted_links": 66335,
+    "true_links": 69137,
+    "micro_precision": 0.9961558754805155,
+    "micro_recall": 0.9557834444653369,
+    "singleton_entities": 1130,
+    "singleton_false_positives": 35,
+    "singleton_false_positive_rate": 0.030973451327433628,
+    "non_singleton_empty_rate": 0.0042395336512983575,
+    "country_macro_f05": {
+      "us": {
+        "entities": 12039,
+        "macro_f05": 0.984179497777556
+      },
+      "india": {
+        "entities": 7961,
+        "macro_f05": 0.9760490102185185
+      }
+    }
+  },
+  "candidate": {
+    "macro_f05": 0.980851181090342,
+    "entities": 20000,
+    "true_positive_links": 66149,
+    "predicted_links": 66433,
+    "true_links": 69137,
+    "micro_precision": 0.9957250161817169,
+    "micro_recall": 0.9567814628925178,
+    "singleton_entities": 1130,
+    "singleton_false_positives": 35,
+    "singleton_false_positive_rate": 0.030973451327433628,
+    "non_singleton_empty_rate": 0.0042395336512983575,
+    "country_macro_f05": {
+      "us": {
+        "entities": 12039,
+        "macro_f05": 0.9839248143134928
+      },
+      "india": {
+        "entities": 7961,
+        "macro_f05": 0.976203087839053
+      }
+    }
+  },
+  "paired_macro_f05_delta": -9.197611433912553e-05,
+  "paired_delta_95pct_ci": [
+    -0.000270314820416332,
+    7.211770064318584e-05
+  ],
+  "country_deltas": {
+    "india": 0.00015407762053428292,
+    "us": -0.00025468346406312296
+  },
+  "links": {
+    "true_removed": 17,
+    "false_removed": 4,
+    "true_added": 86,
+    "false_added": 33,
+    "newly_empty_non_singletons": 0,
+    "ownership_targets_changed": 140,
+    "baseline_collision_targets": 0,
+    "candidate_collision_targets": 0
+  },
+  "freshness": {
+    "reservation_verified": false
+  },
+  "runtime": {
+    "passed": false,
+    "failures": [
+      "runtime_not_provided"
+    ],
+    "evidence": null
+  },
+  "claimant_universe": {
+    "kind": "unspecified",
+    "complete": false
+  },
+  "ownership_limitation": "Cheap exact-key rivals or incomplete/in-sample claims cannot validate a global ownership gain.",
+  "bootstrap": {
+    "seed": 42,
+    "iterations": 2000,
+    "unit": "Source 1 entity",
+    "paired": true
+  },
+  "legacy_guard_diagnostics": {
+    "non_inferiority_pass": false,
+    "quality_non_inferiority_pass": false,
+    "quality_improvement_pass": false,
+    "ownership_scope_eligible": true,
+    "promotion_pass": false,
+    "evidence_scope": "quality_only_development_or_unverified_freshness",
+    "failures": [
+      "point_precision_fell"
+    ],
+    "rule": "Paired LCB > -0.0005, point precision does not fall, singleton false predictions do not rise, no country delta < -0.0005. Improvement additionally requires LCB > 0."
+  },
+  "chosen": {
+    "recipe": "anchored",
+    "trees": 320,
+    "shift": 0.0,
+    "early_macro_f05": 0.9809432210834218
+  },
+  "early_grid": [
+    {
+      "recipe": "anchored",
+      "trees": 80,
+      "shift": -0.25,
+      "early_macro_f05": 0.9806466592655124
+    },
+    {
+      "recipe": "anchored",
+      "trees": 80,
+      "shift": 0.0,
+      "early_macro_f05": 0.9807771150788697
+    },
+    {
+      "recipe": "anchored",
+      "trees": 80,
+      "shift": 0.25,
+      "early_macro_f05": 0.9808026064409557
+    },
+    {
+      "recipe": "anchored",
+      "trees": 80,
+      "shift": 0.5,
+      "early_macro_f05": 0.9807185013027636
+    },
+    {
+      "recipe": "anchored",
+      "trees": 160,
+      "shift": -0.25,
+      "early_macro_f05": 0.9808213997459945
+    },
+    {
+      "recipe": "anchored",
+      "trees": 160,
+      "shift": 0.0,
+      "early_macro_f05": 0.9808468411139655
+    },
+    {
+      "recipe": "anchored",
+      "trees": 160,
+      "shift": 0.25,
+      "early_macro_f05": 0.9808120339891897
+    },
+    {
+      "recipe": "anchored",
+      "trees": 160,
+      "shift": 0.5,
+      "early_macro_f05": 0.9806297856689689
+    },
+    {
+      "recipe": "anchored",
+      "trees": 320,
+      "shift": -0.25,
+      "early_macro_f05": 0.980919415711112
+    },
+    {
+      "recipe": "anchored",
+      "trees": 320,
+      "shift": 0.0,
+      "early_macro_f05": 0.9809432210834218
+    },
+    {
+      "recipe": "anchored",
+      "trees": 320,
+      "shift": 0.25,
+      "early_macro_f05": 0.9808516580504669
+    },
+    {
+      "recipe": "anchored",
+      "trees": 320,
+      "shift": 0.5,
+      "early_macro_f05": 0.9805655868551033
+    },
+    {
+      "recipe": "anchored",
+      "trees": 600,
+      "shift": -0.25,
+      "early_macro_f05": 0.9807679364861571
+    },
+    {
+      "recipe": "anchored",
+      "trees": 600,
+      "shift": 0.0,
+      "early_macro_f05": 0.9807326702530663
+    },
+    {
+      "recipe": "anchored",
+      "trees": 600,
+      "shift": 0.25,
+      "early_macro_f05": 0.9806520845342522
+    },
+    {
+      "recipe": "anchored",
+      "trees": 600,
+      "shift": 0.5,
+      "early_macro_f05": 0.9805774491910728
+    },
+    {
+      "recipe": "direct",
+      "trees": 80,
+      "shift": -0.25,
+      "early_macro_f05": 0.9805274490754722
+    },
+    {
+      "recipe": "direct",
+      "trees": 80,
+      "shift": 0.0,
+      "early_macro_f05": 0.9806666511262699
+    },
+    {
+      "recipe": "direct",
+      "trees": 80,
+      "shift": 0.25,
+      "early_macro_f05": 0.9805661633452739
+    },
+    {
+      "recipe": "direct",
+      "trees": 80,
+      "shift": 0.5,
+      "early_macro_f05": 0.9805779984620063
+    },
+    {
+      "recipe": "direct",
+      "trees": 160,
+      "shift": -0.25,
+      "early_macro_f05": 0.9805874574019677
+    },
+    {
+      "recipe": "direct",
+      "trees": 160,
+      "shift": 0.0,
+      "early_macro_f05": 0.9807452509413633
+    },
+    {
+      "recipe": "direct",
+      "trees": 160,
+      "shift": 0.25,
+      "early_macro_f05": 0.9805867202498494
+    },
+    {
+      "recipe": "direct",
+      "trees": 160,
+      "shift": 0.5,
+      "early_macro_f05": 0.9802896230904086
+    },
+    {
+      "recipe": "direct",
+      "trees": 320,
+      "shift": -0.25,
+      "early_macro_f05": 0.9806870258890035
+    },
+    {
+      "recipe": "direct",
+      "trees": 320,
+      "shift": 0.0,
+      "early_macro_f05": 0.9805284538397645
+    },
+    {
+      "recipe": "direct",
+      "trees": 320,
+      "shift": 0.25,
+      "early_macro_f05": 0.9804314781420697
+    },
+    {
+      "recipe": "direct",
+      "trees": 320,
+      "shift": 0.5,
+      "early_macro_f05": 0.9802498844645972
+    },
+    {
+      "recipe": "direct",
+      "trees": 600,
+      "shift": -0.25,
+      "early_macro_f05": 0.9806343102218507
+    },
+    {
+      "recipe": "direct",
+      "trees": 600,
+      "shift": 0.0,
+      "early_macro_f05": 0.9804614811470881
+    },
+    {
+      "recipe": "direct",
+      "trees": 600,
+      "shift": 0.25,
+      "early_macro_f05": 0.9804627518901272
+    },
+    {
+      "recipe": "direct",
+      "trees": 600,
+      "shift": 0.5,
+      "early_macro_f05": 0.9802585885707796
+    },
+    {
+      "recipe": "anchored_missing2x",
+      "trees": 80,
+      "shift": -0.25,
+      "early_macro_f05": 0.980578732839127
+    },
+    {
+      "recipe": "anchored_missing2x",
+      "trees": 80,
+      "shift": 0.0,
+      "early_macro_f05": 0.9806928487749658
+    },
+    {
+      "recipe": "anchored_missing2x",
+      "trees": 80,
+      "shift": 0.25,
+      "early_macro_f05": 0.9807948606025786
+    },
+    {
+      "recipe": "anchored_missing2x",
+      "trees": 80,
+      "shift": 0.5,
+      "early_macro_f05": 0.980486067355371
+    },
+    {
+      "recipe": "anchored_missing2x",
+      "trees": 160,
+      "shift": -0.25,
+      "early_macro_f05": 0.9808927470486261
+    },
+    {
+      "recipe": "anchored_missing2x",
+      "trees": 160,
+      "shift": 0.0,
+      "early_macro_f05": 0.980885443605751
+    },
+    {
+      "recipe": "anchored_missing2x",
+      "trees": 160,
+      "shift": 0.25,
+      "early_macro_f05": 0.9807419048501388
+    },
+    {
+      "recipe": "anchored_missing2x",
+      "trees": 160,
+      "shift": 0.5,
+      "early_macro_f05": 0.98038318500818
+    },
+    {
+      "recipe": "anchored_missing2x",
+      "trees": 320,
+      "shift": -0.25,
+      "early_macro_f05": 0.9808296923210955
+    },
+    {
+      "recipe": "anchored_missing2x",
+      "trees": 320,
+      "shift": 0.0,
+      "early_macro_f05": 0.9807065067900358
+    },
+    {
+      "recipe": "anchored_missing2x",
+      "trees": 320,
+      "shift": 0.25,
+      "early_macro_f05": 0.980627004176463
+    },
+    {
+      "recipe": "anchored_missing2x",
+      "trees": 320,
+      "shift": 0.5,
+      "early_macro_f05": 0.9803624245240251
+    },
+    {
+      "recipe": "anchored_missing2x",
+      "trees": 600,
+      "shift": -0.25,
+      "early_macro_f05": 0.9808804002362773
+    },
+    {
+      "recipe": "anchored_missing2x",
+      "trees": 600,
+      "shift": 0.0,
+      "early_macro_f05": 0.9805578721198289
+    },
+    {
+      "recipe": "anchored_missing2x",
+      "trees": 600,
+      "shift": 0.25,
+      "early_macro_f05": 0.9804515862176786
+    },
+    {
+      "recipe": "anchored_missing2x",
+      "trees": 600,
+      "shift": 0.5,
+      "early_macro_f05": 0.9801459184518208
+    }
+  ],
+  "features": [
+    "reverse_own_name_sort",
+    "reverse_own_phonetic_sort",
+    "reverse_own_address_sort",
+    "reverse_own_number_jaccard",
+    "reverse_own_number_contradiction",
+    "reverse_own_joint",
+    "reverse_other_name_sort",
+    "reverse_other_phonetic_sort",
+    "reverse_other_address_sort",
+    "reverse_other_number_jaccard",
+    "reverse_other_number_contradiction",
+    "reverse_other_joint",
+    "reverse_margin_name",
+    "reverse_margin_phonetic",
+    "reverse_margin_address",
+    "reverse_margin_number",
+    "reverse_margin_joint",
+    "reverse_other_second_joint",
+    "reverse_other_third_joint",
+    "reverse_best_second_joint_gap",
+    "reverse_name_terms_used",
+    "reverse_phonetic_terms_used",
+    "reverse_address_terms_used",
+    "reverse_query_fields_used",
+    "reverse_high_df_terms_skipped",
+    "reverse_shortlist_saturated",
+    "reverse_own_in_top8",
+    "reverse_no_other_returned",
+    "reverse_target_name_missing",
+    "reverse_target_address_missing",
+    "reverse_target_numbers_missing",
+    "reverse_target_country_missing",
+    "reverse_own_country_conflict",
+    "first_stage",
+    "probability",
+    "candidate_rank",
+    "neural_probability",
+    "neural_fine_probability"
+  ],
+  "model_sha256": "0b98698316e700f214969db1dbf62e3731aabe437ef3b80d20e0b4d68ee169be",
+  "source_sha256": "603ce6a6813aed801d565bfaada5c731874871130120040d5a26fea6b58d5a5e",
+  "baseline_early_macro_f05": 0.9808566500369456,
+  "development_gain_confirmed": false,
+  "fresh_audit_labels_read": false,
+  "test_records_read": false,
+  "full_graph_decision_parity": true
+}

@@ -1,0 +1,175 @@
+{
+  "status": "tuning_only_requires_fresh_audit",
+  "chosen": {
+    "threshold": 0.76,
+    "macro_f05": 0.9687803631178018,
+    "entities": 50000,
+    "true_links": 173025,
+    "predicted_links": 162772,
+    "true_positive_links": 161202,
+    "micro_precision": 0.9903546064433686,
+    "micro_recall": 0.9316688339835284,
+    "singleton_entities": 2828,
+    "singleton_false_positives": 143,
+    "non_singleton_empty_predictions": 259,
+    "country_macro_f05": {
+      "india": {
+        "entities": 20042,
+        "macro_f05": 0.9621571685319527
+      },
+      "us": {
+        "entities": 29958,
+        "macro_f05": 0.9732113019618364
+      }
+    }
+  },
+  "baseline_same_tuning": {
+    "threshold": 0.75,
+    "macro_f05": 0.9666618191217364,
+    "entities": 50000,
+    "true_links": 173025,
+    "predicted_links": 162456,
+    "true_positive_links": 160699,
+    "micro_precision": 0.989184763874526,
+    "micro_recall": 0.928761739633001,
+    "singleton_entities": 2828,
+    "singleton_false_positives": 155,
+    "non_singleton_empty_predictions": 283,
+    "country_macro_f05": {
+      "india": {
+        "entities": 20042,
+        "macro_f05": 0.9594898678385071
+      },
+      "us": {
+        "entities": 29958,
+        "macro_f05": 0.971459877991437
+      }
+    }
+  },
+  "retained_candidate_oracle": {
+    "threshold": 0.5,
+    "macro_f05": 0.9889119160079832,
+    "entities": 50000,
+    "true_links": 173025,
+    "predicted_links": 167012,
+    "true_positive_links": 167012,
+    "micro_precision": 1.0,
+    "micro_recall": 0.9652477965611905,
+    "singleton_entities": 2828,
+    "singleton_false_positives": 0,
+    "non_singleton_empty_predictions": 121,
+    "country_macro_f05": {
+      "india": {
+        "entities": 20042,
+        "macro_f05": 0.9828671743867222
+      },
+      "us": {
+        "entities": 29958,
+        "macro_f05": 0.9929558679264462
+      }
+    }
+  },
+  "macro_gain": 0.0021185439960653696,
+  "training_entities": 300000,
+  "training_pairs": 8725288,
+  "tuning_entities": 50000,
+  "tuning_pairs": 2000000,
+  "best_iteration": 2400,
+  "feature_version": "pairwise-v3-65",
+  "feature_names": [
+    "name_jaro_winkler",
+    "name_levenshtein",
+    "name_token_sort",
+    "name_token_set",
+    "name_partial",
+    "name_jaccard",
+    "name_length_ratio",
+    "name_character_cosine",
+    "address_jaro_winkler",
+    "address_levenshtein",
+    "address_token_sort",
+    "address_token_set",
+    "address_partial",
+    "address_jaccard",
+    "address_length_ratio",
+    "address_numeric_overlap",
+    "digit_token_jaccard",
+    "exact_numeric_match",
+    "postcode_agreement",
+    "street_number_match",
+    "exact_name",
+    "exact_name_core",
+    "any_name_token_match",
+    "name_token_in_address",
+    "address_token_in_name",
+    "country_exact_match",
+    "candidate_address_missing",
+    "postcode_missing",
+    "country_missing",
+    "source1_name_length",
+    "candidate_name_length",
+    "source1_address_length",
+    "candidate_address_length",
+    "blocking_score",
+    "source_is_s2",
+    "source_is_s3",
+    "canonical_name_sort",
+    "canonical_name_set",
+    "canonical_core_exact",
+    "canonical_name_cosine",
+    "canonical_name_length_ratio",
+    "query_family_log_frequency",
+    "candidate_alias_confidence",
+    "candidate_alias_log_support",
+    "address_ascii_containment",
+    "first_numeric_canonical_exact",
+    "numeric_canonical_jaccard",
+    "name_weighted_jaccard",
+    "address_weighted_jaccard",
+    "strongest_shared_address_idf",
+    "num_containment",
+    "num_single_substitution",
+    "num_disjoint_contradiction",
+    "num_left_only",
+    "num_right_only",
+    "phonetic_name_set",
+    "phonetic_name_sort",
+    "phonetic_char_jaccard",
+    "concat_ratio",
+    "concat_partial",
+    "cand_name_min_log_df",
+    "ref_name_min_log_df",
+    "addr_left_unmatched_idf",
+    "addr_right_unmatched_idf",
+    "addr_distinct_mismatch"
+  ],
+  "search_config": {
+    "top_k": 20,
+    "path_top_k": 80,
+    "query_tokens": 6,
+    "max_word_df": 100000,
+    "max_address_df": 100000,
+    "character_terms": 8,
+    "max_character_df": 20000,
+    "character_mode": "off",
+    "reranker_version": "v4",
+    "numeric_conjunctions": true,
+    "numeric_location_queries": true,
+    "use_name_aliases": true,
+    "retrieval_mode": "wide"
+  },
+  "retrieval": {
+    "engine": "bounded-postings-v1",
+    "options": {
+      "max_postings": 100000,
+      "tokens_per_field": 6,
+      "field_budget": 24,
+      "fused_budget": 64,
+      "cache_bytes": 67108864
+    }
+  },
+  "model_sha256": "446c6300647fb1aea32050c031d702ea64b54d6d800804f11447f41954cfe169",
+  "fresh_audit_evaluated": false,
+  "leaderboard_score": null,
+  "seconds": 736.0996620840015
+}

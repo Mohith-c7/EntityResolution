@@ -1,0 +1,173 @@
+From 917264e494aab82e11cd3795903382217d9139e5 Mon Sep 17 00:00:00 2001
+From: harsha-cpp <sriharshatummalapalli@gmail.com>
+Date: Sun, 27 Sep 2026 17:50:45 +0530
+Subject: [PATCH 1/2] retrieval: deterministic exact-key ordering + compound
+ name+number path
+
+- ORDER BY rowid on exact_name/exact_core/core_prefix lookups so a large
+  common-name block consumes the path quota deterministically, not arbitrarily
+- add name_number compound path (name AND address-number conjunction) that
+  engages when the exact-core block fills path_top_k, letting address evidence
+  discriminate within common-name blocks
+
+Co-authored-by: Cursor <cursoragent@cursor.com>
+---
+ .../src/blocking/disk_index.py                |  26 ++++-
+ tests/test_disk_index_retrieval.py            | 106 ++++++++++++++++++
+ 2 files changed, 129 insertions(+), 3 deletions(-)
+ create mode 100644 tests/test_disk_index_retrieval.py
+
+diff --git a/code/business_entity_resolution/src/blocking/disk_index.py b/code/business_entity_resolution/src/blocking/disk_index.py
+index 8b55412..b8a4cd4 100644
+--- a/code/business_entity_resolution/src/blocking/disk_index.py
++++ b/code/business_entity_resolution/src/blocking/disk_index.py
+@@ -342,11 +342,31 @@ class DiskSourceIndex:
+             for path, rows in self.anchors.query(reference, self).items():
+                 add(path, rows)
+             return self.finish_query(reference, paths, return_all=return_all)
++        exact_block_rows: list[int] = []
+         for path, column, value in (("exact_name", "name", reference.name), ("exact_core", "core", reference.core), ("core_prefix", "prefix", "".join(reference.core.split())[:8])):
+             if value:
+-                # Bounded exact lookup; lexical/address paths provide additional
+-                # branch evidence when identical names occur in large blocks.
+-                add(path, [r[0] for r in self.connection.execute(f"SELECT rowid FROM records WHERE {column}=? LIMIT ?", (value, cfg.path_top_k))])
++                # Bounded exact lookup with a deterministic rowid order. Without
++                # ORDER BY, a large block of identical common names can consume
++                # the whole path quota in an arbitrary order before any address
++                # evidence is considered.
++                rows = [r[0] for r in self.connection.execute(
++                    f"SELECT rowid FROM records WHERE {column}=? ORDER BY rowid LIMIT ?", (value, cfg.path_top_k))]
++                add(path, rows)
++                if column == "core":
++                    exact_block_rows = rows
++        # Compound retrieval: when the exact-name block is large (a common
++        # name), a name+number conjunction lets address evidence discriminate
++        # within the block instead of relying on arbitrary truncation.
++        if reference.core and reference.address_digits:
++            block_full = len(exact_block_rows) >= cfg.path_top_k
++            if block_full:
++                number_terms = ["a" + t for t in sorted(reference.address_digits)]
++                number_terms = [t for t in number_terms if 0 < self.df("digits", t) <= cfg.max_address_df]
++                if number_terms:
++                    name_terms = self.rare_terms("name", reference.name_tokens, cfg.max_word_df, cfg.query_tokens)
++                    if name_terms:
++                        expression = self.expression("name", name_terms) + " AND " + self.expression("digits", number_terms)
++                        add("name_number", self.search(expression, country=reference.country or None))
+         names = self.rare_terms("name", reference.name_tokens, cfg.max_word_df, cfg.query_tokens)
+         addresses = self.rare_terms("address", reference.address_tokens, cfg.max_address_df, cfg.query_tokens)
+         numbers = ["n" + t for t in reference.name_digits] + ["a" + t for t in reference.address_digits]
+diff --git a/tests/test_disk_index_retrieval.py b/tests/test_disk_index_retrieval.py
+new file mode 100644
+index 0000000..c3b385e
+--- /dev/null
++++ b/tests/test_disk_index_retrieval.py
+@@ -0,0 +1,106 @@
++"""Tests for deterministic, evidence-ordered disk retrieval.
++
++These exercise the SQLite-backed ``DiskSourceIndex`` directly. They focus on
++the exact-key lookups, which historically used a bare ``LIMIT`` with no
++secondary ordering, so a large block of identical common names could consume
++the whole path quota in an arbitrary (rowid) order before any address evidence
++was considered.
++"""
++
++import sys
++import tempfile
++import unittest
++from pathlib import Path
++
++import pandas as pd
++
++PROJECT_CODE = Path(__file__).resolve().parents[1] / "code" / "business_entity_resolution"
++if str(PROJECT_CODE) not in sys.path:
++    sys.path.insert(0, str(PROJECT_CODE))
++
++from src.blocking.disk_index import (  # noqa: E402
++    DiskSearchConfig,
++    DiskSourceIndex,
++    build_disk_index,
++    normalize_record,
++)
++
++
++def _write_source(path: Path, rows: list[dict[str, str]], source: str) -> None:
++    frame = pd.DataFrame(rows, columns=["entity_id", "business_name", "business_address", "country"])
++    frame.to_csv(path, sep="\t", index=False)
++
++
++def _build(tmp: Path, rows: list[dict[str, str]], source: str = "S2") -> DiskSourceIndex:
++    src = tmp / f"{source}.tsv"
++    _write_source(src, rows, source)
++    index_path = tmp / f"{source}.sqlite"
++    build_disk_index(src, index_path, source)
++    return DiskSourceIndex(index_path, DiskSearchConfig())
++
++
++class ExactKeyOrderingTests(unittest.TestCase):
++    def test_exact_core_lookup_is_deterministic(self) -> None:
++        with tempfile.TemporaryDirectory() as tmpdir:
++            tmp = Path(tmpdir)
++            # Many records share one common core name; only the rowid differs.
++            rows = [
++                {
++                    "entity_id": f"S2-{i}",
++                    "business_name": "Lille Ecole SAS",
++                    "business_address": f"{i} Rue Example, Lille",
++                    "country": "France",
++                }
++                for i in range(200)
++            ]
++            index = _build(tmp, rows)
++            reference = normalize_record(
++                {"entity_id": "S1-1", "business_name": "Lille Ecole SAS",
++                 "business_address": "5 Rue Example, Lille", "country": "France"}
++            )
++            config = DiskSearchConfig(path_top_k=80)
++            index.config = config
++            first = index.connection.execute(
++                "SELECT rowid FROM records WHERE core=? LIMIT ?", (reference.core, config.path_top_k)
++            ).fetchall()
++            # Repeated queries must return the same rowids in the same order.
++            for _ in range(5):
++                again = index.connection.execute(
++                    "SELECT rowid FROM records WHERE core=? LIMIT ?", (reference.core, config.path_top_k)
++                ).fetchall()
++                self.assertEqual(first, again)
++            index.close()
++
++    def test_compound_name_number_path_exists(self) -> None:
++        with tempfile.TemporaryDirectory() as tmpdir:
++            tmp = Path(tmpdir)
++            # Fill the exact-core block (>= path_top_k) with a common name so the
++            # compound name+number path engages. Give each a distinct street number.
++            rows = [
++                {"entity_id": f"S2-{i}", "business_name": "Acme Services",
++                 "business_address": f"{1000 + i} Oak Road, Springfield", "country": "US"}
++                for i in range(200)
++            ]
++            # The true match shares the reference's street number.
++            rows.append({"entity_id": "S2-true", "business_name": "Acme Services",
++                         "business_address": "10 Oak Road, Springfield", "country": "US"})
++            index = _build(tmp, rows)
++            index.config = DiskSearchConfig(path_top_k=80)
++            reference = normalize_record(
++                {"entity_id": "S1-1", "business_name": "Acme Services",
++                 "business_address": "10 Oak Road, Springfield", "country": "US"}
++            )
++            results = index.query(reference, return_all=True)
++            paths = {p for cand, _ in results for p in cand.blocking_paths}
++            # The compound name+number path must engage for the full common block.
++            self.assertTrue(any("name_number" in p for p in paths),
++                            f"expected a name_number path, got {paths}")
++            # And it must retrieve the record that shares the street number.
++            by_id = {cand.candidate_entity_id: cand for cand, _ in results}
++            self.assertIn("S2-true", by_id)
++            self.assertIn("name_number", by_id["S2-true"].blocking_paths)
++            index.close()
++
++
++if __name__ == "__main__":
++    unittest.main()
+-- 
+2.49.0
+

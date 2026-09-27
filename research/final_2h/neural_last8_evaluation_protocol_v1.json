@@ -1,0 +1,21 @@
+{
+  "status": "predeclared_before_eight_layer_development_evaluation",
+  "declared_at": "2026-09-27T15:06:38.125853+00:00",
+  "source_sha256": "d5dda30f2e072677a962604aa0c4459eccad13264f41179f627bc46eee44ebca",
+  "head_manifest_sha256": "5626ab23f1dda7cab60192654cb6835c1d17fc2f87e64b31a3b8dbfef0ef549c",
+  "extension_plan_sha256": "7e0ae6bd98c6023690935f5317b3ea09550fcb5b117a23058db17b61566e8f2a",
+  "extension_labels_read": false,
+  "consumed_audit_or_confirmation_read": false,
+  "calibration": "Existing neural_peer fit-fine anchored38, 20k residual fit and 10k early stopping; fixed existing hyperparameters",
+  "selection_evaluation": "One full30k global decision replay; exposed selection20k once versus selected four-layer model",
+  "acceptance": {
+    "point_macro_f05_gain_at_least": 0.0003,
+    "paired_ci_lower_bound_above": 0.0,
+    "micro_precision_must_not_fall": true,
+    "singleton_false_predictions_must_not_rise": true,
+    "country_delta_floor": -0.0005
+  },
+  "no_strength_or_threshold_tuning": true,
+  "four_layer_pairs_sha256": "0af8eb23426be73cb6562019ea9568ec118d2293f186820824b349aa6e7a67f6",
+  "four_layer_report_sha256": "27f6289130c9db95977b33ba9b9c497ce64cb112ef2c9bd74c9faf4b643bb318"
+}

@@ -1,0 +1,16 @@
+{
+  "declared_at": "2026-09-27T14:48:37.315281+00:00",
+  "purpose": "bounded outer-training capacity experiment while full-test CPU features run",
+  "model": "MIT multilingual MiniLM,117654530 parameters",
+  "encoder_layers_trainable": 8,
+  "epochs": 1,
+  "time_cap_minutes": 14,
+  "initializer": "models/final_2h/neural_last2_3epoch_v1/checkpoint",
+  "training_input": "models/sprint_6h/neural/train120k_street_decoys.jsonl",
+  "training_manifest": "models/sprint_6h/neural/train120k_street_decoys_manifest.json",
+  "training_input_sha256": "e2e232a81dd3b5d041e5a08b00f6cc53c03ed73d909d6782894e59498aa8e1eb",
+  "training_manifest_sha256": "d30c590a584fb27d32d5fd8d30c3b3b1a3d6227b70200ae37d2109f61e53a9af",
+  "selection": "existing early10k and selection20k only; no consumed audit tuning",
+  "default_submission": "four-layer audited candidate continues unchanged",
+  "training_source_sha256": "8de21db3127f994bc5ce53f4c561acf58fea107a33dd76f2dfb9dac196fcdc4b"
+}

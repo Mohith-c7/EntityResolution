@@ -2,17 +2,21 @@
 
 Offline business matching using the seven organizer TSVs, bounded disk indexes, a training-only name channel, pair features, and LightGBM.
 
-## Latest completed result
+## Final results and project status
 
-The first completed submission received a **0.9399 portal score**, reported by the team. Its files are preserved under `output/submission_03/`; both strict and official validators passed with ID checking enabled. It covers all 1,732,544 test references, including France.
+The best completed submission, **Submission 05**, received a team-reported **0.970 portal macro F0.5**, following Submission 04 at **0.968** and Submission 03 at **0.9399**. It covered all **1,732,544** test references, including France, and both strict and official validators passed with ID checking enabled.
 
-The larger `models/scale_v1_run/model_300k` matcher achieved **0.965888 local macro F0.5** on a fresh 10,000-entity audit, versus **0.957786** for the previous matcher on the same entities. Precision increased to 0.989011, recall to 0.927543, and singleton false matches fell from 44 to 31. Paired gain: **0.008103**, with 95% interval **[0.006429, 0.009761]**. This model uses 300,000 training references, 65 features and five-fold training aliases. It has not been submitted.
+The strongest separately audited local candidate reached **0.9811416633** on 10,000 held-out entities. Its Submission 05 comparator scored **0.9803742791 on the same cohort**; the paired gain was **0.0007673842**, with 95% interval **[0.0002402509, 0.0013411254]**. This later hybrid did **not** become a completed submission. Local audits did not measure French accuracy, and the qualification target of 0.989279 was not achieved.
 
-Current development experiments combine learned candidate ranking, one-hop blocking expansion and a second-stage candidate-context model. The conservative selection reaches **0.970635 on 20,000 development entities**, with candidate oracle **0.993451** and 40 candidates per reference. This is not a fresh-audit or portal score. See [the round-two model plan and research](docs/ROUND_2_MODEL_PLAN.md).
+All cloud runs were stopped and the Azure experiment resources were deleted at the user's request. No training or submission generation remains active. The final address-dropout training and two development score sets completed locally, but its calibration was not reviewed or promoted. Submission 06 export was terminated before completion. Submission 05 remains the latest completed release.
 
-**Submission generation is paused by request while working toward 0.99.** Preserve the existing upload and frozen artifacts; do not automatically create another submission from development improvements. The earlier audit sets are consumed and must not be reused for tuning. France still has no labeled evaluation.
+Read the [project retrospective](docs/PROJECT_RETROSPECTIVE.md) for the full development experience, improvements, failures, operational lessons, and measured outcomes. The [final handover](docs/ER_HANDOVER_2026-09-27.md) records artifact locations and hashes. Large datasets, checkpoints, and output caches are intentionally outside Git; a repository clone alone does not contain the complete release package.
 
-Historical v3 results, runtime benchmarks and stopped submission 01/02 checkpoints are documented in [the runtime plan](docs/RUNTIME_REDESIGN.md). The old 0.951057 and 0.960616 results belong to different, earlier holdout cohorts and pipelines.
+## Pipeline
+
+The system combined bounded posting-list retrieval, bridge candidates, LightGBM pair and context models, competing-owner evidence, and sparse offline multilingual neural matching. Every completed submission retained the exact candidates actually scored. Development experiments remained separate from frozen release artifacts.
+
+Historical runtime measurements and stopped Submission 01/02 attempts are documented in [the runtime plan](docs/RUNTIME_REDESIGN.md). Earlier 0.951057, 0.960616, 0.965888, and 0.978547 local results came from different cohorts and pipelines; they should not be read as one directly comparable leaderboard series.
 
 ## Earlier development results
 
@@ -25,7 +29,7 @@ The complete training target pool contains 5,034,616 S2 records and 5,285,603 S3
 
 These are exploratory local scores, not leaderboard results. The improved pilot's bootstrap 95% interval is 0.9108–0.9412. Its name channel is fitted on all eligible training-fold names and counterparts, separately from the classifier sample. Multiple components changed between pilots; this is not an isolated feature ablation. France is test-only, so these results do not establish French accuracy.
 
-All seven files passed a full schema, ID, ground-truth, ownership, and train/test-ID overlap audit. Sanhitha's normalization fixes at `17c9532` are integrated, with blank-field regression fixes. Full official-test predictions are complete; final archive packaging remains separate.
+All seven files passed a full schema, ID, ground-truth, ownership, and train/test-ID overlap audit. Sanhitha's normalization fixes at `17c9532` are integrated, with blank-field regression fixes. Submission 05 predictions and its versioned archive were completed; subsequent experimental exports were not completed.
 
 ## Run and review
 
