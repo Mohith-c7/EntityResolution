@@ -1,0 +1,182 @@
+{
+  "mode": "R2",
+  "measured": true,
+  "candidate_frozen_sha256": "ab2506d2d5e48114246eeb76869b910cfec62402ecb06cfcbdc62bd7bc5b98e1",
+  "synthetic_fixture_runtime": false,
+  "full_test_eta_supported": true,
+  "estimated_processing_seconds": 1372.6796095382774,
+  "processing_budget_seconds": 3939.675848,
+  "safety_margin_fraction": 0.15,
+  "blocks": [
+    {
+      "references": 10000,
+      "pairs": 400000,
+      "country_stratified": true,
+      "countries": {
+        "us": 5985,
+        "india": 4015
+      },
+      "seconds": {
+        "reads": 0.5222480320561549,
+        "lookups": 0.0,
+        "normalization": 0.0,
+        "gate_or_features": 0.0,
+        "predict": 0.0,
+        "global_decision": 0.9096282110040192,
+        "diagnostic_write": 0.0006098320009186864,
+        "tsv_export": 0.13083054299931973,
+        "strict_validator": 20.54996876599762,
+        "official_validator": 8.290113419003319
+      },
+      "validation": {
+        "strict": "PASS",
+        "official": "PASS",
+        "strict_issues": [],
+        "official_returncode": 0,
+        "id_checking": true,
+        "official_command": [
+          "/mnt/er/venv/bin/python",
+          "-S",
+          "/mnt/er/entity/code/business_entity_resolution/src/utils/organizer_validate_submission.py",
+          "--matching",
+          "research/final_2h/hybrid_audit/runtime_v1/block_0/matching_results.tsv",
+          "--candidate",
+          "research/final_2h/hybrid_audit/runtime_v1/block_0/candidate_pairs.tsv",
+          "--test-dir",
+          "research/final_2h/hybrid_audit/runtime_v1/block_0/test",
+          "--check-ids"
+        ],
+        "validator_sha256": {
+          "strict": "ce0a9219cdc9154ef5ed4f191634ef546f0da13e358a9e1a9f8a651d8ae0e72a",
+          "official": "f96f59934383a15095914f507620c078c474e8f9c60e864b2d051ed173a22dfc"
+        },
+        "stage_seconds": {
+          "strict_validator": 20.54996876599762,
+          "official_validator": 8.290113419003319
+        }
+      },
+      "statistics": {
+        "country": {
+          "india": {
+            "entities": 4015,
+            "scored_candidates": 160600,
+            "predicted_links": 13181,
+            "empty_predictions": 234,
+            "empty_candidates": 0
+          },
+          "us": {
+            "entities": 5985,
+            "scored_candidates": 239400,
+            "predicted_links": 19891,
+            "empty_predictions": 355,
+            "empty_candidates": 0
+          }
+        },
+        "candidate_histogram": {
+          "40": 10000
+        },
+        "empty_predictions": 589
+      }
+    },
+    {
+      "references": 10000,
+      "pairs": 400000,
+      "country_stratified": true,
+      "countries": {
+        "us": 5985,
+        "india": 4015
+      },
+      "seconds": {
+        "reads": 0.5080509290536388,
+        "lookups": 0.0,
+        "normalization": 0.0,
+        "gate_or_features": 0.0,
+        "predict": 0.0,
+        "global_decision": 0.9677281370022683,
+        "diagnostic_write": 0.00036813899350818247,
+        "tsv_export": 0.1335020210026414,
+        "strict_validator": 21.424131194005895,
+        "official_validator": 8.382669193000766
+      },
+      "validation": {
+        "strict": "PASS",
+        "official": "PASS",
+        "strict_issues": [],
+        "official_returncode": 0,
+        "id_checking": true,
+        "official_command": [
+          "/mnt/er/venv/bin/python",
+          "-S",
+          "/mnt/er/entity/code/business_entity_resolution/src/utils/organizer_validate_submission.py",
+          "--matching",
+          "research/final_2h/hybrid_audit/runtime_v1/block_1/matching_results.tsv",
+          "--candidate",
+          "research/final_2h/hybrid_audit/runtime_v1/block_1/candidate_pairs.tsv",
+          "--test-dir",
+          "research/final_2h/hybrid_audit/runtime_v1/block_1/test",
+          "--check-ids"
+        ],
+        "validator_sha256": {
+          "strict": "ce0a9219cdc9154ef5ed4f191634ef546f0da13e358a9e1a9f8a651d8ae0e72a",
+          "official": "f96f59934383a15095914f507620c078c474e8f9c60e864b2d051ed173a22dfc"
+        },
+        "stage_seconds": {
+          "strict_validator": 21.424131194005895,
+          "official_validator": 8.382669193000766
+        }
+      },
+      "statistics": {
+        "country": {
+          "india": {
+            "entities": 4015,
+            "scored_candidates": 160600,
+            "predicted_links": 13271,
+            "empty_predictions": 213,
+            "empty_candidates": 0
+          },
+          "us": {
+            "entities": 5985,
+            "scored_candidates": 239400,
+            "predicted_links": 20001,
+            "empty_predictions": 322,
+            "empty_candidates": 0
+          }
+        },
+        "candidate_histogram": {
+          "40": 10000
+        },
+        "empty_predictions": 535
+      }
+    }
+  ],
+  "passed": true,
+  "total_incremental_pipeline_seconds_including_completed_stages": 3583.0322419827094,
+  "remaining_after_neural_seconds": 1372.6796095382774,
+  "operational_deadline_utc": "2026-09-27T18:10:00+00:00",
+  "full_references": 1732544,
+  "full_pairs": 69301760,
+  "projection_seconds": {
+    "new_full_extra_route_reverse_and_raw_serialization": 639.8921288839992,
+    "new_full_main8_neural": 575.9083474169893,
+    "new_full_extra_old_neural": 347.54023991699796,
+    "new_full_extra_fine4_neural": 358.70505112499814,
+    "full_anchored_adapter_join_and_write": 289.2030935329876,
+    "global_decision": 251.4947366091687,
+    "export": 23.129812547600036,
+    "strict_and_official_id_validators_conservative": 329.80680038700666,
+    "network_and_integrity_allowance": 300.0
+  },
+  "scope": "Verified complete saved base/old-main-feature cache reuse; actual new full-test branches and two actual heldout country-stratified decision/export/ID-validator blocks. No cold reproduction claim.",
+  "timing_note": "Reads/normalization/retrieval and original main old-head values are already sealed caches. Fresh full extra preparation includes its normalization and reverse lookups. Blocks time only cached candidate decisions/export/validators; new full-stage costs are separate, not omitted.",
+  "source_sha256": "fb33842bb7b33d572a92eed1d7c4e0c3a321b2657015f6ca63fbac97d41b1802",
+  "stage_manifest_sha256": {
+    "models/final_2h/hybrid_test_rescue_v1/manifest.json": "b829c7955fec30adf797f3d46d82efdf7fc87c53a29539d42faee2a32feddeea",
+    "models/final_2h/hybrid_test_rescue_v1/neural_old/manifest.json": "ee82b0884549c1e70d55f0da3453694acd9e6581d9330a5f843bb26741a8e46c",
+    "models/final_2h/hybrid_test_rescue_v1/neural_fine/manifest.json": "7c5465c0a2aa273a9899e08d86545cbd22a00596f23f22ae196c289c198e95e9",
+    "models/sprint_6h/neural/last8_full_test06/manifest.json": "b16f9e43b8faf80a5d2dc5b192b80a3171fd553a1a220188953e237a46780ae3"
+  },
+  "acceptance": {
+    "passed": true,
+    "failures": []
+  }
+}

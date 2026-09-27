@@ -1,0 +1,11 @@
+{
+  "status": "root_authorized_extension_labels_open",
+  "authorized_by": "root",
+  "labels_read_before_authorization": false,
+  "authorized_at": "2026-09-27T17:05:59.779694+00:00",
+  "candidate_frozen_sha256": "ab2506d2d5e48114246eeb76869b910cfec62402ecb06cfcbdc62bd7bc5b98e1",
+  "prediction_evidence_sha256": "92df351bbef94b37989e39bd7150d743d05296fbfe16b86b3e75b594a5f92826",
+  "runtime_sha256": "80d9fc2555c52b0119ed0a6e8c9a0ccb1de6188f1499d6d57b3723b8f18e29fc",
+  "reservation_plan_sha256": "7e0ae6bd98c6023690935f5317b3ea09550fcb5b117a23058db17b61566e8f2a",
+  "review": "Fixed hybrid, separate unchanged baseline, full331012 claimant graph, original anchor once, disjoint routes, frozen source/model bindings, prospective macro criteria and measured remaining runtime reviewed. Evaluate this reserved10000 cohort exactly once; no tuning on its labels."
+}

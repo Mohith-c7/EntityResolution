@@ -1,0 +1,66 @@
+{
+  "status": "consumed_extension_audit_descriptive_loss_accounting",
+  "cohort_consumed": true,
+  "no_candidate_selection_or_retuning": true,
+  "entities": 10000,
+  "candidate_macro_f05": 0.9811416632804336,
+  "total_macro_deficit": 0.01885833671956638,
+  "error_categories": {
+    "perfect": {
+      "entities": 8587,
+      "macro_deficit": 0.0,
+      "false_links": 0,
+      "missed_true_links": 0
+    },
+    "false_negative_only": {
+      "entities": 1228,
+      "macro_deficit": 0.010556040636937188,
+      "false_links": 0,
+      "missed_true_links": 1395
+    },
+    "singleton_false_positive": {
+      "entities": 17,
+      "macro_deficit": 0.0017000000000000006,
+      "false_links": 17,
+      "missed_true_links": 0
+    },
+    "non_singleton_empty": {
+      "entities": 33,
+      "macro_deficit": 0.0032999999999999982,
+      "false_links": 0,
+      "missed_true_links": 49
+    },
+    "false_positive_only": {
+      "entities": 113,
+      "macro_deficit": 0.00252956462054289,
+      "false_links": 117,
+      "missed_true_links": 0
+    },
+    "mixed_false_positive_and_false_negative": {
+      "entities": 22,
+      "macro_deficit": 0.0007727314620863008,
+      "false_links": 22,
+      "missed_true_links": 25
+    }
+  },
+  "true_links_absent_from_original40": 563,
+  "owners_with_absent_true_candidates": 489,
+  "retrieved_true_links_rejected": 906,
+  "accepted_false_links": 156,
+  "retrieval_upper_bound_macro_f05": 0.9944492698976486,
+  "candidate_absence_macro_deficit": 0.005550730102351432,
+  "scoring_or_decision_macro_deficit": 0.013307606617214932,
+  "upper_bound_note": "Perfect truth selection within the existing40 candidates is an oracle ceiling, not a tested matcher gain. Remaining scoring/decision loss does not identify a deployable rule.",
+  "country_scope": [
+    "US",
+    "India"
+  ],
+  "france_accuracy_unknown": true,
+  "gap_to_user_qualification_cutoff_0_989279": 0.008137336719566401,
+  "source_sha256": "0c289f9deef3d50b4bb761794fa78c2e62f7c9c69ca530c5228b7cfb5de03f78",
+  "input_sha256": {
+    "audit_report": "60cdfda2ac260b371a0d3f937ffa622ade9fc1dc391c4acefdb8e1e94adca6da",
+    "consumed_truth": "34331dd1f89a0ee3979abeffc5a2209ba1035be4c4feec10a689267ece91aa7f",
+    "prediction_evidence": "92df351bbef94b37989e39bd7150d743d05296fbfe16b86b3e75b594a5f92826"
+  }
+}

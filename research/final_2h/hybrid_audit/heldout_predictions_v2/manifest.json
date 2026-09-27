@@ -1,0 +1,44 @@
+{
+  "status": "complete_graph_predictions_frozen_no_labels_read",
+  "labels_read": false,
+  "predicted_at": "2026-09-27T17:02:12.774596+00:00",
+  "full_claim_graph": {
+    "references": 331012,
+    "pairs": 13240480
+  },
+  "candidate_frozen_sha256": "ab2506d2d5e48114246eeb76869b910cfec62402ecb06cfcbdc62bd7bc5b98e1",
+  "baseline_frozen_sha256": "39c00889453f513099ed01746f627cdb43f7a49d300d6f01718b5a12f3532af7",
+  "references_sha256": "15294a3af61c5866d02891f4337230457fefa2804814efa181f63af0a84cfcc8",
+  "hybrid_policy": {
+    "main": "nn8_original_route",
+    "rescue": "fixed4_disjoint_extra",
+    "anchor": "original_p2_once",
+    "empty_owner_source": "selected4_full_graph"
+  },
+  "original_p2_anchored_once": true,
+  "original_candidate_order_preserved": true,
+  "main_rescue_pair_overlap": 0,
+  "main_pairs": 123600,
+  "rescue_pairs": 78703,
+  "decision_config_sha256": "7d35b36b3a6e6c8fb81cdc1419bb57e1949622aa1843373c103f36b33f1193bf",
+  "baseline_decision_config_sha256": "060727361010fcfc6baad47a7dc195a5fe7d5a8cb66691d4e88dbe874fd19dbf",
+  "baseline_decision_config": {
+    "threshold": 0.83,
+    "t_first": 0.6999999999999998,
+    "t_rest": 0.8300000000000004
+  },
+  "candidate_post_selection_policy": "selected_only_probability_then_source1_id",
+  "post_selection_removed_claims": 24,
+  "decision_config": {
+    "threshold": 0.83,
+    "t_rest": 0.79,
+    "t_first": 0.6999999999999998
+  },
+  "source_sha256": "6e9ba28a84b3554619d39c6548edb95434fe1e170dbf3b77b43909e65b22ce49",
+  "baseline_path": "/mnt/er/entity/research/final_2h/hybrid_audit/heldout_predictions_v2/baseline_predictions.json",
+  "baseline_sha256": "700df6151b319453cd00e2c19636b7492b295c5c3a44987c8c1a5dd511bd328c",
+  "candidate_path": "/mnt/er/entity/research/final_2h/hybrid_audit/heldout_predictions_v2/candidate_predictions.json",
+  "candidate_sha256": "b399c21f1ae9f0ed129ed4a87660a643778f9fdd97aecda752eced0adcdd5cf7",
+  "universe_path": "/mnt/er/entity/research/final_2h/hybrid_audit/heldout_scored_v1/hybrid_extension_audit_freeze_v2_universe.json",
+  "universe_sha256": "612dcca14fa258659cd9d9325b13469c74058b84bba6341a4af650d4001f3b67"
+}

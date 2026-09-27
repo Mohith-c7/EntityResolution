@@ -1,20 +1,38 @@
 # Current release status
 
-Updated 27 September 2026, 16:55 UTC / 22:25 IST.
+Updated 27 September 2026, 17:21 UTC /22:51 IST.
 
-Submission 05 is complete and preserved. The user reports portal macro F0.5 **0.970**, up **0.002** from Submission 04. Its fresh final audit was **0.9799622272**; these scores describe different populations. The latest supplied qualification screenshot shows **0.989279** at rank 100. This round requires a TSV, so no new ZIP is being built.
+Submission 05 is complete and preserved, with user-reported portal macro F0.5 **0.970** versus Submission 04 **0.968**. The user now requests only the new upload TSV; no new ZIP is being built. Submission06 export is **paused** at the user’s request while model accuracy research continues. Its portal result is unknown. The supplied qualification screenshot shows **0.989279**; no result at that level has been demonstrated.
 
-The standalone last8 and empty-rescue experiments failed their original quality checks; those results remain rejected. A separately declared combined candidate, `hybrid8_empty4_calibrated_exclusive_v1`, reached **0.9809431572** on the existing 20,000-reference development set. This is not a fresh audit or a portal score. Its prospective audit rule requires macro gain of at least 0.0003, paired 95% lower confidence bound above zero, and no known-country macro loss below -0.0005. Precision and singleton changes are reported as diagnostics; the original rejected component checks are not rewritten.
+The locked candidate **`hybrid8_empty4_calibrated_exclusive_v1` passed its single-use fresh extension audit** after root explicitly authorized opening at17:06 UTC. All331,012 heldout owners and13,240,480 candidates participated in decisions before slicing the reserved10,000 owners. The extension audit is now consumed and must not select or tune another candidate.
 
-Current work:
+| Same fresh10k cohort | Submission05 comparator | Hybrid candidate |
+| --- | ---: | ---: |
+| Macro F0.5 | .9803742791 | **.9811416633** |
+| Precision | .9956300509 | .9953443954 |
+| Recall | .9552856035 | .9578128141 |
+| Singleton false predictions | 16 | 17 |
 
-- Mac: old-head and four-layer scoring over **393,220** extra official-test pairs. These are the original-p2 top four candidates of globally empty Submission 05 owners, excluding original neural-route pairs without refilling slots.
-- VM 1: full-test reverse features are complete and independently verified; **801,380** original-route eight-layer scores are complete. The complete 331,012-owner heldout graph has been rescored for the fixed hybrid. A separate 10,000-owner extension audit is being sealed; its labels remain unopened.
-- Two agents: one owns the extension audit, one owns the final TSV exporter. Export is conditional on that audit passing. Submission 05 stays immutable.
+Macro gain **+.0007673842**, paired95% CI **[+.0002402509,+.0013411254]**. India gained+.0009361420 andUS+.0006567417. The exact prospectively declared rule required gain≥.0003, confidence lower bound>0 and country delta≥−.0005; all passed. Precision fell and singleton false predictions rose, explicitly reported as diagnostics under this new rule. Historical standalone last8 and empty-rescue rejections under their original guards remain unchanged. The new extension provides no French accuracy measurement.
 
-Native corrections are anchored to original probabilities once, with disjoint routes. The candidate uses ordinary threshold 0.79, first-candidate threshold 0.6999999999999998, original ownership threshold 0.83, then accepted-only exclusive ownership. Baseline 05 keeps its original thresholds and decisions. The same 40 forward candidates per Source 1 entity remain in the candidate TSV.
+Current processes: root requested cancellation of the capacity-only12-layer job andpreparation of an8-layer continuation with balanced target-address dropout on the same120k training keys/labels/owners. No new accuracy gain is claimed. The existing Submission06 exporter onVM1, PID139161, is SIGSTOP-paused with state preserved (read-only process check `Tsl`). Validation anddownload remain pending; no new submission run has been started. All801,380 original-route NN8 scores and393,220 disjoint extra old/fixed4 scores are complete and verified. Submission05's outputs, models and archive remain immutable.
 
-Root verification: 36 scoped tests pass. An independent 256-case check matches the official F0.5 formula, including singleton handling, to floating-point precision. Neither check implies a model score gain.
+The candidate applies NN8 on the original neural route and fixed4 on disjoint original-p2 top4 candidates of globally empty Submission05 owners. Exclusion is after top4, without fifth-candidate refill. Both native corrections anchor once to ORIGINALp2. Candidate thresholds are ownership.83, ordinary.79, first-candidate.6999999999999998, followed by highest-probability **actually selected** target ownership with Source1ID tie-break. Blue05 retains its original rules. All40 candidates per owner are preserved.
+
+The cache-reuse R2 runtime evidence uses actual full new-stage timings and two actual US/India-stratified10k decision/export/ID-validator blocks. Both validators passed. Remaining processing was conservatively estimated **1,372.68seconds /22.88minutes including15% margin**, versus3,939.68seconds available to18:10UTC at measurement. Total incremental time including completed CPU/MPS stages is3,583.03seconds. This is not a cold reproduction benchmark; full-test neural timing includesFrance, without an accuracy claim.
+
+| Sealed artifact | Path / SHA prefix |
+| --- | --- |
+| Audited freeze | `reports/final_2h/hybrid_extension_audit_freeze_v2.json`; `ab2506d2…` |
+| Operative release, metadata amendment only | `reports/final_2h/hybrid_release_freeze_v1.json`; `31bc9745…` |
+| Fresh aggregate report | `research/final_2h/hybrid_audit/extension_evaluation_v1/report.json`; `60cdfda2…` |
+| Complete-graph prediction evidence | `research/final_2h/hybrid_audit/heldout_predictions_v2/manifest.json`; `92df351b…` |
+| Runtime | `research/final_2h/hybrid_audit/runtime_v1/runtime.json`; `80d9fc25…` |
+| Root release review | `reports/final_2h/hybrid_release_root_review_v1.json` |
+
+Consumed-audit diagnostics identify906 retrieved true links rejected (682 alreadyNN8-routed),563 absent fromoriginal40 and156 accepted false links. Target addresses are missing in558/906 missed retrieved pairs. Fine8≥.95 unselected/anchored-p<.79 contains494 true and1271 false pairs, so confidence alone does not justify anoverride. Training coverage is thin:1969/67010 positive pairs and122/52990 negative pairs have target-address missing, while Source1 addresses are always present. These are retrospective diagnostics, not fresh validation or a deployed rule. Aggregate reports are `hybrid_consumed_error_summary_v1.json`, `hybrid_consumed_pair_traits_v1.json`, `hybrid_consumed_neural_confidence_v1.json` and `neural_training_address_coverage_v1.json`.
+
+All97 source pins were reviewed by root; source/model/config/prediction lineage is unchanged in the release amendment. Production exporter `verify_freeze` and `verify_audit` passed before export. Eleven audit-workflow guards and root's36 scoped checks passed; an independent256-case metric check matches the official formula to floating-point precision. These are verification evidence, not accuracy gains.
 
 ## Historical starting snapshot
 

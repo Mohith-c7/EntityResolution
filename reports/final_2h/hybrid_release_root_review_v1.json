@@ -1,0 +1,14 @@
+{
+  "status": "root_reviewed_release_export_authorized",
+  "reviewed_at": "2026-09-27T17:08:20.182191+00:00",
+  "release_sha256": "31bc974574bed607ab689122f6646de1388b4b68bc107cfdbdedab3721833fe6",
+  "audit_freeze_sha256": "ab2506d2d5e48114246eeb76869b910cfec62402ecb06cfcbdc62bd7bc5b98e1",
+  "audit_report_sha256": "60cdfda2ac260b371a0d3f937ffa622ade9fc1dc391c4acefdb8e1e94adca6da",
+  "source_models_config_and_predictions_unchanged": true,
+  "candidate": "hybrid8_empty4_calibrated_exclusive_v1",
+  "fresh_macro_f05": 0.9811416632804336,
+  "fresh_gain": 0.0007673842049908681,
+  "portal_score_unknown": true,
+  "output": "output/submission_06",
+  "preserve_submission_05": true
+}

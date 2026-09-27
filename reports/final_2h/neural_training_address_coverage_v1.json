@@ -1,0 +1,46 @@
+{
+  "status": "provided_outer_training_text_coverage_only",
+  "no_heldout_truth_read": true,
+  "coverage": {
+    "models/sprint_6h/neural/train120k.jsonl": {
+      "0": {
+        "pairs": 52990,
+        "left_missing": 0,
+        "right_missing": 122,
+        "either_missing": 122,
+        "both_missing": 0,
+        "owners_with_missing_address": 120,
+        "either_missing_fraction": 0.0023023211926778636
+      },
+      "1": {
+        "pairs": 67010,
+        "left_missing": 0,
+        "right_missing": 1969,
+        "either_missing": 1969,
+        "both_missing": 0,
+        "owners_with_missing_address": 1833,
+        "either_missing_fraction": 0.029383674078495747
+      }
+    },
+    "models/sprint_6h/neural/train120k_street_decoys.jsonl": {
+      "0": {
+        "pairs": 52990,
+        "left_missing": 0,
+        "right_missing": 122,
+        "either_missing": 122,
+        "both_missing": 0,
+        "owners_with_missing_address": 120,
+        "either_missing_fraction": 0.0023023211926778636
+      },
+      "1": {
+        "pairs": 67010,
+        "left_missing": 0,
+        "right_missing": 1969,
+        "either_missing": 1969,
+        "both_missing": 0,
+        "owners_with_missing_address": 1833,
+        "either_missing_fraction": 0.029383674078495747
+      }
+    }
+  }
+}

@@ -1,0 +1,341 @@
+{
+  "status": "paired_extension_audit_complete",
+  "role": "final_audit",
+  "baseline": {
+    "macro_f05": 0.9803742790754426,
+    "entities": 10000,
+    "true_positive_links": 33264,
+    "predicted_links": 33410,
+    "true_links": 34821,
+    "micro_precision": 0.9956300508829692,
+    "micro_recall": 0.9552856035151202,
+    "singleton_entities": 566,
+    "singleton_false_positives": 16,
+    "singleton_false_positive_rate": 0.028268551236749116,
+    "non_singleton_empty_rate": 0.004027983888064448,
+    "country_macro_f05": {
+      "US": {
+        "entities": 6040,
+        "macro_f05": 0.9839273367944744
+      },
+      "India": {
+        "entities": 3960,
+        "macro_f05": 0.9749549688171216
+      }
+    }
+  },
+  "candidate": {
+    "macro_f05": 0.9811416632804336,
+    "entities": 10000,
+    "true_positive_links": 33352,
+    "predicted_links": 33508,
+    "true_links": 34821,
+    "micro_precision": 0.9953443953682702,
+    "micro_recall": 0.95781281410643,
+    "singleton_entities": 566,
+    "singleton_false_positives": 17,
+    "singleton_false_positive_rate": 0.030035335689045935,
+    "non_singleton_empty_rate": 0.0034979860080559676,
+    "country_macro_f05": {
+      "US": {
+        "entities": 6040,
+        "macro_f05": 0.9845840784894669
+      },
+      "India": {
+        "entities": 3960,
+        "macro_f05": 0.9758911107898877
+      }
+    }
+  },
+  "paired_macro_f05_delta": 0.0007673842049908681,
+  "paired_delta_95pct_ci": [
+    0.0002402509429139045,
+    0.0013411254449625612
+  ],
+  "country_deltas": {
+    "India": 0.0009361419727659527,
+    "US": 0.0006567416949926338
+  },
+  "links": {
+    "true_removed": 11,
+    "false_removed": 4,
+    "true_added": 99,
+    "false_added": 14,
+    "newly_empty_non_singletons": 0,
+    "ownership_targets_changed": 128,
+    "baseline_collision_targets": 0,
+    "candidate_collision_targets": 0
+  },
+  "acceptance": {
+    "non_inferiority_pass": false,
+    "quality_non_inferiority_pass": false,
+    "quality_improvement_pass": false,
+    "ownership_scope_eligible": true,
+    "promotion_pass": false,
+    "evidence_scope": "fresh_evaluation",
+    "failures": [
+      "point_precision_fell",
+      "singleton_false_predictions_rose"
+    ],
+    "rule": "Paired LCB > -0.0005, point precision does not fall, singleton false predictions do not rise, no country delta < -0.0005. Improvement additionally requires LCB > 0."
+  },
+  "freshness": {
+    "status": "hybrid_label_free_gates_passed_labels_still_unopened",
+    "reservation_verified": true,
+    "role": "extension_final_audit",
+    "reservation_plan_sha256": "7e0ae6bd98c6023690935f5317b3ea09550fcb5b117a23058db17b61566e8f2a",
+    "references_sha256": "15294a3af61c5866d02891f4337230457fefa2804814efa181f63af0a84cfcc8",
+    "reference_ids_sha256": "4b8ec21351a6265051ad412892061e63b291652122711457fdb934775a012af3",
+    "reserved_at": "2026-09-27T15:01:08.100664+00:00",
+    "owners": 10000,
+    "labels_read": false,
+    "candidate_frozen_sha256": "ab2506d2d5e48114246eeb76869b910cfec62402ecb06cfcbdc62bd7bc5b98e1",
+    "baseline_release_freeze_sha256": "39c00889453f513099ed01746f627cdb43f7a49d300d6f01718b5a12f3532af7",
+    "prediction_evidence_sha256": "92df351bbef94b37989e39bd7150d743d05296fbfe16b86b3e75b594a5f92826",
+    "runtime_sha256": "80d9fc2555c52b0119ed0a6e8c9a0ccb1de6188f1499d6d57b3723b8f18e29fc",
+    "promotion_sha256": "ed4bd1328e2fd97f0d7cdd4870c1cdbb6f531cf5b8fa0b190f04976bef441488",
+    "candidate_preselected": true,
+    "frozen_rules_verified": true,
+    "root_open_authorization_sha256": "4059fea960d2e1d921bc2e8e7567bf3aba739d7fec551e8b9dd4b4ae659363d0"
+  },
+  "runtime": {
+    "passed": true,
+    "failures": [],
+    "evidence": {
+      "mode": "R2",
+      "measured": true,
+      "candidate_frozen_sha256": "ab2506d2d5e48114246eeb76869b910cfec62402ecb06cfcbdc62bd7bc5b98e1",
+      "synthetic_fixture_runtime": false,
+      "full_test_eta_supported": true,
+      "estimated_processing_seconds": 1372.6796095382774,
+      "processing_budget_seconds": 3939.675848,
+      "safety_margin_fraction": 0.15,
+      "blocks": [
+        {
+          "references": 10000,
+          "pairs": 400000,
+          "country_stratified": true,
+          "countries": {
+            "us": 5985,
+            "india": 4015
+          },
+          "seconds": {
+            "reads": 0.5222480320561549,
+            "lookups": 0.0,
+            "normalization": 0.0,
+            "gate_or_features": 0.0,
+            "predict": 0.0,
+            "global_decision": 0.9096282110040192,
+            "diagnostic_write": 0.0006098320009186864,
+            "tsv_export": 0.13083054299931973,
+            "strict_validator": 20.54996876599762,
+            "official_validator": 8.290113419003319
+          },
+          "validation": {
+            "strict": "PASS",
+            "official": "PASS",
+            "strict_issues": [],
+            "official_returncode": 0,
+            "id_checking": true,
+            "official_command": [
+              "/mnt/er/venv/bin/python",
+              "-S",
+              "/mnt/er/entity/code/business_entity_resolution/src/utils/organizer_validate_submission.py",
+              "--matching",
+              "research/final_2h/hybrid_audit/runtime_v1/block_0/matching_results.tsv",
+              "--candidate",
+              "research/final_2h/hybrid_audit/runtime_v1/block_0/candidate_pairs.tsv",
+              "--test-dir",
+              "research/final_2h/hybrid_audit/runtime_v1/block_0/test",
+              "--check-ids"
+            ],
+            "validator_sha256": {
+              "strict": "ce0a9219cdc9154ef5ed4f191634ef546f0da13e358a9e1a9f8a651d8ae0e72a",
+              "official": "f96f59934383a15095914f507620c078c474e8f9c60e864b2d051ed173a22dfc"
+            },
+            "stage_seconds": {
+              "strict_validator": 20.54996876599762,
+              "official_validator": 8.290113419003319
+            }
+          },
+          "statistics": {
+            "country": {
+              "india": {
+                "entities": 4015,
+                "scored_candidates": 160600,
+                "predicted_links": 13181,
+                "empty_predictions": 234,
+                "empty_candidates": 0
+              },
+              "us": {
+                "entities": 5985,
+                "scored_candidates": 239400,
+                "predicted_links": 19891,
+                "empty_predictions": 355,
+                "empty_candidates": 0
+              }
+            },
+            "candidate_histogram": {
+              "40": 10000
+            },
+            "empty_predictions": 589
+          }
+        },
+        {
+          "references": 10000,
+          "pairs": 400000,
+          "country_stratified": true,
+          "countries": {
+            "us": 5985,
+            "india": 4015
+          },
+          "seconds": {
+            "reads": 0.5080509290536388,
+            "lookups": 0.0,
+            "normalization": 0.0,
+            "gate_or_features": 0.0,
+            "predict": 0.0,
+            "global_decision": 0.9677281370022683,
+            "diagnostic_write": 0.00036813899350818247,
+            "tsv_export": 0.1335020210026414,
+            "strict_validator": 21.424131194005895,
+            "official_validator": 8.382669193000766
+          },
+          "validation": {
+            "strict": "PASS",
+            "official": "PASS",
+            "strict_issues": [],
+            "official_returncode": 0,
+            "id_checking": true,
+            "official_command": [
+              "/mnt/er/venv/bin/python",
+              "-S",
+              "/mnt/er/entity/code/business_entity_resolution/src/utils/organizer_validate_submission.py",
+              "--matching",
+              "research/final_2h/hybrid_audit/runtime_v1/block_1/matching_results.tsv",
+              "--candidate",
+              "research/final_2h/hybrid_audit/runtime_v1/block_1/candidate_pairs.tsv",
+              "--test-dir",
+              "research/final_2h/hybrid_audit/runtime_v1/block_1/test",
+              "--check-ids"
+            ],
+            "validator_sha256": {
+              "strict": "ce0a9219cdc9154ef5ed4f191634ef546f0da13e358a9e1a9f8a651d8ae0e72a",
+              "official": "f96f59934383a15095914f507620c078c474e8f9c60e864b2d051ed173a22dfc"
+            },
+            "stage_seconds": {
+              "strict_validator": 21.424131194005895,
+              "official_validator": 8.382669193000766
+            }
+          },
+          "statistics": {
+            "country": {
+              "india": {
+                "entities": 4015,
+                "scored_candidates": 160600,
+                "predicted_links": 13271,
+                "empty_predictions": 213,
+                "empty_candidates": 0
+              },
+              "us": {
+                "entities": 5985,
+                "scored_candidates": 239400,
+                "predicted_links": 20001,
+                "empty_predictions": 322,
+                "empty_candidates": 0
+              }
+            },
+            "candidate_histogram": {
+              "40": 10000
+            },
+            "empty_predictions": 535
+          }
+        }
+      ],
+      "passed": true,
+      "total_incremental_pipeline_seconds_including_completed_stages": 3583.0322419827094,
+      "remaining_after_neural_seconds": 1372.6796095382774,
+      "operational_deadline_utc": "2026-09-27T18:10:00+00:00",
+      "full_references": 1732544,
+      "full_pairs": 69301760,
+      "projection_seconds": {
+        "new_full_extra_route_reverse_and_raw_serialization": 639.8921288839992,
+        "new_full_main8_neural": 575.9083474169893,
+        "new_full_extra_old_neural": 347.54023991699796,
+        "new_full_extra_fine4_neural": 358.70505112499814,
+        "full_anchored_adapter_join_and_write": 289.2030935329876,
+        "global_decision": 251.4947366091687,
+        "export": 23.129812547600036,
+        "strict_and_official_id_validators_conservative": 329.80680038700666,
+        "network_and_integrity_allowance": 300.0
+      },
+      "scope": "Verified complete saved base/old-main-feature cache reuse; actual new full-test branches and two actual heldout country-stratified decision/export/ID-validator blocks. No cold reproduction claim.",
+      "timing_note": "Reads/normalization/retrieval and original main old-head values are already sealed caches. Fresh full extra preparation includes its normalization and reverse lookups. Blocks time only cached candidate decisions/export/validators; new full-stage costs are separate, not omitted.",
+      "source_sha256": "fb33842bb7b33d572a92eed1d7c4e0c3a321b2657015f6ca63fbac97d41b1802",
+      "stage_manifest_sha256": {
+        "models/final_2h/hybrid_test_rescue_v1/manifest.json": "b829c7955fec30adf797f3d46d82efdf7fc87c53a29539d42faee2a32feddeea",
+        "models/final_2h/hybrid_test_rescue_v1/neural_old/manifest.json": "ee82b0884549c1e70d55f0da3453694acd9e6581d9330a5f843bb26741a8e46c",
+        "models/final_2h/hybrid_test_rescue_v1/neural_fine/manifest.json": "7c5465c0a2aa273a9899e08d86545cbd22a00596f23f22ae196c289c198e95e9",
+        "models/sprint_6h/neural/last8_full_test06/manifest.json": "b16f9e43b8faf80a5d2dc5b192b80a3171fd553a1a220188953e237a46780ae3"
+      },
+      "acceptance": {
+        "passed": true,
+        "failures": []
+      }
+    }
+  },
+  "claimant_universe": {
+    "kind": "complete_heldout",
+    "complete": true,
+    "supervised_training_excluded": true,
+    "scoring_complete": true,
+    "declared_references": 331012,
+    "scored_references": 331012,
+    "declared_pairs": 13240480,
+    "scored_pairs": 13240480,
+    "pairs": 13240480,
+    "training_owner_intersection": 0,
+    "labels_read": false
+  },
+  "ownership_limitation": "Complete within a declared heldout universe does not reproduce full official-test claimant density.",
+  "bootstrap": {
+    "seed": 42,
+    "iterations": 2000,
+    "unit": "Source 1 entity",
+    "paired": true
+  },
+  "hybrid_prospective_acceptance": {
+    "passed": true,
+    "failures": [],
+    "criteria": {
+      "minimum_point_macro_gain": 0.0003,
+      "paired_ci_lower_bound_strictly_above": 0.0,
+      "country_macro_delta_floor": -0.0005,
+      "precision_singletons_diagnostic_only": true
+    },
+    "legacy_precision_singleton_acceptance_is_diagnostic": true,
+    "prediction_evidence_sha256": "92df351bbef94b37989e39bd7150d743d05296fbfe16b86b3e75b594a5f92826"
+  },
+  "candidate_frozen_sha256": "ab2506d2d5e48114246eeb76869b910cfec62402ecb06cfcbdc62bd7bc5b98e1",
+  "baseline_frozen_sha256": "39c00889453f513099ed01746f627cdb43f7a49d300d6f01718b5a12f3532af7",
+  "reservation_plan_sha256": "7e0ae6bd98c6023690935f5317b3ea09550fcb5b117a23058db17b61566e8f2a",
+  "full_claim_graph": {
+    "references": 331012,
+    "pairs": 13240480
+  },
+  "source_sha256": "99c59073e6ecdeb49a2b44675939eba2a9d2a18b6775b962d85880ef00426213",
+  "decision_config_sha256": "7d35b36b3a6e6c8fb81cdc1419bb57e1949622aa1843373c103f36b33f1193bf",
+  "baseline_decision_config_sha256": "060727361010fcfc6baad47a7dc195a5fe7d5a8cb66691d4e88dbe874fd19dbf",
+  "candidate_post_selection_policy": "selected_only_probability_then_source1_id",
+  "input_sha256": {
+    "truth": "34331dd1f89a0ee3979abeffc5a2209ba1035be4c4feec10a689267ece91aa7f",
+    "official_truth": "70bc1d8a16c667e0155c2105d0ab2ebe41d7e7a85d8a529e3ca81c6c3a5af037",
+    "candidate": "b399c21f1ae9f0ed129ed4a87660a643778f9fdd97aecda752eced0adcdd5cf7",
+    "baseline": "700df6151b319453cd00e2c19636b7492b295c5c3a44987c8c1a5dd511bd328c",
+    "references": "15294a3af61c5866d02891f4337230457fefa2804814efa181f63af0a84cfcc8",
+    "universe": "612dcca14fa258659cd9d9325b13469c74058b84bba6341a4af650d4001f3b67",
+    "prediction_evidence": "92df351bbef94b37989e39bd7150d743d05296fbfe16b86b3e75b594a5f92826",
+    "runtime": "80d9fc2555c52b0119ed0a6e8c9a0ccb1de6188f1499d6d57b3723b8f18e29fc",
+    "freeze": "ab2506d2d5e48114246eeb76869b910cfec62402ecb06cfcbdc62bd7bc5b98e1"
+  }
+}
