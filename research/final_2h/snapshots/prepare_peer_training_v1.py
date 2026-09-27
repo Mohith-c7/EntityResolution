@@ -33,8 +33,6 @@ def main():
                 item={**row,'text_left':other['text_right']}
                 stream.write(json.dumps(item,ensure_ascii=False)+'\n');pairs+=1;positive+=int(row['label']);owners.add(owner)
     marker={**m,'rows':pairs,'positive_pairs':positive,'negative_pairs':pairs-positive,
-        'owners':len(owners),'source_negative_selection':m.get('negative_selection'),
-        'negative_selection':'Retain supplied nonmatches with a distinct positive seed in the same outer-training owner; labels unchanged.',
         'input_sha256':sha(a.output/'pairs.jsonl'),'source_input_sha256':sha(a.input),
         'source_manifest_sha256':sha(a.manifest),'code_sha256':sha(__file__),
         'construction':'Within an outer-training business, replace Source1 text by another supplied positive target; keep each candidate original label. No inference seeds or labels read.',

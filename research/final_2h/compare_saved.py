@@ -29,8 +29,8 @@ def main():
     config=json.loads(Path('research/sprint_6h/coordination/baseline_freeze/frozen.json').read_text())
     config={k:config[k] for k in ['threshold','t_first','t_rest']}
     mask=claims.source1_entity_id.isin(truth).to_numpy();predictions=[]
-    for frame in [claims,nn,candidate]:
-        chosen,_=decide_control(frame,frame,config)
+    for i,frame in enumerate([claims,nn,candidate]):
+        chosen,_=decide_control(frame,frame,manifest.get('decision_config',config) if i==2 else config)
         predictions.append(predictions_for(frame.loc[mask],chosen[mask],truth))
     a.output.mkdir(parents=True)
     report={'scope':'already exposed selection20k, complete declared30k claimant graph; not a fresh audit',

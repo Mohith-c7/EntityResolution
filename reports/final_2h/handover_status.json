@@ -1,0 +1,19 @@
+{
+  "captured_at": "2026-09-27T13:55:00Z",
+  "active_model_jobs": 0,
+  "new_submission_running": false,
+  "final_audit_labels_opened": false,
+  "portal_team_reported": 0.968,
+  "best_fresh_confirmation": 0.9794958376501831,
+  "development_candidate": "neural_last4_fine_v1",
+  "development_macro_f05": 0.9802609267254342,
+  "development_gain_vs_neural_v2": 0.0002519948056544368,
+  "development_gain_ci95": [
+    4.401708427816703e-05,
+    0.0004706428713290225
+  ],
+  "new38_release_helpers_implemented": false,
+  "new38_final_audit_completed": false,
+  "model_sha256": "625268050ec1774ec2eb1c0c8d38b89bf13c284d3e7474b564bb8264eec0dac1",
+  "head_manifest_sha256": "60bca75bf41628f43eff487f8bdbb9b2f2f5ad54967af467807d7bc55417083c"
+}
