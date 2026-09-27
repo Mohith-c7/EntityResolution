@@ -32,3 +32,20 @@ def test_parent_key_label_reorder_and_insufficient_eligible_rejected():
     changed=copy.deepcopy(data); changed[0]['label']=1
     with pytest.raises(ValueError,match='keys/order/labels'):m.selection(data,changed,1,42,'a','b')
     with pytest.raises(ValueError,match='Insufficient'):m.selection(data,data,2,42,'a','b')
+
+def test_reusing_transform_after_parent_byte_change_is_rejected(tmp_path):
+    import json
+    original=tmp_path/'original.jsonl';street=tmp_path/'street.jsonl';derived=tmp_path/'derived.jsonl'
+    rows=[row(0,0),row(1,1)]
+    for path in (original,street):path.write_text(''.join(json.dumps(r)+'\n' for r in rows))
+    parents={}
+    for name,path in [('original',original),('street',street)]:
+        manifest=tmp_path/(name+'.json');manifest.write_text(json.dumps({'input_sha256':m.sha(path)}))
+        parents[name]={'input':str(path),'manifest':str(manifest),'input_sha256':m.sha(path),'manifest_sha256':m.sha(manifest)}
+    chosen,decoys,skipped=m.selection(rows,rows,1,42,m.sha(original),m.sha(street))
+    derived.write_text(''.join(json.dumps(r)+'\n' for r in m.derive(rows,rows,chosen)))
+    import hashlib
+    marker={'augmentation_kind':m.DOMAIN,'builder_sha256':m.sha(m.__file__),'parents':parents,'masked_per_class':1,'seed':42,'input_sha256':m.sha(derived),'excluded_modified_pairs':0,'contradiction_skips':skipped,'chosen_row_indices_sha256':hashlib.sha256(json.dumps(sorted(chosen),separators=(',',':')).encode()).hexdigest()}
+    m.verify(derived,marker)
+    original.write_text(original.read_text()+'\n')
+    with pytest.raises(ValueError,match='Parent input or manifest changed'):m.verify(derived,marker)
