@@ -1,5 +1,7 @@
 # Rare-Token Alignment Evidence — Result
 
+This document records the original v1 implementation at `43e14c633f45193611c8b2ea96d094dac957a919`. For corrected frequency views, v2 artifact compatibility, provenance checks and current commands, see [CURSOR_TOKEN_ALIGNMENT_V2_REVIEW.md](CURSOR_TOKEN_ALIGNMENT_V2_REVIEW.md).
+
 Owner: Cursor session (parallel task). Parent session owns model experiments,
 validation, VMs and release. This module adds evidence only; it changes no
 existing model, registry, or output.
@@ -99,7 +101,7 @@ No country-specific word lists or decision rules are used.
 ## Commit
 
 * Branch: `cursor/token-alignment` (based on `origin/Harsha`).
-* Commit: `fda365c0b18a1dc7c90356b15c7b538f07a3f594` (pushed to origin).
+* Commit: `43e14c633f45193611c8b2ea96d094dac957a919` (pushed to origin).
 * Owned files only: the two source files, the test file, and this document.
 
 ## Runtime (local, Apple Silicon, `/tmp/entity-review-venv` Python)

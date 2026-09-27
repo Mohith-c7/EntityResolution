@@ -33,6 +33,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "code" / "business_entity_resolution"))
 
 from src.blocking.disk_index import normalize_record  # noqa: E402
+from src.preprocessing.normalize import accent_fold  # noqa: E402
+from src.features.evidence import phonetic  # noqa: E402
 from src.features.token_alignment import (  # noqa: E402
     FEATURE_NAMES,
     FEATURE_VERSION,
@@ -64,6 +66,8 @@ def build_statistics(source1_path: Path) -> tuple[AlignmentStatistics, float]:
     global_df: Counter = Counter()
     country_df: dict[str, Counter] = defaultdict(Counter)
     country_count: Counter = Counter()
+    phonetic_global_df: Counter = Counter()
+    phonetic_country_df: dict[str, Counter] = defaultdict(Counter)
     total = 0
     frame = pd.read_csv(source1_path, sep="\t", dtype=str)
     for name, address, country in zip(
@@ -73,11 +77,15 @@ def build_statistics(source1_path: Path) -> tuple[AlignmentStatistics, float]:
             {"entity_id": "S1-x", "business_name": name or "",
              "business_address": address or "", "country": country or ""}
         )
-        terms = set(record.name.split()) | set(record.address.split())
+        terms = set(accent_fold(record.name).split()) | set(accent_fold(record.address).split())
+        phonetic_terms = set(phonetic(record.name).split())
         country_key = record.country or ""
         for term in terms:
             global_df[term] += 1
             country_df[country_key][term] += 1
+        for term in phonetic_terms:
+            phonetic_global_df[term] += 1
+            phonetic_country_df[country_key][term] += 1
         country_count[country_key] += 1
         total += 1
     stats = AlignmentStatistics(
@@ -86,8 +94,20 @@ def build_statistics(source1_path: Path) -> tuple[AlignmentStatistics, float]:
         global_df=dict(global_df),
         country_df={c: (country_count[c], dict(df)) for c, df in country_df.items()},
         source_sha256={str(source1_path): digest(source1_path)},
+        phonetic_global_df=dict(phonetic_global_df),
+        phonetic_country_df={c: (country_count[c], dict(phonetic_country_df[c])) for c in country_count},
     )
     return stats, time.perf_counter() - started
+
+
+def verify_statistics_source(stats: AlignmentStatistics, source1_path: Path) -> None:
+    """Reject statistics from a different Source 1 corpus before generating rows.
+
+    Paths may differ across machines; the content hash must match exactly.
+    """
+    expected = set(stats.source_sha256.values())
+    if len(expected) != 1 or digest(source1_path) not in expected:
+        raise ValueError("Statistics Source 1 hash does not match the supplied Source 1 corpus; rebuild statistics")
 
 
 def _load_records(paths: dict[str, Path], wanted_ids: set[str]) -> dict[str, object]:
@@ -128,6 +148,7 @@ def main() -> None:
 
     if args.statistics is not None:
         stats = AlignmentStatistics.from_dict(json.loads(args.statistics.read_text()))
+        verify_statistics_source(stats, args.source1)
         stats_seconds = 0.0
     else:
         stats, stats_seconds = build_statistics(args.source1)
@@ -156,6 +177,8 @@ def main() -> None:
     manifest = {
         "feature_version": FEATURE_VERSION,
         "statistics_version": STATISTICS_VERSION,
+        "statistics_sha256": (digest(args.statistics) if args.statistics is not None else
+                              hashlib.sha256(json.dumps(stats.to_dict(), sort_keys=True, separators=(",", ":")).encode()).hexdigest()),
         "feature_names": FEATURE_NAMES,
         "pair_count": int(len(output)),
         "pair_key_sha256": hashlib.sha256(

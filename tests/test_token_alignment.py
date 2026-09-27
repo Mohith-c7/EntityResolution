@@ -12,6 +12,7 @@ from src.blocking.disk_index import normalize_record  # noqa: E402
 from src.features.token_alignment import (  # noqa: E402
     FEATURE_NAMES,
     AlignmentStatistics,
+    STATISTICS_VERSION,
     build_alignment_features,
 )
 
@@ -32,11 +33,13 @@ def _stats() -> AlignmentStatistics:
         "birch": 1, "avenue": 40,
     }
     return AlignmentStatistics(
-        version="token-alignment-stats-v1",
+        version=STATISTICS_VERSION,
         record_count=200,
         global_df=global_df,
         country_df={"US": (200, dict(global_df))},
         source_sha256={},
+        phonetic_global_df=global_df,
+        phonetic_country_df={"US": (200, dict(global_df))},
     )
 
 

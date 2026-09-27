@@ -32,8 +32,8 @@ from rapidfuzz import fuzz
 from ..preprocessing.normalize import accent_fold
 from .evidence import phonetic
 
-STATISTICS_VERSION = "token-alignment-stats-v1"
-FEATURE_VERSION = "token-alignment-v1"
+STATISTICS_VERSION = "token-alignment-stats-v2"
+FEATURE_VERSION = "token-alignment-v2"
 
 # Fixed feature order. The batch writer and any consumer must use this order.
 FEATURE_NAMES = [
@@ -86,19 +86,34 @@ class AlignmentStatistics:
     country_df: Mapping[str, tuple[int, Mapping[str, int]]] = field(default_factory=dict)
     # source file hashes for provenance.
     source_sha256: Mapping[str, str] = field(default_factory=dict)
+    # Separate document frequencies for the queried phonetic name view. These
+    # cannot be recovered from primary DF: transformed tokens can co-occur.
+    phonetic_global_df: Mapping[str, int] | None = None
+    phonetic_country_df: Mapping[str, tuple[int, Mapping[str, int]]] = field(default_factory=dict)
 
-    def df(self, term: str, country: str) -> int:
-        if country and country in self.country_df:
-            return self.country_df[country][1].get(term, 0)
-        return self.global_df.get(term, 0)
+    def _view(self, view: str):
+        if view == "primary":
+            return self.global_df, self.country_df
+        if view != "phonetic":
+            raise ValueError(f"Unknown alignment statistics view: {view}")
+        if self.phonetic_global_df is None:
+            raise ValueError("Phonetic document frequencies are required; rebuild v2 statistics from Source 1")
+        return self.phonetic_global_df, self.phonetic_country_df
 
-    def count(self, country: str) -> int:
-        if country and country in self.country_df:
-            return self.country_df[country][0]
+    def df(self, term: str, country: str, view: str = "primary") -> int:
+        global_df, country_df = self._view(view)
+        if country and country in country_df:
+            return country_df[country][1].get(term, 0)
+        return global_df.get(term, 0)
+
+    def count(self, country: str, view: str = "primary") -> int:
+        _, country_df = self._view(view)
+        if country and country in country_df:
+            return country_df[country][0]
         return self.record_count
 
-    def idf(self, term: str, country: str) -> float:
-        return math.log((self.count(country) + 1) / (self.df(term, country) + 1)) + 1.0
+    def idf(self, term: str, country: str, view: str = "primary") -> float:
+        return math.log((self.count(country, view) + 1) / (self.df(term, country, view) + 1)) + 1.0
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -107,12 +122,16 @@ class AlignmentStatistics:
             "global_df": dict(self.global_df),
             "country_df": {c: {"record_count": n, "df": dict(df)} for c, (n, df) in self.country_df.items()},
             "source_sha256": dict(self.source_sha256),
+            "phonetic_global_df": dict(self.phonetic_global_df) if self.phonetic_global_df is not None else None,
+            "phonetic_country_df": {c: {"record_count": n, "df": dict(df)} for c, (n, df) in self.phonetic_country_df.items()},
         }
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "AlignmentStatistics":
         if value.get("version") != STATISTICS_VERSION:
-            raise ValueError(f"Unsupported statistics version {value.get('version')!r}")
+            raise ValueError(f"Unsupported statistics version {value.get('version')!r}; rebuild v2 statistics from Source 1")
+        if value.get("phonetic_global_df") is None:
+            raise ValueError("v2 statistics require dedicated phonetic document frequencies")
         return cls(
             version=value["version"],
             record_count=int(value["record_count"]),
@@ -120,6 +139,9 @@ class AlignmentStatistics:
             country_df={c: (int(d["record_count"]), {k: int(v) for k, v in d["df"].items()})
                         for c, d in value.get("country_df", {}).items()},
             source_sha256=dict(value.get("source_sha256", {})),
+            phonetic_global_df={k: int(v) for k, v in value["phonetic_global_df"].items()},
+            phonetic_country_df={c: (int(d["record_count"]), {k: int(v) for k, v in d["df"].items()})
+                                 for c, d in value.get("phonetic_country_df", {}).items()},
         )
 
 
@@ -156,8 +178,11 @@ def _alignment(left_tokens, right_tokens, weight) -> tuple[float, float, float, 
         left_counts[token] -= n
         right_counts[token] -= n
 
-    left_remaining = [t for t in sorted(left_counts) for _ in range(left_counts[t])][:MAX_FUZZY_TOKENS]
-    right_remaining = [t for t in sorted(right_counts) for _ in range(right_counts[t])][:MAX_FUZZY_TOKENS]
+    def remaining(counts):
+        ordered = sorted((t for t in counts if counts[t]), key=lambda t: (-weight(t), t))
+        return [t for t in ordered for _ in range(counts[t])][:MAX_FUZZY_TOKENS]
+    left_remaining = remaining(left_counts)
+    right_remaining = remaining(right_counts)
 
     # Bounded fuzzy matrix over remaining tokens; greedy best-first one-to-one.
     pairs = []
@@ -216,10 +241,11 @@ def build_alignment_features(left, right, statistics: AlignmentStatistics) -> di
 
     def weight_view(view: str):
         def weight(term: str) -> float:
-            return statistics.idf(term, country)
+            return statistics.idf(term, country, view)
         return weight
 
-    name_weight = weight_view("name")
+    name_weight = weight_view("primary")
+    phonetic_weight = weight_view("phonetic")
 
     left_name = _tokens(getattr(left, "name", "") or "")
     right_name = _tokens(getattr(right, "name", "") or "")
@@ -250,7 +276,7 @@ def build_alignment_features(left, right, statistics: AlignmentStatistics) -> di
         features["align_name_phon_coverage_sym"] = 0.0
         features["align_name_phon_unmatched_distinctive"] = 0.0
     else:
-        l2r, r2l, _, unmatched = _alignment(left_phon, right_phon, name_weight)
+        l2r, r2l, _, unmatched = _alignment(left_phon, right_phon, phonetic_weight)
         features["align_name_phon_coverage_sym"] = min(l2r, r2l)
         features["align_name_phon_unmatched_distinctive"] = unmatched
 
